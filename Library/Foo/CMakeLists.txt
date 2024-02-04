@@ -23,6 +23,7 @@ set(Foo_PUBLIC_HEADERS
 
 add_library(Foo ${Foo_SOURCES} ${Foo_HEADERS} config.h.in)
 
+generate_export_header(Foo)
 # state that anybody linking to us needs to include the current source dir
 # to find interface headers, while we don't need it.
 target_include_directories(Foo

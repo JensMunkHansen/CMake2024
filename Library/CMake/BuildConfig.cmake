@@ -17,13 +17,14 @@ endif()
 
 # Layout build dir like install dir
 include(GNUInstallDirs)
+if (APPLE)
+  set(CMAKE_INSTALL_RPATH "@executable_path/../lib")
+endif()
+
 if(UNIX)
   option(BUILD_SHARED_LIBS "Build shared libraries (.so or .dyld)." ON)
   set(CMAKE_BUILD_WITH_INSTALL_RPATH TRUE)
-  # TODO: Verify
   set(CMAKE_INSTALL_RPATH "$ORIGIN/../lib")
-  # Apple
-  #  set(CMAKE_INSTALL_RPATH "@executable_path/../lib")
 
   set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/${CMAKE_INSTALL_LIBDIR})
   set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/${CMAKE_INSTALL_LIBDIR})
@@ -35,6 +36,10 @@ if(UNIX)
     set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY_${OUTPUTCONFIG} ${CMAKE_BINARY_DIR}/${OutputConfig}/${CMAKE_INSTALL_LIBDIR})
     set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_${OUTPUTCONFIG} ${CMAKE_BINARY_DIR}/${OutputConfig}/${CMAKE_INSTALL_BINDIR})
   endforeach()
+
+  # set_property(TARGET my_lib
+  #  PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/$<CONFIG>/bin)
+  
 else()
   # Currently Only support static build for windows
   # option(BUILD_SHARED_LIBS "Build shared libraries (.dll)." OFF)
@@ -44,8 +49,8 @@ else()
   # for multi-config builds (e.g. msvc)
   foreach(OutputConfig IN LISTS CMAKE_CONFIGURATION_TYPES)
     string(TOUPPER ${OutputConfig} OUTPUTCONFIG)
-    set(CMAKE_LIBRARY_OUTPUT_DIRECTORY_${OUTPUTCONFIG} ${CMAKE_BINARY_DIR}/${OutputConfig}/${CMAKE_INSTALL_BINDIR})
-    set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY_${OUTPUTCONFIG} ${CMAKE_BINARY_DIR}/${OutputConfig}/${CMAKE_INSTALL_BINDIR})
+    set(CMAKE_LIBRARY_OUTPUT_DIRECTORY_${OUTPUTCONFIG} ${CMAKE_BINARY_DIR}/${OutputConfig}/${CMAKE_INSTALL_LIBDIR})
+    set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY_${OUTPUTCONFIG} ${CMAKE_BINARY_DIR}/${OutputConfig}/${CMAKE_INSTALL_LIBDIR})
     set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_${OUTPUTCONFIG} ${CMAKE_BINARY_DIR}/${OutputConfig}/${CMAKE_INSTALL_BINDIR})
   endforeach()
 endif()

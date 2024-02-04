@@ -22,6 +22,29 @@ install(EXPORT FooTargets
   DESTINATION lib/cmake/Foo
 )
 
-#export(EXPORT FooTargets
-#  FILE "${CMAKE_CURRENT_BINARY_DIR}/MathFunctionsTargets.cmake"
-#)
+include(CMakePackageConfigHelpers)
+# generate the config file that is includes the exports
+configure_package_config_file(${CMAKE_CURRENT_SOURCE_DIR}/Config.cmake.in
+  "${CMAKE_CURRENT_BINARY_DIR}/FooConfig.cmake"
+  INSTALL_DESTINATION "lib/cmake/example"
+  NO_SET_AND_CHECK_MACRO
+  NO_CHECK_REQUIRED_COMPONENTS_MACRO
+  )
+# generate the version file for the config file
+write_basic_package_version_file(
+  "${CMAKE_CURRENT_BINARY_DIR}/FooConfigVersion.cmake"
+  VERSION "${Library_VERSION_MAJOR}.${Library_VERSION_MINOR}"
+  COMPATIBILITY AnyNewerVersion
+)
+
+# install the configuration file
+install(FILES
+  ${CMAKE_CURRENT_BINARY_DIR}/FooConfig.cmake
+  DESTINATION lib/cmake/Foo
+  )
+
+# generate the export targets for the build tree
+# needs to be after the install(TARGETS ) command
+export(EXPORT FooTargets
+  FILE "${CMAKE_CURRENT_BINARY_DIR}/FooTargets.cmake"
+)
