@@ -1,6 +1,6 @@
 #pragma once
 
-#include "foo_export.h"
+#include "Foo/foo_export.h"
 #include <cstddef>
 
 namespace Library

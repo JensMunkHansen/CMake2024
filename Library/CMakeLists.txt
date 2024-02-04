@@ -16,6 +16,8 @@ add_subdirectory(Foo)
 
 add_subdirectory(FooApp)
 
+# TODO: Move this to inner build dir
+
 # install the configuration targets
 install(EXPORT FooTargets
   FILE FooTargets.cmake
@@ -26,7 +28,7 @@ include(CMakePackageConfigHelpers)
 # generate the config file that is includes the exports
 configure_package_config_file(${CMAKE_CURRENT_SOURCE_DIR}/Config.cmake.in
   "${CMAKE_CURRENT_BINARY_DIR}/FooConfig.cmake"
-  INSTALL_DESTINATION "lib/cmake/example"
+  INSTALL_DESTINATION "lib/cmake/Foo"
   NO_SET_AND_CHECK_MACRO
   NO_CHECK_REQUIRED_COMPONENTS_MACRO
   )
@@ -46,5 +48,8 @@ install(FILES
 # generate the export targets for the build tree
 # needs to be after the install(TARGETS ) command
 export(EXPORT FooTargets
+#  NAMESPACE Foo:: # TODO: Figure out how to use namespaces
   FILE "${CMAKE_CURRENT_BINARY_DIR}/FooTargets.cmake"
 )
+# export package for the build tree
+export(PACKAGE Foo)

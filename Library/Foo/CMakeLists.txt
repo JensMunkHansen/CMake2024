@@ -1,3 +1,5 @@
+# TODO: Consider if we should make a subdirectory with the same name
+
 include(GenerateExportHeader)
 
 # File: target_public_headers.cmake
@@ -28,13 +30,17 @@ generate_export_header(Foo)
 # to find interface headers, while we don't need it.
 target_include_directories(Foo
                            INTERFACE
-                           $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
-			   $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>
+                           $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}>
+			   $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}>
                            $<INSTALL_INTERFACE:include>)
 
 # We depend on our binary dir to find export header
 target_include_directories(Foo PRIVATE
-  ${CMAKE_CURRENT_BINARY_DIR})
+  ${PROJECT_BINARY_DIR})
+
+target_include_directories(Foo PRIVATE
+  ${PROJECT_SOURCE_DIR})
+
 
 # Declare public headers for external build and install			
 target_public_headers(Foo "${Foo_PUBLIC_HEADERS}")
@@ -61,3 +67,7 @@ install(TARGETS ${installable_libs}
         LIBRARY DESTINATION lib
 	PUBLIC_HEADER DESTINATION include/Foo)
 
+# TOOD: Try to create FooConfig.cmake in ${CMAKE_CURRENT_BUILD_DIR}
+#       Store information in registry      
+#export(EXPORT FooTargets NAMESPACE Foo:: FILE FooConfig.cmake)
+#export(PACKAGE Foo)

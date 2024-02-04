@@ -1,5 +1,5 @@
-#include "Foo.h"
-#include "config.h"
+#include "Foo/Foo.h"
+#include "Foo/config.h"
 #include <malloc.h>
 
 namespace Library
