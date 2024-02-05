@@ -1,0 +1,10 @@
+1. We do not provide runtime dependencies on Windows:
+
+Consider using file(GET_RUNTIME_DEPENDENCIES) and RUNTIME_DEPENDENCY_SET or install(CODE)
+install(CODE [[
+  file(GET_RUNTIME_DEPENDENCIES
+    # ...
+    )
+  ]])
+
+https://stackoverflow.com/questions/10671916/how-to-copy-dll-files-into-the-same-folder-as-the-executable-using-cmake
