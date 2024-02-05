@@ -15,6 +15,7 @@ else()
   message(STATUS "Build type: ${CMAKE_BUILD_TYPE}")
 endif()
 
+set(INSTALL_INCLUDE_DIR "include")
 # Layout build dir like install dir
 include(GNUInstallDirs)
 if (APPLE)

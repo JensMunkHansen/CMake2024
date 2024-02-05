@@ -39,17 +39,21 @@ write_basic_package_version_file(
   COMPATIBILITY AnyNewerVersion
 )
 
-# install the configuration file
+# install the configuration files
 install(FILES
   ${CMAKE_CURRENT_BINARY_DIR}/FooConfig.cmake
+  ${CMAKE_CURRENT_BINARY_DIR}/FooConfigVersion.cmake
   DESTINATION lib/cmake/Foo
+  COMPONENT dev
   )
 
 # generate the export targets for the build tree
 # needs to be after the install(TARGETS ) command
 export(EXPORT FooTargets
-#  NAMESPACE Foo:: # TODO: Figure out how to use namespaces
+  #  NAMESPACE Foo:: # TODO: Figure out how to use namespaces
   FILE "${CMAKE_CURRENT_BINARY_DIR}/FooTargets.cmake"
 )
-# export package for the build tree
+
+# Export the package for use from the build-tree
+# (this registers the build-tree with a global CMake-registry)
 export(PACKAGE Foo)

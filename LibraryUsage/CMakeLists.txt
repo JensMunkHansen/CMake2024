@@ -5,7 +5,7 @@ project(LibraryUsage
   LANGUAGES CXX)
 
 # TODO: Figure out how to avoid this
-list(APPEND CMAKE_PREFIX_PATH "/home/jmh/github/cmake/CMake2024/Library/build")
+#list(APPEND CMAKE_PREFIX_PATH "/home/jmh/github/cmake/CMake2024/Library/build")
 
 find_package(Foo REQUIRED)
 
