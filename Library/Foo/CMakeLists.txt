@@ -29,18 +29,14 @@ generate_export_header(Foo)
 # state that anybody linking to us needs to include the current source dir
 # to find interface headers, while we don't need it.
 target_include_directories(Foo
-                           INTERFACE
-                           $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}>
-			   $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}>
-                           $<INSTALL_INTERFACE:include>)
-
-# We depend on our binary dir to find export header
-target_include_directories(Foo PRIVATE
-  ${PROJECT_BINARY_DIR})
-
-target_include_directories(Foo PRIVATE
-  ${PROJECT_SOURCE_DIR})
-
+  PUBLIC
+    $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}>
+    $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}>
+    $<INSTALL_INTERFACE:include>
+  PRIVATE
+    ${PROJECT_BINARY_DIR} # for export header
+    ${PROJECT_SOURCE_DIR} # Foo/Foo.h
+)
 
 # Declare public headers for external build and install			
 target_public_headers(Foo "${Foo_PUBLIC_HEADERS}")
