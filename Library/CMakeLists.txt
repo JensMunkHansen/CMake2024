@@ -32,8 +32,6 @@ add_subdirectory(Foo)
 
 add_subdirectory(FooApp)
 
-# TODO: Move this to inner build dir
-
 # install the configuration targets
 install(EXPORT FooTargets
   FILE FooTargets.cmake
@@ -68,8 +66,7 @@ install(FILES
 
 # generate the export targets for the build tree
 # needs to be after the install(TARGETS ) command
-#export(EXPORT FooTargets
-export(TARGETS Foo sps_compiler_flags
+export(EXPORT FooTargets
   #  NAMESPACE Foo:: # TODO: Figure out how to use namespaces
   FILE "${CMAKE_CURRENT_BINARY_DIR}/FooTargets.cmake"
 )
