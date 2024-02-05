@@ -2,11 +2,6 @@
 
 include(GenerateExportHeader)
 
-# File: target_public_headers.cmake
-macro(target_public_headers TARGET)
-  set_target_properties(${TARGET} PROPERTIES PUBLIC_HEADER "${ARGN}")
-endmacro()
-
 configure_file(config.h.in "${CMAKE_CURRENT_BINARY_DIR}/config.h" @ONLY)
 
 # sources

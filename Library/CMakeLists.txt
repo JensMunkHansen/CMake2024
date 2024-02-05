@@ -22,6 +22,7 @@ project(Library
 
 option(BUILD_SHARED_LIBS "Build using shared libraries" ON)
 
+include(target_public_headers)
 include(BuildConfig)
 #include(GNUInstallDirs)
 
