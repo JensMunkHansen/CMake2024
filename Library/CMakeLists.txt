@@ -1,4 +1,17 @@
-cmake_minimum_required(VERSION 3.15)
+cmake_minimum_required(VERSION 3.15..3.27)
+
+###################################################################################
+# Set some CMake Policies.
+# See http://cmake.org/cmake/help/cmake-2-8-docs.html#section_Policies for details.
+###################################################################################
+set(project_policies
+  CMP090 # export to registry using CMAKE_EXPORT_PACKAGE_REGISTRY 
+)
+foreach(policy ${project_policies})
+  if(POLICY ${policy})
+    cmake_policy(SET ${policy} NEW)
+  endif()
+endforeach()
 
 set (CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/CMake")
 
@@ -10,6 +23,8 @@ project(Library
 option(BUILD_SHARED_LIBS "Build using shared libraries" ON)
 
 include(BuildConfig)
+#include(GNUInstallDirs)
+
 include(CompilerFlags)
 
 add_subdirectory(Foo)
@@ -23,6 +38,9 @@ install(EXPORT FooTargets
   FILE FooTargets.cmake
   DESTINATION lib/cmake/Foo
 )
+
+# Enable writing to registry
+set(CMAKE_EXPORT_PACKAGE_REGISTRY 1)
 
 include(CMakePackageConfigHelpers)
 # generate the config file that is includes the exports
@@ -49,7 +67,8 @@ install(FILES
 
 # generate the export targets for the build tree
 # needs to be after the install(TARGETS ) command
-export(EXPORT FooTargets
+#export(EXPORT FooTargets
+export(TARGETS Foo sps_compiler_flags
   #  NAMESPACE Foo:: # TODO: Figure out how to use namespaces
   FILE "${CMAKE_CURRENT_BINARY_DIR}/FooTargets.cmake"
 )
@@ -57,3 +76,15 @@ export(EXPORT FooTargets
 # Export the package for use from the build-tree
 # (this registers the build-tree with a global CMake-registry)
 export(PACKAGE Foo)
+
+if (NOT TARGET uninstall)
+  # Add uninstall target, in linux simply issue xargs rm < install_manifest.txt
+  configure_file(
+      "${CMAKE_CURRENT_SOURCE_DIR}/CMake/cmake_uninstall.cmake.in"
+      "${CMAKE_CURRENT_BINARY_DIR}/CMake/cmake_uninstall.cmake"
+      IMMEDIATE @ONLY)
+  
+  add_custom_target(uninstall
+      COMMAND ${CMAKE_COMMAND} -P
+      ${CMAKE_CURRENT_BINARY_DIR}/CMake/cmake_uninstall.cmake)
+endif()

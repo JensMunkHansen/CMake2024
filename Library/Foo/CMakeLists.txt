@@ -60,13 +60,14 @@ set(installable_libs Foo sps_compiler_flags)
 
 install(TARGETS ${installable_libs}
   EXPORT FooTargets
+  DESTINATION lib/Foo
   RUNTIME DESTINATION "${INSTALL_BIN_DIR}" COMPONENT bin
   ARCHIVE DESTINATION "${INSTALL_LIB_DIR}" COMPONENT lib
   LIBRARY DESTINATION "${INSTALL_LIB_DIR}" COMPONENT shlib
   PUBLIC_HEADER DESTINATION "${INSTALL_INCLUDE_DIR}/Foo")
 
 # Not needed
-install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/Foo.h DESTINATION include)
+#install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/Foo.h DESTINATION include)
 
 # TOOD: Try to create FooConfig.cmake in ${CMAKE_CURRENT_BUILD_DIR}
 #       Store information in registry      
