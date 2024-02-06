@@ -24,12 +24,16 @@ option(BUILD_SHARED_LIBS "Build using shared libraries" ON)
 
 include(target_public_headers)
 include(BuildConfig)
-
+include(TestConfig)
 include(CompilerFlags)
 
 add_subdirectory(Foo)
 
 add_subdirectory(FooApp)
+
+if (BUILD_TESTING)
+  add_subdirectory(FooTest)
+endif()
 
 # install the configuration targets
 install(EXPORT FooTargets
@@ -84,3 +88,13 @@ if (NOT TARGET uninstall)
       COMMAND ${CMAKE_COMMAND} -P
       ${CMAKE_CURRENT_BINARY_DIR}/CMake/cmake_uninstall.cmake)
 endif()
+
+# setup installer using CPack
+include(InstallRequiredSystemLibraries)
+set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/License.txt")
+set(CPACK_PACKAGE_VERSION_MAJOR "${Library_VERSION_MAJOR}")
+set(CPACK_PACKAGE_VERSION_MINOR "${Library_VERSION_MINOR}")
+set(CPACK_SOURCE_GENERATOR "TGZ")
+set(CPACK_PACKAGE_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/Packaging")
+
+include(CPack)

@@ -2,6 +2,12 @@
 
 include(GenerateExportHeader)
 
+# Dummy test for compiler features
+include(CompilerFeatures)
+if(HAVE_LOG AND HAVE_EXP)
+  message("We have log and exp")
+endif()
+  
 configure_file(config.h.in "${CMAKE_CURRENT_BINARY_DIR}/config.h" @ONLY)
 
 # sources
@@ -43,6 +49,10 @@ if (WIN32 AND NOT DEFINED CMAKE_DEBUG_POSTFIX)
     DEBUG_POSTFIX "d")
 endif()
 
+# state that SqrtLibrary need PIC when the default is shared libraries
+set_target_properties(Foo PROPERTIES
+                        POSITION_INDEPENDENT_CODE ${BUILD_SHARED_LIBS})
+
 # link Foo to compiler flags
 target_link_libraries(Foo PUBLIC sps_compiler_flags)
 
@@ -55,7 +65,7 @@ set(installable_libs Foo sps_compiler_flags)
 
 install(TARGETS ${installable_libs}
   EXPORT FooTargets
-  DESTINATION lib/Foo
+  DESTINATION lib
   RUNTIME DESTINATION "${INSTALL_BIN_DIR}" COMPONENT bin
   ARCHIVE DESTINATION "${INSTALL_LIB_DIR}" COMPONENT lib
   LIBRARY DESTINATION "${INSTALL_LIB_DIR}" COMPONENT shlib
