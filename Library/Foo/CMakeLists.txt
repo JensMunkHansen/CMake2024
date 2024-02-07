@@ -51,7 +51,7 @@ endif()
 
 # state that SqrtLibrary need PIC when the default is shared libraries
 set_target_properties(Foo PROPERTIES
-                        POSITION_INDEPENDENT_CODE ${BUILD_SHARED_LIBS})
+  POSITION_INDEPENDENT_CODE ${BUILD_SHARED_LIBS})
 
 # link Foo to compiler flags
 target_link_libraries(Foo PUBLIC sps_compiler_flags)

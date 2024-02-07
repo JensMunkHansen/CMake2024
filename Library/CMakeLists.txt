@@ -23,7 +23,12 @@ project(Library
 option(BUILD_SHARED_LIBS "Build using shared libraries" ON)
 
 include(target_public_headers)
-include(BuildConfig)
+if (WIN32)
+  set(CMAKE_DEBUG_POSTFIX d)
+  include(GNUInstallDirs)
+else()
+  include(BuildConfig) # Not yet deploying DLL's correctly
+endif()
 include(TestConfig)
 include(CompilerFlags)
 

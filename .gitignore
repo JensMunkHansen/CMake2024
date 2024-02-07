@@ -9,3 +9,7 @@ build/*
 compile_commands.json
 */debug/*
 */release/*
+install/
+#*
+./#*
+\#*
