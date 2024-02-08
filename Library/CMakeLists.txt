@@ -29,8 +29,10 @@ if (WIN32)
 else()
   include(BuildConfig) # Not yet deploying DLL's correctly
 endif()
+
 include(TestConfig)
 include(CompilerFlags)
+include(Dependencies)
 
 add_subdirectory(Foo)
 

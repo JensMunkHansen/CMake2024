@@ -4,10 +4,15 @@ REM TODO: Ensure GTEST is build with CMAKE_DEBUG_POSTFIX=d and BUILD_SHARED_LIBS
 
 SetLocal EnableDelayedExpansion
 
-set myArg=%1
+set "myArg=%~1"
 
 call :TOUPPERCASE myArg
 echo %myArg%
+
+if "!myArg!"=="" (
+  echo "Please select debug or release"
+  goto :eof
+)
 
 pushd %~dp0
 
