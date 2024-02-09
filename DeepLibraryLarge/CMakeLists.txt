@@ -13,13 +13,35 @@ include(CompilerFlags)
 
 add_subdirectory(Deep)
 
-
-if (0)
-  # install the configuration targets
+if (1)
+  # Install
   install(EXPORT DeepTargets
-    FILE DeepTargets.cmake
-    DESTINATION lib/cmake/Deep
-  )
+    NAMESPACE ${PROJECT_NAMESPACE}::
+    DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/Deep
+    COMPONENT Devel)
+endif()
+if (0)
+  include(CMakePackageConfigHelpers)
+  configure_package_config_file(DeepConfig.cmake.in
+    "${PROJECT_BINARY_DIR}/DeepConfig.cmake"
+    INSTALL_DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/Deep"
+    NO_SET_AND_CHECK_MACRO
+    NO_CHECK_REQUIRED_COMPONENTS_MACRO)
+  write_basic_package_version_file(
+    "${PROJECT_BINARY_DIR}/DeepConfigVersion.cmake"
+    COMPATIBILITY SameMajorVersion)
+  install(
+    FILES
+    "${PROJECT_BINARY_DIR}/DeepConfig.cmake"
+    "${PROJECT_BINARY_DIR}/DeepConfigVersion.cmake"
+    DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/Deep"
+    COMPONENT Devel)
+  
+    # install the configuration targets
+    install(EXPORT DeepTargets
+      FILE DeepTargets.cmake
+      DESTINATION lib/cmake/Deep
+    )
   
   # Enable writing to registry
   set(CMAKE_EXPORT_PACKAGE_REGISTRY 1)
