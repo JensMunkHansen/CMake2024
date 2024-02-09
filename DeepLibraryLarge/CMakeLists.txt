@@ -43,8 +43,6 @@ install(EXPORT DeepTargets
   FILE DeepTargets.cmake
   DESTINATION lib/cmake/Deep
 )
-# Enable writing to registry
-set(CMAKE_EXPORT_PACKAGE_REGISTRY 1)
 
 include(CMakePackageConfigHelpers)
 # generate the config file that is includes the exports
@@ -76,17 +74,18 @@ export(EXPORT DeepTargets
   FILE "${CMAKE_CURRENT_BINARY_DIR}/DeepTargets.cmake"
 )
 
-# Export the package for use from the build-tree
-# (this registers the build-tree with a global CMake-registry)
+# Enable writing to registry
+set(CMAKE_EXPORT_PACKAGE_REGISTRY 1)
+# Export the package for use from the build-tree (this registers the build-tree with a global CMake-registry)
 export(PACKAGE Deep)
 
 if (NOT TARGET uninstall)
   # Add uninstall target, in linux simply issue xargs rm < install_manifest.txt
   configure_file(
-      "${CMAKE_CURRENT_SOURCE_DIR}/CMake/cmake_uninstall.cmake.in"
-      "${CMAKE_CURRENT_BINARY_DIR}/CMake/cmake_uninstall.cmake"
-      IMMEDIATE @ONLY)
+    "${CMAKE_CURRENT_SOURCE_DIR}/CMake/cmake_uninstall.cmake.in"
+    "${CMAKE_CURRENT_BINARY_DIR}/CMake/cmake_uninstall.cmake"
+    IMMEDIATE @ONLY)
   add_custom_target(uninstall
-      COMMAND ${CMAKE_COMMAND} -P
-      ${CMAKE_CURRENT_BINARY_DIR}/CMake/cmake_uninstall.cmake)
+    COMMAND ${CMAKE_COMMAND} -P
+    ${CMAKE_CURRENT_BINARY_DIR}/CMake/cmake_uninstall.cmake)
 endif()

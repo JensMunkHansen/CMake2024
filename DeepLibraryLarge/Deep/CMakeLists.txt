@@ -7,22 +7,25 @@ configure_file(include/Deep/Config.h.in "${CMAKE_CURRENT_BINARY_DIR}/include/Dee
 
 set(PUBLIC_HEADERS
   ${CMAKE_CURRENT_LIST_DIR}/include/Deep/Deep.h
+  # Add public headers here
 )
+
 target_sources(Deep
   PUBLIC
     $<BUILD_INTERFACE:${PUBLIC_HEADERS}>
   PRIVATE
     ${CMAKE_CURRENT_BINARY_DIR}/include/Deep/Config.h
-    src/Deep.cxx)
+    # Add private headers here
+    src/Deep.cxx
+    # Add sources here
+)
 
 target_include_directories(Deep
   PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-    $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/include>
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/include> # For auto-generated export header
     $<INSTALL_INTERFACE:include>)
 
-# TODO: Verify things go in the right place
-#       Can we put a CMakeLists.txt inside include dir?
 set_target_properties(Deep PROPERTIES PUBLIC_HEADER include/Deep/Deep.h)
   
 target_compile_features(Deep PUBLIC cxx_std_17)
@@ -34,6 +37,7 @@ set_target_properties(Deep PROPERTIES
   INTERFACE_POSITION_INDEPENDENT_CODE ON
   PUBLIC_HEADERS ${PUBLIC_HEADERS})
 
+# TODO: Create macro
 generate_export_header(Deep
   EXPORT_FILE_NAME ${CMAKE_CURRENT_BINARY_DIR}/include/Deep/Deep_export.h
   PREFIX_NAME TS_  

@@ -7,4 +7,9 @@ install(CODE [[
     )
   ]])
 
-https://stackoverflow.com/questions/10671916/how-to-copy-dll-files-into-the-same-folder-as-the-executable-using-cmake
+See:
+	https://stackoverflow.com/questions/10671916/how-to-copy-dll-files-into-the-same-folder-as-the-executable-using-cmake
+
+2. Add DeepLibraryLargeUsage. Check namespaces are working
+
+3. Create the macros
