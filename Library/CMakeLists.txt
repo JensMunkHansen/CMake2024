@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.15..3.27)
+cmake_minimum_required(VERSION 3.15..3.22)
 
 ###################################################################################
 # Set some CMake Policies.
@@ -13,7 +13,7 @@ foreach(policy ${project_policies})
   endif()
 endforeach()
 
-set (CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/CMake")
+set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/CMake")
 
 # set the project name and version
 project(Library
