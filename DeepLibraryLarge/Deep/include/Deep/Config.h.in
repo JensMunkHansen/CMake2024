@@ -1,0 +1,6 @@
+// This is a generated file. Do not modify
+
+#define DEEP_MAJOR_VERSION (@DeepLibrary_MAJOR_VERSION @)
+#define DEEP_MINOR_VERSION (@DeepLibrary_MINOR_VERSION @)
+#define DEEP_PATCH_VERSION (@DeepLibrary_PATCH_VERSION @)
+#define DEEP_VERSION_STRING "@DeepLibrary_VERSION@"
