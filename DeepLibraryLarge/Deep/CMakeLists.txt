@@ -1,17 +1,18 @@
-# Fron CMake 3.11, we can skip the empty quotes
 include(GenerateExportHeader)
 
+# Fron CMake 3.11, we can skip the empty quotes
 add_library(Deep "")
 
-configure_file(include/deep/Config.h.in "${CMAKE_CURRENT_BINARY_DIR}/include/Deep/Config.h" @ONLY)
+configure_file(include/Deep/Config.h.in "${CMAKE_CURRENT_BINARY_DIR}/include/Deep/Config.h" @ONLY)
 
-# Consider adding stuff as private
+set(PUBLIC_HEADERS
+  ${CMAKE_CURRENT_LIST_DIR}/include/Deep/Deep.h
+)
 target_sources(Deep
   PUBLIC
-    $<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/include/Deep/Deep.h>
+    $<BUILD_INTERFACE:${PUBLIC_HEADERS}>
   PRIVATE
     ${CMAKE_CURRENT_BINARY_DIR}/include/Deep/Config.h
-    include/Deep/Deep.h
     src/Deep.cxx)
 
 target_include_directories(Deep
@@ -31,7 +32,7 @@ set_target_properties(Deep PROPERTIES
   SOVERSION ${PROJECT_VERSION_MAJOR}
   POSITION_INDEPENDENT_CODE ON
   INTERFACE_POSITION_INDEPENDENT_CODE ON
-  PUBLIC_HEADER include/Deep/Deep.hpp) # TODO: Add a list
+  PUBLIC_HEADERS ${PUBLIC_HEADERS})
 
 generate_export_header(Deep
   EXPORT_FILE_NAME ${CMAKE_CURRENT_BINARY_DIR}/include/Deep/Deep_export.h

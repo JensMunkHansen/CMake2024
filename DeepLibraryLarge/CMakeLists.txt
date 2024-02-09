@@ -11,84 +11,82 @@ option(BUILD_SHARED_LIBS "Build using shared libraries" ON)
 
 include(CompilerFlags)
 
+# Layout build dir like install dir
+include(GNUInstallDirs)
+
 add_subdirectory(Deep)
 
-if (1)
-  # Install
-  install(EXPORT DeepTargets
-    NAMESPACE ${PROJECT_NAMESPACE}::
-    DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/Deep
-    COMPONENT Devel)
-endif()
-if (0)
-  include(CMakePackageConfigHelpers)
-  configure_package_config_file(DeepConfig.cmake.in
-    "${PROJECT_BINARY_DIR}/DeepConfig.cmake"
-    INSTALL_DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/Deep"
-    NO_SET_AND_CHECK_MACRO
-    NO_CHECK_REQUIRED_COMPONENTS_MACRO)
-  write_basic_package_version_file(
-    "${PROJECT_BINARY_DIR}/DeepConfigVersion.cmake"
-    COMPATIBILITY SameMajorVersion)
-  install(
-    FILES
-    "${PROJECT_BINARY_DIR}/DeepConfig.cmake"
-    "${PROJECT_BINARY_DIR}/DeepConfigVersion.cmake"
-    DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/Deep"
-    COMPONENT Devel)
-  
-    # install the configuration targets
-    install(EXPORT DeepTargets
-      FILE DeepTargets.cmake
-      DESTINATION lib/cmake/Deep
-    )
-  
-  # Enable writing to registry
-  set(CMAKE_EXPORT_PACKAGE_REGISTRY 1)
-  
-  include(CMakePackageConfigHelpers)
-  # generate the config file that is includes the exports
-  configure_package_config_file(${CMAKE_CURRENT_SOURCE_DIR}/Config.cmake.in
-    "${CMAKE_CURRENT_BINARY_DIR}/DeepConfig.cmake"
-    INSTALL_DESTINATION "lib/cmake/Deep"
-    NO_SET_AND_CHECK_MACRO
-    NO_CHECK_REQUIRED_COMPONENTS_MACRO
-    )
-  # generate the version file for the config file
-  write_basic_package_version_file(
-    "${CMAKE_CURRENT_BINARY_DIR}/DeepConfigVersion.cmake"
-    VERSION "${Library_VERSION_MAJOR}.${Library_VERSION_MINOR}"
-    COMPATIBILITY AnyNewerVersion
+# Install
+install(EXPORT DeepTargets
+  NAMESPACE ${PROJECT_NAMESPACE}::
+  DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/Deep
+  COMPONENT Devel)
+
+include(CMakePackageConfigHelpers)
+configure_package_config_file(DeepConfig.cmake.in
+  "${PROJECT_BINARY_DIR}/DeepConfig.cmake"
+  INSTALL_DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/Deep"
+  NO_SET_AND_CHECK_MACRO
+  NO_CHECK_REQUIRED_COMPONENTS_MACRO)
+write_basic_package_version_file(
+  "${PROJECT_BINARY_DIR}/DeepConfigVersion.cmake"
+  COMPATIBILITY SameMajorVersion)
+install(
+  FILES
+  "${PROJECT_BINARY_DIR}/DeepConfig.cmake"
+  "${PROJECT_BINARY_DIR}/DeepConfigVersion.cmake"
+  DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/Deep"
+  COMPONENT Devel)
+
+# install the configuration targets
+install(EXPORT DeepTargets
+  FILE DeepTargets.cmake
+  DESTINATION lib/cmake/Deep
+)
+# Enable writing to registry
+set(CMAKE_EXPORT_PACKAGE_REGISTRY 1)
+
+include(CMakePackageConfigHelpers)
+# generate the config file that is includes the exports
+configure_package_config_file(${CMAKE_CURRENT_SOURCE_DIR}/DeepConfig.cmake.in
+  "${CMAKE_CURRENT_BINARY_DIR}/DeepConfig.cmake"
+  INSTALL_DESTINATION "lib/cmake/Deep"
+  NO_SET_AND_CHECK_MACRO
+  NO_CHECK_REQUIRED_COMPONENTS_MACRO
   )
-  
-  # install the configuration files
-  install(FILES
-    ${CMAKE_CURRENT_BINARY_DIR}/DeepConfig.cmake
-    ${CMAKE_CURRENT_BINARY_DIR}/DeepConfigVersion.cmake
-    DESTINATION lib/cmake/Deep
-    COMPONENT dev
-    )
-  
-  # generate the export targets for the build tree
-  # needs to be after the install(TARGETS ) command
-  export(EXPORT DeepTargets
-    #  NAMESPACE Deep:: # TODO: Figure out how to use namespaces
-    FILE "${CMAKE_CURRENT_BINARY_DIR}/DeepTargets.cmake"
+# generate the version file for the config file
+write_basic_package_version_file(
+  "${CMAKE_CURRENT_BINARY_DIR}/DeepConfigVersion.cmake"
+  VERSION "${Library_VERSION_MAJOR}.${Library_VERSION_MINOR}"
+  COMPATIBILITY AnyNewerVersion
+)
+
+# install the configuration files
+install(FILES
+  ${CMAKE_CURRENT_BINARY_DIR}/DeepConfig.cmake
+  ${CMAKE_CURRENT_BINARY_DIR}/DeepConfigVersion.cmake
+  DESTINATION lib/cmake/Deep
+  COMPONENT dev
   )
-  
-  # Export the package for use from the build-tree
-  # (this registers the build-tree with a global CMake-registry)
-  export(PACKAGE Deep)
-  
-  if (NOT TARGET uninstall)
-    # Add uninstall target, in linux simply issue xargs rm < install_manifest.txt
-    configure_file(
-        "${CMAKE_CURRENT_SOURCE_DIR}/CMake/cmake_uninstall.cmake.in"
-        "${CMAKE_CURRENT_BINARY_DIR}/CMake/cmake_uninstall.cmake"
-        IMMEDIATE @ONLY)
-    add_custom_target(uninstall
-        COMMAND ${CMAKE_COMMAND} -P
-        ${CMAKE_CURRENT_BINARY_DIR}/CMake/cmake_uninstall.cmake)
-  endif()
-  
+
+# generate the export targets for the build tree
+# needs to be after the install(TARGETS ) command
+export(EXPORT DeepTargets
+  #  NAMESPACE Deep:: # TODO: Figure out how to use namespaces
+  FILE "${CMAKE_CURRENT_BINARY_DIR}/DeepTargets.cmake"
+)
+
+# Export the package for use from the build-tree
+# (this registers the build-tree with a global CMake-registry)
+export(PACKAGE Deep)
+
+if (NOT TARGET uninstall)
+  # Add uninstall target, in linux simply issue xargs rm < install_manifest.txt
+  configure_file(
+      "${CMAKE_CURRENT_SOURCE_DIR}/CMake/cmake_uninstall.cmake.in"
+      "${CMAKE_CURRENT_BINARY_DIR}/CMake/cmake_uninstall.cmake"
+      IMMEDIATE @ONLY)
+  add_custom_target(uninstall
+      COMMAND ${CMAKE_COMMAND} -P
+      ${CMAKE_CURRENT_BINARY_DIR}/CMake/cmake_uninstall.cmake)
 endif()
