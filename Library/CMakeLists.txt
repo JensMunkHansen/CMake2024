@@ -15,6 +15,9 @@ endforeach()
 
 set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/CMake")
 
+set(CMAKE_CXX_VISIBILITY_PRESET hidden)
+set(CMAKE_VISIBILITY_INLINES_HIDDEN YES)
+
 # set the project name and version
 project(Library2
   LANGUAGES CXX
@@ -69,7 +72,7 @@ write_basic_package_version_file(
 install(FILES
   ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}Config.cmake
   ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}ConfigVersion.cmake
-  DESTINATION lib/cmake/${PROJECT_NAME}
+  DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME}
   COMPONENT ${PROJECT_NAME}_Devel #
   # EXCLUDE_FROM_ALL # If enabled, you must specify which component that you want, e.g. Devel
   )
