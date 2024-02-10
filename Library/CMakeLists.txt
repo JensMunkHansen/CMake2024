@@ -64,7 +64,7 @@ configure_package_config_file(${CMAKE_CURRENT_SOURCE_DIR}/Config.cmake.in
 # generate the version file for the config file
 write_basic_package_version_file(
   "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}ConfigVersion.cmake"
-  VERSION "${Library_VERSION_MAJOR}.${Library_VERSION_MINOR}"
+  VERSION "${Library2_VERSION_MAJOR}.${Library2_VERSION_MINOR}"
   COMPATIBILITY AnyNewerVersion
 )
 
@@ -102,8 +102,8 @@ endif()
 # setup installer using CPack
 include(InstallRequiredSystemLibraries)
 set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/License.txt")
-set(CPACK_PACKAGE_VERSION_MAJOR "${Library_VERSION_MAJOR}")
-set(CPACK_PACKAGE_VERSION_MINOR "${Library_VERSION_MINOR}")
+set(CPACK_PACKAGE_VERSION_MAJOR "${Library2_VERSION_MAJOR}")
+set(CPACK_PACKAGE_VERSION_MINOR "${Library2_VERSION_MINOR}")
 set(CPACK_SOURCE_GENERATOR "TGZ")
 set(CPACK_PACKAGE_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/Packaging")
 
