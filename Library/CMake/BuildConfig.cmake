@@ -27,8 +27,11 @@ endif()
 
 if(UNIX)
   option(BUILD_SHARED_LIBS "Build shared libraries (.so or .dyld)." ON)
+  message("Installing RPATH")
+  # Makes sense since build and install tree are the same
+  set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE) # TESTME
   set(CMAKE_BUILD_WITH_INSTALL_RPATH TRUE)
-  set(CMAKE_INSTALL_RPATH "$ORIGIN/../lib")
+  set(CMAKE_INSTALL_RPATH "$ORIGIN/../${CMAKE_INSTALL_LIBDIR}:$ORIGIN")
 
   set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/${CMAKE_INSTALL_LIBDIR})
   set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/${CMAKE_INSTALL_LIBDIR})

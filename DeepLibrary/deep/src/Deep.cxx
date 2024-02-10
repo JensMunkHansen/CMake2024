@@ -2,5 +2,5 @@
 #include <deep/Config.h>
 
 namespace deep {
-  
+  void Nothing();
 }

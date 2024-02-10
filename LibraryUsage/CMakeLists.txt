@@ -2,34 +2,51 @@
 
 cmake_minimum_required(VERSION 3.15)
 
+set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/CMake")
+
 project(LibraryUsage
   VERSION 1.0.0
   LANGUAGES CXX)
 
-find_package(Foo REQUIRED)
+if (WIN32)
+  set(CMAKE_DEBUG_POSTFIX d)
+  include(GNUInstallDirs)
+else()
+  include(BuildConfig) # Not yet deploying DLL's correctly
+endif()
+
+find_package(Library2 REQUIRED)
+
+set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 
 add_executable(FooUsage main.cxx)
+# TODO: Consider using namespace
 target_link_libraries(FooUsage PRIVATE Foo)
 
-# Consider setting rpath like this and keep all libraries in once place
-set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib")
 
 # This will stop stripping rpath - but then it is not moveable
-# set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 
 install(TARGETS FooUsage
   EXPORT FooUsageTargets
   DESTINATION bin
-  RUNTIME DESTINATION "${INSTALL_BIN_DIR}" COMPONENT bin
-  ARCHIVE DESTINATION "${INSTALL_LIB_DIR}" COMPONENT lib
-  LIBRARY DESTINATION "${INSTALL_LIB_DIR}" COMPONENT shlib
-  PUBLIC_HEADER DESTINATION "${INSTALL_INCLUDE_DIR}/FooUsage")
+  RUNTIME DESTINATION "${CMAKE_INSTALL_BIN_DIR}"
+          COMPONENT ${PROJECT_NAME}_Runtime
+  ARCHIVE DESTINATION "${CMAKE_INSTALL_LIB_DIR}"
+          COMPONENT ${PROJECT_NAME}_Devel
+  LIBRARY DESTINATION "${CMAKE_INSTALL_LIB_DIR}"
+          COMPONENT ${PROJECT_NAME}_Devel
+	  NAMELINK_COMPONENT ${PROJECT_NAME}_Devel)
 
 # install the configuration targets
 install(EXPORT FooUsageTargets
   FILE FooUsageTargets.cmake
   DESTINATION bin
 )
+
+#foreach(component ${@PROJECT_NAME@_FIND_COMPONENTS})
+#    include(${CMAKE_CURRENT_LIST_DIR}/${component}-config.cmake)
+#endforeach()
+
 
 export(EXPORT FooUsageTargets
   #  NAMESPACE Foo:: # TODO: Figure out how to use namespaces

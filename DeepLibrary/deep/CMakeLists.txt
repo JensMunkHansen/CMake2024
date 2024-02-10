@@ -1,4 +1,5 @@
 # Fron CMake 3.11, we can skip the empty quotes
+include(GenerateExportHeader)
 
 add_library(Deep "")
 
@@ -6,7 +7,8 @@ configure_file(include/deep/Config.h.in "${CMAKE_CURRENT_BINARY_DIR}/include/dee
 
 target_sources(Deep
   PUBLIC
-    $<BUILD_INTERFACE:include/deep/Deep.h>
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include/deep/Deep.h>
+    $<INSTALL_INTERFACE:${CMAKE_INSTALL_PREFIX}/include/deep/Deep.h>
   PRIVATE
     src/Deep.cxx)
 
@@ -14,7 +16,7 @@ target_include_directories(Deep
   PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
     $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/include>
-    $<INSTALL_INTERFACE:include>)
+    $<INSTALL_INTERFACE:${CMAKE_INSTALL_PREFIX}/include>) # Experiment (WRONG)
 
 target_compile_features(Deep PUBLIC cxx_std_17)
 
@@ -27,6 +29,11 @@ set_target_properties(Deep PROPERTIES
 
 #target_link_libraries(Deep PUBLIC ...) # Check IDE
 add_library(${PROJECT_NAMESPACE}::Deep ALIAS Deep)
+
+generate_export_header(Deep
+  EXPORT_FILE_NAME ${CMAKE_CURRENT_BINARY_DIR}/include/deep/Deep_export.h
+  PREFIX_NAME TS_  
+)
 
 add_subdirectory(tests)
 

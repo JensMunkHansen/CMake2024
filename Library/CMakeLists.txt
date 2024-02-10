@@ -16,7 +16,7 @@ endforeach()
 set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/CMake")
 
 # set the project name and version
-project(Library
+project(Library2
   LANGUAGES CXX
   VERSION 1.0.0)
 
@@ -32,7 +32,6 @@ endif()
 
 include(TestConfig)
 include(CompilerFlags)
-include(Dependencies)
 
 add_subdirectory(Foo)
 
@@ -43,9 +42,9 @@ if (BUILD_TESTING)
 endif()
 
 # install the configuration targets
-install(EXPORT FooTargets
-  FILE FooTargets.cmake
-  DESTINATION lib/cmake/Foo
+install(EXPORT ${PROJECT_NAME}Targets
+  FILE ${PROJECT_NAME}Targets.cmake
+  DESTINATION lib/cmake/${PROJECT_NAME}
 )
 
 # Enable writing to registry
@@ -54,36 +53,37 @@ set(CMAKE_EXPORT_PACKAGE_REGISTRY 1)
 include(CMakePackageConfigHelpers)
 # generate the config file that is includes the exports
 configure_package_config_file(${CMAKE_CURRENT_SOURCE_DIR}/Config.cmake.in
-  "${CMAKE_CURRENT_BINARY_DIR}/FooConfig.cmake"
-  INSTALL_DESTINATION "lib/cmake/Foo"
+  "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}Config.cmake"
+  INSTALL_DESTINATION "lib/cmake/${PROJECT_NAME}"
   NO_SET_AND_CHECK_MACRO
   NO_CHECK_REQUIRED_COMPONENTS_MACRO
   )
 # generate the version file for the config file
 write_basic_package_version_file(
-  "${CMAKE_CURRENT_BINARY_DIR}/FooConfigVersion.cmake"
+  "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}ConfigVersion.cmake"
   VERSION "${Library_VERSION_MAJOR}.${Library_VERSION_MINOR}"
   COMPATIBILITY AnyNewerVersion
 )
 
 # install the configuration files
 install(FILES
-  ${CMAKE_CURRENT_BINARY_DIR}/FooConfig.cmake
-  ${CMAKE_CURRENT_BINARY_DIR}/FooConfigVersion.cmake
-  DESTINATION lib/cmake/Foo
-  COMPONENT dev
+  ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}Config.cmake
+  ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}ConfigVersion.cmake
+  DESTINATION lib/cmake/${PROJECT_NAME}
+  COMPONENT ${PROJECT_NAME}_Devel #
+  # EXCLUDE_FROM_ALL # If enabled, you must specify which component that you want, e.g. Devel
   )
 
 # generate the export targets for the build tree
 # needs to be after the install(TARGETS ) command
-export(EXPORT FooTargets
+export(EXPORT ${PROJECT_NAME}Targets
   #  NAMESPACE Foo:: # TODO: Figure out how to use namespaces
-  FILE "${CMAKE_CURRENT_BINARY_DIR}/FooTargets.cmake"
+  FILE "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}Targets.cmake"
 )
 
 # Export the package for use from the build-tree
 # (this registers the build-tree with a global CMake-registry)
-export(PACKAGE Foo)
+export(PACKAGE ${PROJECT_NAME})
 
 if (NOT TARGET uninstall)
   # Add uninstall target, in linux simply issue xargs rm < install_manifest.txt

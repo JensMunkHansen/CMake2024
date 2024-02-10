@@ -15,3 +15,4 @@ cd LibraryUsage/build
 bear -- make
 cmake --install . --prefix="$dir/install"
 cd ../..
+./install/bin/FooUsage
