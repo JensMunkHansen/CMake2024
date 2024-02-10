@@ -6,6 +6,13 @@ set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/CMake")
 
 include(DumpVariables)
 
+if (WIN32)
+  set(CMAKE_DEBUG_POSTFIX d)
+  include(GNUInstallDirs)
+else()
+  include(BuildConfig) # Not yet deploying DLL's correctly
+endif()
+
 project(LibraryUsage
   VERSION 1.0.0
   LANGUAGES CXX)
@@ -16,4 +23,4 @@ add_executable(DeepUsage main.cxx)
 target_link_libraries(DeepUsage PUBLIC Deep)
 
 # Utility function for dumping variables
-dump_cmake_variables()
+#dump_cmake_variables()

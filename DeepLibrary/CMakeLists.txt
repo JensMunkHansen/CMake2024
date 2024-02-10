@@ -23,7 +23,7 @@ add_subdirectory(deep)
 # install the configuration targets
 install(EXPORT DeepTargets
   FILE DeepTargets.cmake
-  DESTINATION lib/cmake/Deep
+  DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/Deep
 )
 
 # Enable writing to registry

@@ -9,4 +9,4 @@ project(DeepLibraryLargeUsage
 find_package(Deep REQUIRED)
 
 add_executable(DeepLibraryLargeUsage main.cxx)
-target_link_libraries(DeepLibraryLargeUsage PRIVATE Deep)
+target_link_libraries(DeepLibraryLargeUsage PUBLIC Deep)

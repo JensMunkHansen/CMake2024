@@ -1,9 +1,9 @@
 // TODO: When installed, it is Foo/Foo.h, else Foo.h
-#include <Foo/Foo.h>
+#include <Deep/Deep.h>
 #include <iostream>
 
 int main(int, char*[])
 {
-  std::cout << Library::Version() << std::endl;
+  std::cout << Deep::Version() << std::endl;
   return 0;
 }

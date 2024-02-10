@@ -18,11 +18,11 @@ include(CompilerFlags)
 add_subdirectory(Deep)
 
 # Install and deployment. Not needed for in source development
-
-include(GNUInstallDirs)
+#include(GNUInstallDirs)
+include(BuildConfig)
 
 install(EXPORT DeepTargets
-  NAMESPACE ${PROJECT_NAMESPACE}::
+#  NAMESPACE ${PROJECT_NAMESPACE}::
   DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/Deep
   COMPONENT Devel)
 

@@ -45,7 +45,7 @@ generate_export_header(Deep
 )
 
 #target_link_libraries(Deep PUBLIC ...) # Check IDE
-add_library(${PROJECT_NAMESPACE}::Deep ALIAS Deep)
+#add_library(${PROJECT_NAMESPACE}::Deep ALIAS Deep)
 
 add_subdirectory(tests)
 
@@ -57,5 +57,5 @@ add_subdirectory(dotnet)
 
 install(TARGETS Deep
   EXPORT DeepTargets
-  PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/Deep
+  PUBLIC_HEADER DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/Deep"
 )
