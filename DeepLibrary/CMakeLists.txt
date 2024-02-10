@@ -11,7 +11,7 @@ option(BUILD_SHARED_LIBS "Build using shared libraries" ON)
 
 include(CompilerFlags)
 
-add_subdirectory(deep)
+add_subdirectory(Deep)
 
 
 if (0)
