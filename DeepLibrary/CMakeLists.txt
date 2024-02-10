@@ -14,7 +14,14 @@ include(CompilerFlags)
 add_subdirectory(deep)
 
 
-if (0)
+if (1)
+  if (WIN32)
+    set(CMAKE_DEBUG_POSTFIX d)
+    include(GNUInstallDirs)
+  else()
+    include(BuildConfig) # Not yet deploying DLL's correctly
+  endif()
+  
   # install the configuration targets
   install(EXPORT DeepTargets
     FILE DeepTargets.cmake
@@ -26,7 +33,7 @@ if (0)
   
   include(CMakePackageConfigHelpers)
   # generate the config file that is includes the exports
-  configure_package_config_file(${CMAKE_CURRENT_SOURCE_DIR}/Config.cmake.in
+  configure_package_config_file(${CMAKE_CURRENT_SOURCE_DIR}/DeepConfig.cmake.in
     "${CMAKE_CURRENT_BINARY_DIR}/DeepConfig.cmake"
     INSTALL_DESTINATION "lib/cmake/Deep"
     NO_SET_AND_CHECK_MACRO

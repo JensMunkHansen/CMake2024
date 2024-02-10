@@ -6,7 +6,7 @@ configure_file(include/deep/Config.h.in "${CMAKE_CURRENT_BINARY_DIR}/include/dee
 
 target_sources(Deep
   PUBLIC
-    include/deep/Deep.h
+    $<BUILD_INTERFACE:include/deep/Deep.h>
   PRIVATE
     src/Deep.cxx)
 
@@ -23,7 +23,7 @@ set_target_properties(Deep PROPERTIES
   SOVERSION ${PROJECT_VERSION_MAJOR}
   POSITION_INDEPENDENT_CODE ON
   INTERFACE_POSITION_INDEPENDENT_CODE ON
-  PUBLIC_HEADER include/foo/Deep.hpp)
+  PUBLIC_HEADER include/deep/Deep.h)
 
 #target_link_libraries(Deep PUBLIC ...) # Check IDE
 add_library(${PROJECT_NAMESPACE}::Deep ALIAS Deep)

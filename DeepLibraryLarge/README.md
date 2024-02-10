@@ -16,3 +16,12 @@ project and can pull-in dependencies using the `find_package` from
 Testing
 -------
 For testing, we use `Catch2`.
+
+TODO
+----
+
+### COMPONENTS
+They are set but only relevant for libraries using us and installation
+
+### NAMESPACES
+CMake namespaces. Do we want them?

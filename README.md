@@ -24,3 +24,6 @@ For source distribution
 cpack --config CPackSourceConfig.cmake
 ```
 
+
+DeepLibrary (works on linux: build and install)
+DeepLibraryLarge (works on linux: build)

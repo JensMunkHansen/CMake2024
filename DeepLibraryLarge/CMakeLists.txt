@@ -1,5 +1,7 @@
 cmake_minimum_required(VERSION 3.15..3.22)
 
+# We use SameMajorVersion, consider AnyNewerVersion
+
 set (CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/CMake")
 
 # set the project name and version
@@ -9,14 +11,16 @@ project(DeepLibrary
 
 option(BUILD_SHARED_LIBS "Build using shared libraries" ON)
 
+# Same compiler flags everywhere
 include(CompilerFlags)
 
-# Layout build dir like install dir
-include(GNUInstallDirs)
-
+# Libraries
 add_subdirectory(Deep)
 
-# Install
+# Install and deployment. Not needed for in source development
+
+include(GNUInstallDirs)
+
 install(EXPORT DeepTargets
   NAMESPACE ${PROJECT_NAMESPACE}::
   DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/Deep
@@ -41,10 +45,11 @@ install(
 # install the configuration targets
 install(EXPORT DeepTargets
   FILE DeepTargets.cmake
-  DESTINATION lib/cmake/Deep
+  DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/Deep
 )
 
 include(CMakePackageConfigHelpers)
+
 # generate the config file that is includes the exports
 configure_package_config_file(${CMAKE_CURRENT_SOURCE_DIR}/DeepConfig.cmake.in
   "${CMAKE_CURRENT_BINARY_DIR}/DeepConfig.cmake"
@@ -52,19 +57,20 @@ configure_package_config_file(${CMAKE_CURRENT_SOURCE_DIR}/DeepConfig.cmake.in
   NO_SET_AND_CHECK_MACRO
   NO_CHECK_REQUIRED_COMPONENTS_MACRO
   )
+
 # generate the version file for the config file
 write_basic_package_version_file(
   "${CMAKE_CURRENT_BINARY_DIR}/DeepConfigVersion.cmake"
   VERSION "${Library_VERSION_MAJOR}.${Library_VERSION_MINOR}"
-  COMPATIBILITY AnyNewerVersion
+  COMPATIBILITY SameMajorVersion
 )
 
 # install the configuration files
 install(FILES
   ${CMAKE_CURRENT_BINARY_DIR}/DeepConfig.cmake
   ${CMAKE_CURRENT_BINARY_DIR}/DeepConfigVersion.cmake
-  DESTINATION lib/cmake/Deep
-  COMPONENT dev
+  DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/Deep
+  COMPONENT Devel
   )
 
 # generate the export targets for the build tree
@@ -89,3 +95,4 @@ if (NOT TARGET uninstall)
     COMMAND ${CMAKE_COMMAND} -P
     ${CMAKE_CURRENT_BINARY_DIR}/CMake/cmake_uninstall.cmake)
 endif()
+

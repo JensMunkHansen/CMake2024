@@ -3,6 +3,7 @@ include(GenerateExportHeader)
 # Fron CMake 3.11, we can skip the empty quotes
 add_library(Deep "")
 
+# Config file containing version
 configure_file(include/Deep/Config.h.in "${CMAKE_CURRENT_BINARY_DIR}/include/Deep/Config.h" @ONLY)
 
 set(PUBLIC_HEADERS
@@ -51,6 +52,8 @@ add_subdirectory(tests)
 add_subdirectory(python)
 
 add_subdirectory(dotnet)
+
+# Installation stuff
 
 install(TARGETS Deep
   EXPORT DeepTargets
