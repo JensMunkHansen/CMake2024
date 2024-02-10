@@ -1,5 +1,7 @@
 # TODO: Runtime-path not set correctly...
 
+# FIND_LIBRARY_USE_LIB64_PATHS=1 => lib64 are searched
+
 cmake_minimum_required(VERSION 3.15)
 
 set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/CMake")
