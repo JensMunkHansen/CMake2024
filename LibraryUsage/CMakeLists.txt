@@ -13,18 +13,15 @@ project(LibraryUsage
   VERSION 1.0.0
   LANGUAGES CXX)
 
-if (WIN32)
-  set(CMAKE_DEBUG_POSTFIX d)
-  include(GNUInstallDirs)
-else()
-  include(BuildConfig) # Not yet deploying DLL's correctly
-endif()
+include(BuildConfig) # Not yet deploying DLL's correctly
 
 find_package(Library2 REQUIRED)
 
 set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 
 add_executable(FooUsage main.cxx)
+set_target_properties(FooUsage PROPERTIES DEBUG_POSTFIX ${CMAKE_DEBUG_POSTFIX})
+
 # TODO: Consider using namespace
 target_link_libraries(FooUsage PRIVATE Foo)
 
