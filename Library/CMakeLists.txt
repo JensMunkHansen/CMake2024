@@ -25,14 +25,12 @@ project(Library2
 
 option(BUILD_SHARED_LIBS "Build using shared libraries" ON)
 
-include(target_public_headers)
-if (WIN32)
-  set(CMAKE_DEBUG_POSTFIX d)
-  include(GNUInstallDirs)
-else()
-  include(BuildConfig) # Not yet deploying DLL's correctly
-endif()
 
+add_library(build INTERFACE)
+add_library(Library2::build ALIAS build)
+
+include(target_public_headers)
+include(BuildConfig)
 include(TestConfig)
 include(CompilerFlags)
 
