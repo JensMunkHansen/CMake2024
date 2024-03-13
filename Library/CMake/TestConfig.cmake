@@ -1,6 +1,13 @@
 include(CTest)
 include(GoogleTest) # CMake macros for GoogleTest
-find_package(GTest REQUIRED)
+find_package(GTest)
+
+if (NOT GTest_FOUND)
+  message("GTest not found - disabling testing")
+  set(BUILD_TESTING OFF)
+  return()
+endif()
+
 enable_testing()
 
 # add_cpp_test()

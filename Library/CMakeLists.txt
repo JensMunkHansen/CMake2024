@@ -24,14 +24,19 @@ project(Library2
   VERSION 1.0.0)
 
 option(BUILD_SHARED_LIBS "Build using shared libraries" ON)
+option(BUILD_TESTING "Build testing" ON)
+# On Windows, this is store in the registry. On other platforms, inside $HOME/.cmake/packages
+option(EXPORT_TO_PACKAGE_REGISTRY "Export installation to package registry" OFF)
 
+add_library(build INTERFACE)
+add_library(Library2::build ALIAS build)
+target_sources(build PRIVATE
+  ${CMAKE_CURRENT_SOURCE_DIR}/CMakeLists.txt)
+
+# TODO: Avoid using this macro
 include(target_public_headers)
-if (WIN32)
-  set(CMAKE_DEBUG_POSTFIX d)
-  include(GNUInstallDirs)
-else()
-  include(BuildConfig) # Not yet deploying DLL's correctly
-endif()
+
+include(InstallDirs)
 
 include(TestConfig)
 include(CompilerFlags)
@@ -44,6 +49,9 @@ if (BUILD_TESTING)
   add_subdirectory(FooTest)
 endif()
 
+# Installation and deployment (we could introduce some convenience macros)
+install(TARGETS build EXPORT "${PROJECT_NAME}Targets")
+
 # install the configuration targets
 install(EXPORT ${PROJECT_NAME}Targets
   FILE ${PROJECT_NAME}Targets.cmake
@@ -51,7 +59,9 @@ install(EXPORT ${PROJECT_NAME}Targets
 )
 
 # Enable writing to registry
-set(CMAKE_EXPORT_PACKAGE_REGISTRY 1)
+if (EXPORT_TO_PACKAGE_REGISTRY)
+  set(CMAKE_EXPORT_PACKAGE_REGISTRY 1)
+endif()
 
 include(CMakePackageConfigHelpers)
 # generate the config file that is includes the exports
@@ -80,12 +90,13 @@ install(FILES
 # generate the export targets for the build tree
 # needs to be after the install(TARGETS ) command
 export(EXPORT ${PROJECT_NAME}Targets
-  #  NAMESPACE Foo:: # TODO: Figure out how to use namespaces
+  #  NAMESPACE Foo:: # Not using namespaces
   FILE "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}Targets.cmake"
 )
 
 # Export the package for use from the build-tree
 # (this registers the build-tree with a global CMake-registry)
+# If CMAKE_EXPORT_PACKAGE_REGISTRY == 0, this does nothing (default) 
 export(PACKAGE ${PROJECT_NAME})
 
 if (NOT TARGET uninstall)

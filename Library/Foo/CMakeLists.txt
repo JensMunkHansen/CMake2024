@@ -54,14 +54,14 @@ set_target_properties(Foo PROPERTIES
   POSITION_INDEPENDENT_CODE ${BUILD_SHARED_LIBS})
 
 # link Foo to compiler flags
-target_link_libraries(Foo PUBLIC sps_compiler_flags)
+target_link_libraries(Foo PUBLIC build)
 
 # setup the version numbering
 set_property(TARGET Foo PROPERTY VERSION "${Library2_VERSION}")
 set_property(TARGET Foo PROPERTY SOVERSION "1")
 
 # installs libs
-set(installable_libs Foo sps_compiler_flags)
+set(installable_libs Foo)
 
 install(TARGETS ${installable_libs}
   EXPORT ${PROJECT_NAME}Targets
