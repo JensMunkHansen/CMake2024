@@ -30,14 +30,9 @@ option(EXPORT_TO_PACKAGE_REGISTRY "Export installation to package registry" OFF)
 
 add_library(build INTERFACE)
 add_library(Library2::build ALIAS build)
-target_sources(build PRIVATE
-  ${CMAKE_CURRENT_SOURCE_DIR}/CMakeLists.txt)
 
-# TODO: Avoid using this macro
 include(target_public_headers)
-
-include(InstallDirs)
-
+include(BuildConfig)
 include(TestConfig)
 include(CompilerFlags)
 

@@ -3,7 +3,7 @@
 
 add_executable(FooApp FooApp.cxx)
 set_target_properties(FooApp PROPERTIES DEBUG_POSTFIX ${CMAKE_DEBUG_POSTFIX})
-target_link_libraries(FooApp PUBLIC Foo)
+target_link_libraries(FooApp PUBLIC Foo build)
 
 #set_target_properties(FooApp PROPERTIES INSTALL_RPATH_USE_LINK_PATH
 
