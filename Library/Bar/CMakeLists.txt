@@ -23,7 +23,7 @@ write_basic_package_version_file(
   COMPATIBILITY AnyNewerVersion ARCH_INDEPENDENT
 )
 
-install(TARGETS Bar  algorithms
+install(TARGETS Bar algorithms
     EXPORT BarTargets 
     LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}" COMPONENT Bar_Runtime
     ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}" COMPONENT Bar_Development
@@ -32,6 +32,7 @@ install(TARGETS Bar  algorithms
     BUNDLE DESTINATION bin COMPONENT Bar_Runtime
 )
 
+include(CMakePackageConfigHelpers)
 configure_package_config_file(
     "${CMAKE_CURRENT_SOURCE_DIR}/BarConfig.cmake.in"
     "${CMAKE_CURRENT_BINARY_DIR}/BarConfig.cmake"
@@ -49,6 +50,14 @@ install(
 )
 # Before CMake 3.23, we make a manual install for the headers  
 install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/include/Bar DESTINATION include)  
+
+# Must be after the install commands
+if (0)
+export(EXPORT BarTargets
+  #  NAMESPACE Foo:: # Not using namespaces
+  FILE "${CMAKE_CURRENT_BINARY_DIR}/BarTargets.cmake"
+)
+endif()
 
 add_executable(BarTest test/basic_checks.cxx)
 target_link_libraries(BarTest PUBLIC Bar)

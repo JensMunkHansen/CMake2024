@@ -17,13 +17,15 @@ include(BuildConfig) # Not yet deploying DLL's correctly
 
 find_package(Library2 REQUIRED)
 
+find_package(Bar REQUIRED)
+
 set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 
 add_executable(FooUsage main.cxx)
 set_target_properties(FooUsage PROPERTIES DEBUG_POSTFIX ${CMAKE_DEBUG_POSTFIX})
 
 # TODO: Consider using namespace
-target_link_libraries(FooUsage PRIVATE Foo)
+target_link_libraries(FooUsage PRIVATE Foo Bar)
 
 
 # This will stop stripping rpath - but then it is not moveable

@@ -1,4 +1,5 @@
 @PACKAGE_INIT@
 
 include("${CMAKE_CURRENT_LIST_DIR}/BarTargets.cmake")
-# check_required_components("@PROJECT_NAME@")
+# Without this, the XXXTargets file are missing????
+check_required_components("@PROJECT_NAME@")
