@@ -39,6 +39,9 @@ include(CompilerFlags)
 add_subdirectory(Foo)
 add_subdirectory(FooApp)
 
+# Testing header-only
+add_subdirectory(Bar)
+
 if (BUILD_TESTING)
   add_subdirectory(FooTest)
 endif()
