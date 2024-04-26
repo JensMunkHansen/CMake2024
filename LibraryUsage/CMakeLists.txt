@@ -2,7 +2,7 @@
 
 # FIND_LIBRARY_USE_LIB64_PATHS=1 => lib64 are searched
 
-cmake_minimum_required(VERSION 3.15)
+cmake_minimum_required(VERSION 3.23)
 
 set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/CMake")
 
@@ -25,8 +25,12 @@ add_executable(FooUsage main.cxx)
 set_target_properties(FooUsage PROPERTIES DEBUG_POSTFIX ${CMAKE_DEBUG_POSTFIX})
 
 # TODO: Consider using namespace
-target_link_libraries(FooUsage PRIVATE Foo Bar)
+#target_link_libraries(FooUsage PUBLIC algorithms)
+target_link_libraries(FooUsage PUBLIC Foo)
+target_link_libraries(FooUsage PUBLIC Bar) # Get the compile parameters (only if PUBLIC)
 
+get_target_property(BUM algorithms INTERFACE_COMPILE_OPTIONS)
+#target_link_libraries(FooUsage $<TARGET_FILE:algorithms> $<TARGET_PROPERTY:INTERFACE_LINK_LIBRARIES>)
 
 # This will stop stripping rpath - but then it is not moveable
 
