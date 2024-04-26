@@ -30,14 +30,13 @@ option(EXPORT_TO_PACKAGE_REGISTRY "Export installation to package registry" OFF)
 
 add_library(build INTERFACE)
 add_library(Library2::build ALIAS build)
-
+  
 include(target_public_headers)
 include(BuildConfig)
 include(TestConfig)
 include(CompilerFlags)
 
 add_subdirectory(Foo)
-
 add_subdirectory(FooApp)
 
 if (BUILD_TESTING)
