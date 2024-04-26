@@ -2,7 +2,18 @@
 add_library(algorithms INTERFACE)
 add_library(Bar::algorithms ALIAS algorithms)
 # setup that we need C++14 support
-target_compile_features(algorithms  INTERFACE cxx_std_14)
+target_compile_features(algorithms INTERFACE cxx_std_17)
+set(gcc_like_cxx "$<COMPILE_LANG_AND_ID:CXX,ARMClang,AppleClang,Clang,GNU,LCC>")
+set(msvc_cxx "$<COMPILE_LANG_AND_ID:CXX,MSVC>")
+
+target_compile_options(algorithms INTERFACE
+  "$<${gcc_like_cxx}:$<BUILD_INTERFACE:-Wall;-Wextra;-Wshadow;-Wformat=2;-Wunused>>"
+  "$<${msvc_cxx}:$<BUILD_INTERFACE:-W3>>")
+
+target_compile_options(algorithms INTERFACE
+  "$<${gcc_like_cxx}:$<INSTALL_INTERFACE:-Wall;-Wextra;-Wshadow;-Wformat=2;-Wunused>>"
+  "$<${msvc_cxx}:$<INSTALL_INTERFACE:-W3>>")
+
 
 # Our header-only library
 add_library(Bar INTERFACE)
