@@ -43,9 +43,9 @@ public:
 
   stack_function(const stack_function &other) {
     if (other) {
-      other.manager(data, other.data, operation::clone);
-      invoker = other.invoker;
-      manager = other.manager;
+      other._manager(data, other.data, operation::clone);
+      _invoker = other._invoker;
+      _manager = other._manager;
     }
   }
 
@@ -56,13 +56,13 @@ public:
     static_assert(alignof(f_type) <= alignof(storage), "invalid alignment");
     static_assert(sizeof(f_type) <= sizeof(storage), "storage too small");
     new (&data) f_type(std::forward<F>(f));
-    invoker = &invoke<f_type>;
-    manager = &manage<f_type>;
+    _invoker = &invoke<f_type>;
+    _manager = &manage<f_type>;
   }
 
   ~stack_function() {
-    if (manager) {
-      manager(&data, nullptr, operation::destroy);
+    if (_manager) {
+      _manager(&data, nullptr, operation::destroy);
     }
   }
 
@@ -77,10 +77,10 @@ public:
   }
 
   stack_function &operator=(std::nullptr_t) {
-    if (manager) {
-      manager(&data, nullptr, operation::destroy);
-      manager = nullptr;
-      invoker = nullptr;
+    if (_manager) {
+      _manager(&data, nullptr, operation::destroy);
+      _manager = nullptr;
+      _invoker = nullptr;
     }
     return *this;
   }
@@ -97,17 +97,17 @@ public:
 
   void swap(stack_function &other) {
     std::swap(data, other.data);
-    std::swap(manager, other.manager);
-    std::swap(invoker, other.invoker);
+    std::swap(_manager, other._manager);
+    std::swap(_invoker, other._invoker);
   }
 
-  explicit operator bool() const noexcept { return !!manager; }
+  explicit operator bool() const noexcept { return !!_manager; }
 
   R operator()(Args... args) {
-    if (!invoker) {
+    if (!_invoker) {
       throw std::bad_function_call();
     }
-    return invoker(&data, std::forward<Args>(args)...);
+    return _invoker(&data, std::forward<Args>(args)...);
   }
 
 private:
@@ -136,7 +136,7 @@ private:
   }
 
   storage data;
-  invoker invoker = nullptr;
-  manager manager = nullptr;
+  invoker _invoker = nullptr;
+  manager _manager = nullptr;
 };
 } // namespace sps
