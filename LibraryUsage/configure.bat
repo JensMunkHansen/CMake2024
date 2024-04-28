@@ -2,4 +2,4 @@
 
 pushd %~dp0
 
-cmake -B %~dp0build -G Ninja -DCMAKE_PREFIX_PATH=$(pwd)/../Library/install
+cmake -B %~dp0build  -DCMAKE_PREFIX_PATH=%~dp0../Library/install
