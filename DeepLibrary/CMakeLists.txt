@@ -11,7 +11,7 @@ option(BUILD_SHARED_LIBS "Build using shared libraries" ON)
 
 include(CompilerFlags)
 
-if (WIN32)
+if (0)
   set(CMAKE_DEBUG_POSTFIX d)
   include(GNUInstallDirs)
 else()

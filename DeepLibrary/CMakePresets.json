@@ -14,7 +14,8 @@
         "rhs": "Windows"
       },
       "cacheVariables": {
-        "CMAKE_INSTALL_PREFIX": "${sourceDir}/../install/${presetName}"
+        "CMAKE_INSTALL_PREFIX": "${sourceDir}/../install/${presetName}",
+        "BUILD_SHARED_LIBS": "OFF"
       }	
     },
     {

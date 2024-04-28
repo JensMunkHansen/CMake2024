@@ -1,6 +1,10 @@
 #include <deep/Deep.h>
 #include <deep/Config.h>
+#include <iostream>
 
 namespace deep {
-  void Nothing();
+  void Nothing()
+  {
+    std::cout << "Hello from deep" << std::endl;
+  }
 }
