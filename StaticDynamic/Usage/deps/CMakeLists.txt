@@ -8,7 +8,7 @@ include(ExternalProject)
 # Google's test framework
 ExternalProject_Add(Catch2
     GIT_REPOSITORY https://github.com/catchorg/Catch2.git
-    GIT_TAG        v3.5.2 # or a later release
+    GIT_TAG        v3.5.3 # or a later release
     GIT_SHALLOW TRUE
     GIT_PROGRESS TRUE
     CMAKE_ARGS
