@@ -24,6 +24,14 @@ set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 add_executable(FooUsage main.cxx)
 set_target_properties(FooUsage PROPERTIES DEBUG_POSTFIX ${CMAKE_DEBUG_POSTFIX})
 
+if (MSVC)
+    add_custom_command( TARGET FooUsage POST_BUILD
+      COMMAND ${CMAKE_COMMAND} -E copy
+      $<TARGET_RUNTIME_DLLS:FooUsage>
+      $<TARGET_FILE_DIR:FooUsage>
+      COMMAND_EXPAND_LISTS)
+endif()
+
 # TODO: Consider using namespace
 #target_link_libraries(FooUsage PUBLIC algorithms)
 target_link_libraries(FooUsage PUBLIC Foo)
