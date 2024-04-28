@@ -17,14 +17,14 @@ if %myArg% == DEBUG (
   goto :Debug
 )
 
-cmake --build build --config Release
+cmake --build build --config Release -DCMAKE_INSTALL_PREFIX=install
 %~dp0\build\Release\bin\FooApp.exe
 
 goto :eof
 
 :Debug
 
-cmake --build build --config Debug
+cmake --build build --config Debug -DCMAKE_INSTALL_PREFIX=install
 %~dp0\build\Debug\bin\FooAppd.exe
 
 cd %~dp0
