@@ -11,6 +11,9 @@ add_library(StackFunction::build ALIAS build)
 target_compile_features(build INTERFACE cxx_std_17)
 
 add_library(${PROJECT_NAME} INTERFACE)
+# Propagate compiler flags to target
+target_link_libraries(${PROJECT_NAME} INTERFACE build)
+
 target_include_directories(${PROJECT_NAME} INTERFACE 
     $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
     $<INSTALL_INTERFACE:include>
@@ -23,7 +26,8 @@ write_basic_package_version_file(
     COMPATIBILITY AnyNewerVersion
 )
 
-install(TARGETS ${PROJECT_NAME}
+# Note build target is exported
+install(TARGETS ${PROJECT_NAME} build
     EXPORT ${PROJECT_NAME}Targets
     LIBRARY DESTINATION lib COMPONENT Runtime
     ARCHIVE DESTINATION lib COMPONENT Development
@@ -42,10 +46,12 @@ configure_package_config_file(
 install(EXPORT ${PROJECT_NAME}Targets DESTINATION lib/cmake/${PROJECT_NAME})
 install(FILES "${PROJECT_BINARY_DIR}/${PROJECT_NAME}ConfigVersion.cmake"
               "${PROJECT_BINARY_DIR}/${PROJECT_NAME}Config.cmake"
-        DESTINATION lib/cmake/${PROJECT_NAME})
+              DESTINATION lib/cmake/${PROJECT_NAME})
+
+# From CMake 3.23, you can use FILE_SET	
 install(DIRECTORY ${PROJECT_SOURCE_DIR}/include/ DESTINATION include)
 
-# TODO: Add path to artifactory
+# This searches artifactory (due to CMAKE_PREFIX_PATH)
 find_package(Catch2)
 if (NOT Catch2_FOUND)
   set(BUILD_TESTING OFF)
@@ -58,7 +64,6 @@ enable_testing()
 set(TEST_NAME mytest)
 add_executable(mytest test/TestStackFunction.cxx)
 target_link_libraries(${TEST_NAME} PUBLIC ${PROJECT_NAME})
-target_link_libraries(${TEST_NAME} INTERFACE build)
 target_link_libraries(${TEST_NAME} PRIVATE Catch2::Catch2WithMain)
 add_test(NAME ${TEST_NAME} COMMAND ${TEST_NAME})
 
