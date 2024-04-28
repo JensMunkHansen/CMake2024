@@ -12,7 +12,7 @@ execute_process(
 execute_process(
     COMMAND ${CMAKE_COMMAND} --build ${CMAKE_BINARY_DIR}/deps)
 
-find_package(StackFunction)
+find_package(StackFunction REQUIRED)
 find_package(Catch2 3.5.3 EXACT REQUIRED PATHS "${PROJECT_BINARY_DIR}/deps/lib/cmake" NO_DEFAULT_PATHS)
 
 if (NOT Catch2_FOUND)
