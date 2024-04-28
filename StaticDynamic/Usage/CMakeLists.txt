@@ -30,3 +30,12 @@ target_link_libraries(${TEST_NAME} PUBLIC Catch2::Catch2)
 target_link_libraries(${TEST_NAME} PUBLIC Catch2::Catch2WithMain) # Catch2 v3
 add_test(NAME ${TEST_NAME} COMMAND ${TEST_NAME})
 
+
+if (MSVC)
+  add_custom_command( TARGET ${TEST_NAME} POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy
+    $<TARGET_RUNTIME_DLLS:${TEST_NAME}>
+    $<TARGET_FILE_DIR:${TEST_NAME}>
+    COMMAND_EXPAND_LISTS)
+endif()
+
