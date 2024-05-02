@@ -89,8 +89,19 @@ if(CMAKE_VERSION VERSION_GREATER_EQUAL "3.28.0")
   # CXX_MODULES_BMI to the above.
   #
   # Here a dummy target (currently no C++20 modules)
+  # You need to change it to static
   add_library(SomeCXXModuleLibrary INTERFACE)
 
+  if (0)
+    target_sources(SomeCXXModuleLibrary
+      PUBLIC
+        FILE_SET cxx_modules
+        TYPE CXX_MODULES
+	FILES
+          functional.ixx
+    )
+  endif()
+  
   # If we only export BMI files (no headers), we only need
   install(TARGETS SomeCXXModuleLibrary
     EXPORT ${TARGET_NAME}CXXModuleTargets
