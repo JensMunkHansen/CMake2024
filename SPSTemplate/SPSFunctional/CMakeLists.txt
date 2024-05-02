@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.23)
+cmake_minimum_required(VERSION 3.23...3.28)
 
 project(SPS
   VERSION 0.1
@@ -78,14 +78,25 @@ install(TARGETS ${TARGET_NAME} build # Needed
        COMPONENT Runtime
     BUNDLE # MacOS (exe)
        COMPONENT Runtime
-     PRIVATE_HEADER # For private headers (why!!!)
+    PRIVATE_HEADER # For private headers (why!!!)
        COMPONENT Development
-     RESOURCE
+    RESOURCE
        COMPONENT Development # Windows resources
-#     CXX_MODULES_BMI # Binary module interfaces for C++20 (modules), requires CMake 3.28
-#       COMPONENT Development
 )
 
+if(CMAKE_VERSION VERSION_GREATER_EQUAL "3.28.0")
+  # For a target containing C++20 Modules, one needs to add the
+  # CXX_MODULES_BMI to the above.
+  #
+  # Here a dummy target (currently no C++20 modules)
+  add_library(SomeCXXModuleLibrary INTERFACE)
+
+  # If we only export BMI files (no headers), we only need
+  install(TARGETS SomeCXXModuleLibrary
+    EXPORT ${TARGET_NAME}CXXModuleTargets
+    CXX_MODULES_BMI                   # Binary module interfaces for C++20 (modules), requires CMake 3.28
+      COMPONENT Development)
+endif()
 
 # Both build and install tree
 include(CMakePackageConfigHelpers)
