@@ -36,7 +36,10 @@ target_sources(${TARGET_NAME}
     TYPE HEADERS
     BASE_DIRS include
     FILES
-      include/sps/functional.hpp)
+      include/sps/functional.hpp
+  PRIVATE
+    # Private headers
+)
 
 # Include dirs for build tree and install tree
 target_include_directories(${TARGET_NAME} INTERFACE 
@@ -69,11 +72,20 @@ install(TARGETS ${TARGET_NAME} build # Needed
     RUNTIME
       DESTINATION ${CMAKE_INSTALL_BINDIR}
       COMPONENT Runtime
-    FILE_SET public_headers # Only this for header-only
+    FILE_SET public_headers # Only this for header-only, CMake 3.23+
       COMPONENT Development # Only this for header-only
-    BUNDLE
-      DESTINATION ${CMAKE_INSTALL_BINDIR}
+    FRAMEWORK # MacOS (.so and lib)
       COMPONENT Runtime
+    BUNDLE # MacOS (exe)
+      COMPONENT Runtime
+    PRIVATE_HEADER # For private headers (why!!!)
+      COMPONENT Development
+    CXX_MODULES_BMI # Used for C++20 (modules), CMake 3.28, not required for compilation
+      COMPONENT Development
+    RESOURCE
+      COMPONENT Development # Windows resources
+
+    RESOURCE
 )
 
 # Both build and install tree
