@@ -14,7 +14,7 @@
         "rhs": "Windows"
       },
       "cacheVariables": {
-        "CMAKE_PREFIX_PATH": "${sourceDir}/../HeaderOnly/install/${presetName}"
+        "CMAKE_PREFIX_PATH": "${sourceDir}/../install/${presetName}"
       }	
     },
     {
