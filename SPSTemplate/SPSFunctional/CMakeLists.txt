@@ -84,6 +84,7 @@ install(TARGETS ${TARGET_NAME} build # Needed
        COMPONENT Development # Windows resources
 )
 
+if (0)
 if(CMAKE_VERSION VERSION_GREATER_EQUAL "3.28.0")
   # For a target containing C++20 Modules, one needs to add the
   # CXX_MODULES_BMI to the above.
@@ -108,6 +109,7 @@ if(CMAKE_VERSION VERSION_GREATER_EQUAL "3.28.0")
     CXX_MODULES_BMI                   # Binary module interfaces for C++20 (modules), requires CMake 3.28
       COMPONENT Development)
 endif()
+endif()
 
 # Both build and install tree
 include(CMakePackageConfigHelpers)
@@ -117,7 +119,7 @@ configure_package_config_file(
     INSTALL_DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${TARGET_NAME} # Install tree
 )
 
-# For the install tree (can be skipped completely)
+    # For the install tree (can be skipped completely)
 install(
   EXPORT ${TARGET_NAME}Targets
   NAMESPACE SPS::
