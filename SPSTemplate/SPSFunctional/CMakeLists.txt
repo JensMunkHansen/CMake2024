@@ -13,6 +13,14 @@ message("CMAKE_INSTALL_BINDIR ${CMAKE_INSTALL_BINDIR}")
 message("CMAKE_INSTALL_LIBDIR ${CMAKE_INSTALL_LIBDIR}")
 message("CMAKE_INSTALL_INCLUDE_DIR ${CMAKE_INSTALL_INCLUDEDIR}")
 
+# On Windows, this is store in the registry. On other platforms, inside $HOME/.cmake/packages
+option(EXPORT_TO_PACKAGE_REGISTRY "Export installation to package registry" OFF)
+
+# Enable writing to registry
+if (EXPORT_TO_PACKAGE_REGISTRY)
+  set(CMAKE_EXPORT_PACKAGE_REGISTRY 1)
+endif()
+
 # Build interface
 add_library(build INTERFACE)
 # These flags are automatically transferred (when linking)
@@ -64,7 +72,7 @@ install(TARGETS ${TARGET_NAME} build # Needed
     FILE_SET public_headers # Only this for header-only
       COMPONENT Development # Only this for header-only
     BUNDLE
-      DESTINATION bin
+      DESTINATION ${CMAKE_INSTALL_BINDIR}
       COMPONENT Runtime
 )
 
@@ -76,7 +84,7 @@ configure_package_config_file(
     INSTALL_DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${TARGET_NAME} # Install tree
 )
 
-# For the install tree
+# For the install tree (can be skipped completely)
 install(
   EXPORT ${TARGET_NAME}Targets
   NAMESPACE SPS::
@@ -94,7 +102,9 @@ export(EXPORT ${TARGET_NAME}Targets
   NAMESPACE SPS::
 )
 
-# Export to package registry
+# Export the package for use from the build-tree
+# (this registers the build-tree with a global CMake-registry)
+# If CMAKE_EXPORT_PACKAGE_REGISTRY == 0, this does nothing (default) 
 export(PACKAGE ${TARGET_NAME})
 
 # Just test targets (not included for build/install tree)
