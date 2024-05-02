@@ -34,6 +34,14 @@ function(add_cpp_test FILE_NAME)
     PRIVATE
     GTest::gtest_main)
 
+  if (MSVC)
+    add_custom_command( TARGET ${TEST_NAME} POST_BUILD
+      COMMAND ${CMAKE_COMMAND} -E copy
+      $<TARGET_RUNTIME_DLLS:${TEST_NAME}>
+      $<TARGET_FILE_DIR:${TEST_NAME}>
+      COMMAND_EXPAND_LISTS)
+  endif()
+  
   target_compile_features(${TEST_NAME} PRIVATE cxx_std_17)
   gtest_discover_tests(${TEST_NAME}) # adds the test again
 endfunction()
