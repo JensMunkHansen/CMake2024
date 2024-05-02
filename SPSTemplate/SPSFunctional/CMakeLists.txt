@@ -75,16 +75,17 @@ install(TARGETS ${TARGET_NAME} build # Needed
     FILE_SET public_headers # Only this for header-only, CMake 3.23+
       COMPONENT Development # Only this for header-only
     FRAMEWORK # MacOS (.so and lib)
-      COMPONENT Runtime
+       COMPONENT Runtime
     BUNDLE # MacOS (exe)
-      COMPONENT Runtime
-    PRIVATE_HEADER # For private headers (why!!!)
-      COMPONENT Development
-    CXX_MODULES_BMI # Used for C++20 (modules), CMake 3.28, not required for compilation
-      COMPONENT Development
-    RESOURCE
-      COMPONENT Development # Windows resources
+       COMPONENT Runtime
+     PRIVATE_HEADER # For private headers (why!!!)
+       COMPONENT Development
+     RESOURCE
+       COMPONENT Development # Windows resources
+#     CXX_MODULES_BMI # Binary module interfaces for C++20 (modules), requires CMake 3.28
+#       COMPONENT Development
 )
+
 
 # Both build and install tree
 include(CMakePackageConfigHelpers)
