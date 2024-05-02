@@ -84,8 +84,6 @@ install(TARGETS ${TARGET_NAME} build # Needed
       COMPONENT Development
     RESOURCE
       COMPONENT Development # Windows resources
-
-    RESOURCE
 )
 
 # Both build and install tree
