@@ -131,7 +131,7 @@ install(
   DESTINATION
     ${CMAKE_INSTALL_LIBDIR}/cmake/${TARGET_NAME})                   # Install tree
 
-# Generate export targets for the build/install tree
+# Generate export targets for the build
 export(EXPORT ${TARGET_NAME}Targets
   FILE "${CMAKE_CURRENT_BINARY_DIR}/${TARGET_NAME}Targets.cmake"
   NAMESPACE SPS::
