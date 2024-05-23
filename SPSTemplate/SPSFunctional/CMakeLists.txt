@@ -29,7 +29,7 @@ add_library(SPS::build ALIAS build)
 
 # Create a new target (header-only)
 set(TARGET_NAME SPSFunctional)
-add_library(${TARGET_NAME} INTERFACE)
+add_library(${TARGET_NAME} STATIC)
 target_sources(${TARGET_NAME}
   PUBLIC
     FILE_SET public_headers
@@ -37,13 +37,21 @@ target_sources(${TARGET_NAME}
     BASE_DIRS include
     FILES
       include/sps/functional.hpp
+      include/sps/make_static_library.h
   PRIVATE
     # Private headers
 )
 
+set_property(TARGET ${TARGET_NAME} PROPERTY CXX_STANDARD 17)
+
+configure_file(make_static_library.h.in ${CMAKE_CURRENT_SOURCE_DIR}/include/sps/make_static_library.h)
+configure_file(make_static_library.cxx.in ${CMAKE_CURRENT_BINARY_DIR}/make_static_library.cxx)
+target_sources(${TARGET_NAME} PRIVATE ${CMAKE_CURRENT_BINARY_DIR}/make_static_library.cxx)
+
 # Include dirs for build tree and install tree
-target_include_directories(${TARGET_NAME} INTERFACE 
-    $<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/include>
+target_include_directories(${TARGET_NAME}
+  PUBLIC
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
     $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
 )
 

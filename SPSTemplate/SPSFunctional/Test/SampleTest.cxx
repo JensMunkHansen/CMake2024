@@ -10,7 +10,7 @@ int main(int argc, char* argv[])
   State state2 = {0, 0, 0};
 
   size_t i = 2;
-  sps::Function<void()> fun = [&state, state2, i]() { state = i; };
+  sps::inner::Function<void()> fun = [&state, state2, i]() { state = i; };
   fun();
   return 0;
 }
