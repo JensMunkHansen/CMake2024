@@ -27,7 +27,7 @@ SOFTWARE.
 #include <functional>
 #include <memory>
 
-namespace sps
+namespace sps::inner
 {    
 template <class, size_t MaxSize = 1024> class Function;
 
