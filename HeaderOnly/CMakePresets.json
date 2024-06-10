@@ -6,7 +6,7 @@
       "description": "For more information: http://aka.ms/cmakepresetsvs",
       "hidden": true,
       "generator": "Ninja",
-      "binaryDir": "${sourceDir}/out/build/${presetName}",
+      "binaryDir": "${sourceDir}/build/${presetName}",
       "installDir": "${sourceDir}/install/${presetName}",
       "condition": {
         "type": "equals",
@@ -21,10 +21,8 @@
       "name": "windows",
       "displayName": "Windows",
       "generator": "Ninja Multi-Config",
-      "inheritEnvironments": [ "clang_cl_x64" ],
       "description": "Multiple configurations",
       "inherits": "base",
-      "intelliSenseMode": "windows-clang-x64",
       "architecture": {
         "value": "x64",
         "strategy": "external"
@@ -52,7 +50,7 @@
       "vendor": {
         "microsoft.com/VisualStudioRemoteSettings/CMake/1.0": {
           "sourceDir": "$env{HOME}/.vs/$ms{projectDirName}",
-          "copyAdditionalIncludeDirectoriesList": [ "$env{HOME}/.vs/box2d-lite-actions/out/build/linux-debug/vcpkg_installed/x64-linux/include" ]
+          "copyAdditionalIncludeDirectoriesList": [ "$env{HOME}/.vs/box2d-lite-actions/build/linux-debug/vcpkg_installed/x64-linux/include" ]
         }
       }
     },
