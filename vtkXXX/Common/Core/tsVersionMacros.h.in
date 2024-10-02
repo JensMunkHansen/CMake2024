@@ -1,0 +1,25 @@
+/*=========================================================================
+
+  Program:   
+  Module:    tsVersionMacros.h
+
+=========================================================================*/
+#ifndef tsVersionMacros_h
+#define tsVersionMacros_h
+
+/* Note: this file is deliberately both valid C and valid C++. */
+
+#define TS_MAJOR_VERSION @TS_MAJOR_VERSION@
+#define TS_MINOR_VERSION @TS_MINOR_VERSION@
+#define TS_BUILD_VERSION @TS_BUILD_VERSION@
+#define TS_VERSION "@TS_VERSION@"
+
+#define TS_SOURCE_VERSION "ts version " TS_VERSION
+
+/* Macro for testing versions. */
+#define TS_VERSION_CHECK(major, minor, build)                                                     \
+  (10000000000ULL * major + 100000000ULL * minor + build)
+#define TS_VERSION_NUMBER                                                                         \
+  TS_VERSION_CHECK(TS_MAJOR_VERSION, TS_MINOR_VERSION, TS_BUILD_VERSION)
+
+#endif

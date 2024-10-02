@@ -1,0 +1,10 @@
+NAME
+  TS::CommonCore
+LIBRARY_NAME
+  tsCommonCore
+DEPENDS
+  VTK::CommonCore
+DESCRIPTION
+  The base TS
+GROUPS
+  StandAlone

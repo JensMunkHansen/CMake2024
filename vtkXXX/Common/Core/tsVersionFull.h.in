@@ -1,0 +1,8 @@
+#ifndef tsVersionFull_h
+#define tsVersionFull_h
+
+/* This is in its own header to reduce build dependencies */
+
+#define TS_VERSION "@TS_VERSION@"
+
+#endif
