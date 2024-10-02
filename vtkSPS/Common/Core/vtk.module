@@ -1,0 +1,10 @@
+NAME
+  SPS::CommonCore
+LIBRARY_NAME
+  spsCommonCore
+DEPENDS
+  VTK::CommonCore
+DESCRIPTION
+  The base SPS
+GROUPS
+  StandAlone

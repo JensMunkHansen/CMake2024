@@ -1,0 +1,25 @@
+/*=========================================================================
+
+  Program:
+  Module:    spsVersionMacros.h
+
+=========================================================================*/
+#ifndef spsVersionMacros_h
+#define spsVersionMacros_h
+
+/* Note: this file is deliberately both valid C and valid C++. */
+
+#define SPS_MAJOR_VERSION @SPS_MAJOR_VERSION@
+#define SPS_MINOR_VERSION @SPS_MINOR_VERSION@
+#define SPS_BUILD_VERSION @SPS_BUILD_VERSION@
+#define SPS_VERSION "@SPS_VERSION@"
+
+#define SPS_SOURCE_VERSION "ts version " SPS_VERSION
+
+/* Macro for testing versions. */
+#define SPS_VERSION_CHECK(major, minor, build)                                                     \
+  (10000000000ULL * major + 100000000ULL * minor + build)
+#define SPS_VERSION_NUMBER                                                                         \
+  SPS_VERSION_CHECK(SPS_MAJOR_VERSION, SPS_MINOR_VERSION, SPS_BUILD_VERSION)
+
+#endif

@@ -1,0 +1,10 @@
+NAME
+  SPS::CommonDataModel
+LIBRARY_NAME
+  spsCommonDataModel
+DEPENDS
+  VTK::CommonDataModel
+DESCRIPTION
+  The base SPS
+GROUPS
+  StandAlone
