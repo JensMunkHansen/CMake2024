@@ -11,4 +11,5 @@ if (SPS_VERSIONED_INSTALL)
 endif ()
 
 set(SPS_TWEAK_VERSION ${timestring})
+set(SPS_BUILD_VERSION ${SPS_TWEAK_VERSION})
 

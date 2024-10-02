@@ -1,0 +1,18 @@
+""" This module loads the entire VTK library into its namespace.  It
+also allows one to use specific packages inside the vtk directory.."""
+
+from __future__ import absolute_import
+
+import os
+import sys
+
+if os.name == 'posix':
+  # Hack to ensure that the right python wrappers for VTK are found. It could be the installed ones
+  VTK_INSTALL_DIR = "/usr/local"
+  sys.path.insert(0, os.path.join(VTK_INSTALL_DIR, "@SPS_PYTHON_SITE_PACKAGES_SUFFIX@"))
+else:
+  sys.path.insert(0, os.path.join("@VTK_PREFIX_PATH@",
+                                  "@VTK_PYTHONPATH@"))
+  
+# --------------------------------------
+@_sps_python_imports@
