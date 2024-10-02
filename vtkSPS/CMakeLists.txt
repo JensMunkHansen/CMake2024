@@ -24,9 +24,7 @@ list(APPEND CMAKE_MODULE_PATH ${sps_cmake_dir})
 include(spsVersion)
 set(SPS_VERSION
     "${SPS_MAJOR_VERSION}.${SPS_MINOR_VERSION}.${SPS_BUILD_VERSION}")
-#determine_version("${CMAKE_CURRENT_SOURCE_DIR}" "${GIT_EXECUTABLE}" "SPS")
 message("Building vtkSPS with version: ${SPS_VERSION}")
-
 
 set(sps_VTK_VERSION_MINIMUM 9.3)
 
@@ -42,12 +40,12 @@ option(SPS_BUILD_TESTING "Build the tessps" OFF)
 
 # Wrap Python option (requires that VTK is compiled with python wrappers)
 if(VTK_WRAP_PYTHON)
-  # Temporarily disable python wrappers!!!
-  option(BUILD_PYTHON_WRAPPERS "Build python wrappers" OFF)
+  option(BUILD_PYTHON_WRAPPERS "Build python wrappers" ON)
 
   # These are required if we want to create a wheels distribution
   set_property(GLOBAL PROPERTY _sps_python_soabi "${Python3_SOABI}")
   get_property(sps_soabi GLOBAL PROPERTY _sps_python_soabi)
+
   # TODO: Support release version of Python and verify debugging is working
   cmake_dependent_option(SPS_WINDOWS_PYTHON_DEBUGGABLE "Append `_d` to Python module names" OFF
     "WIN32;VTK_WRAP_PYTHON" OFF)
@@ -207,7 +205,7 @@ vtk_module_build(
   SOVERSION             "1" # If the library is small and should work as a remote module to VTK
   TEST_DATA_TARGET      SpsData
   INSTALL_HEADERS       "${SPS_INSTALL_SDK}"
-#  USE_FILE_SETS         ON
+  USE_FILE_SETS         ON
   BUILD_WITH_KITS       "${SPS_ENABLE_KITS}"
   USE_EXTERNAL          "${SPS_USE_EXTERNAL}"  
   TEST_INPUT_DATA_DIRECTORY   "${CMAKE_CURRENT_SOURCE_DIR}/Testing"
