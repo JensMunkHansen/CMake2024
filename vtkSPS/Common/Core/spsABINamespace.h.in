@@ -1,0 +1,14 @@
+#ifndef spsABINamespace_h
+#define spsABINamespace_h
+
+#ifndef SPS_NO_ABI_NAMESPACE
+#if defined(__cplusplus)
+#define SPS_ABI_NAMESPACE_BEGIN @SPS_ABI_NAMESPACE_BEGIN@
+#define SPS_ABI_NAMESPACE_END @SPS_ABI_NAMESPACE_END@
+#else
+#define SPS_ABI_NAMESPACE_BEGIN
+#define SPS_ABI_NAMESPACE_END
+#endif
+#endif // VTK_NO_SPS_ABI_NAMESPACE
+
+#endif // spsABINamespace_h
