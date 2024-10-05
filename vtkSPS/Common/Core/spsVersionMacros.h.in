@@ -14,7 +14,7 @@
 #define SPS_BUILD_VERSION @SPS_BUILD_VERSION@
 #define SPS_VERSION "@SPS_VERSION@"
 
-#define SPS_SOURCE_VERSION "ts version " SPS_VERSION
+#define SPS_SOURCE_VERSION "sps version " SPS_VERSION
 
 /* Macro for testing versions. */
 #define SPS_VERSION_CHECK(major, minor, build)                                                     \

@@ -276,7 +276,7 @@ if (SPS_BUILD_TESTING)
 endif()
 
 # Build examples. TODO: Include these like they do in VTK
-if (TS_BUILD_EXAMPLES)
+if (SPS_BUILD_EXAMPLES)
   message("Build examples enabled")
   add_subdirectory(Examples)
 endif()
