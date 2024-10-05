@@ -1,0 +1,19 @@
+NAME
+  SPS::FiltersModeling
+LIBRARY_NAME
+  spsFiltersModeling
+GROUPS
+  SpsFilters
+DEPENDS
+  VTK::CommonCore
+  VTK::CommonDataModel
+  VTK::CommonExecutionModel
+  VTK::CommonMisc
+  VTK::FiltersCore
+  VTK::FiltersModeling
+PRIVATE_DEPENDS
+  VTK::CommonMath
+  VTK::CommonSystem
+TEST_DEPENDS
+  VTK::TestingCore
+  VTK::TestingRendering

@@ -26,7 +26,7 @@ set(SPS_VERSION
     "${SPS_MAJOR_VERSION}.${SPS_MINOR_VERSION}.${SPS_BUILD_VERSION}")
 message("Building vtkSPS with version: ${SPS_VERSION}")
 
-set(sps_VTK_VERSION_MINIMUM 9.3)
+set(sps_VTK_VERSION_MINIMUM 9.1)
 
 find_package(VTK ${sps_VTK_VERSION_MINIMUM})
 
@@ -205,12 +205,12 @@ vtk_module_build(
   SOVERSION             "1" # If the library is small and should work as a remote module to VTK
   TEST_DATA_TARGET      SpsData
   INSTALL_HEADERS       "${SPS_INSTALL_SDK}"
-  USE_FILE_SETS         ON
   BUILD_WITH_KITS       "${SPS_ENABLE_KITS}"
   USE_EXTERNAL          "${SPS_USE_EXTERNAL}"  
   TEST_INPUT_DATA_DIRECTORY   "${CMAKE_CURRENT_SOURCE_DIR}/Testing"
   TEST_OUTPUT_DATA_DIRECTORY  "${CMAKE_CURRENT_BINARY_DIR}/ExternalData/Testing")
 
+  
 if(BUILD_PYTHON_WRAPPERS)
   find_package(PythonInterp ${VTK_PYTHON_VERSION} QUIET)
 
