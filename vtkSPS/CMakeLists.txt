@@ -216,7 +216,14 @@ vtk_module_build(
 
   
 if(BUILD_PYTHON_WRAPPERS)
-  find_package(PythonInterp ${VTK_PYTHON_VERSION} QUIET)
+  find_package(Python3
+    COMPONENTS
+    Interpreter
+    Development REQUIRED)
+
+  if(NOT VTK_PYTHON_VERSION VERSION_EQUAL Python3_VERSION_MAJOR)
+    message(FATAL_ERROR "Python versions must agree")
+  endif()
 
   vtk_module_wrap_python(
     MODULES             ${sps_modules}
