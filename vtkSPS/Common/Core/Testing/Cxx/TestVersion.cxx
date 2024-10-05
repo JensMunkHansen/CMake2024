@@ -1,12 +1,13 @@
 #include "spsVersion.h"
-#include "vtkVersion.h"
 #include "vtkNew.h"
+#include "vtkVersion.h"
 
-#include <iostream>
 #include <algorithm>
+#include <iostream>
 #include <string_view>
 
-int TestVersion(int argc, char* argv[]) {
+int TestVersion(int argc, char* argv[])
+{
   int retval;
 
 #if (VTK_VERSION_NUMBER >= VTK_VERSION_CHECK(9, 0, 0))
@@ -17,17 +18,17 @@ int TestVersion(int argc, char* argv[]) {
   retval |= EXIT_FAILURE;
 #endif
 
-#if TS_VERSION_NUMBER <= TS_VERSION_CHECK(0, 9, 0)
+#if SPS_VERSION_NUMBER <= SPS_VERSION_CHECK(0, 9, 0)
   retval |= EXIT_FAILURE;
 #endif
 
-#if !(TS_VERSION_NUMBER >= TS_VERSION_CHECK(0, 9, 0))
+#if !(SPS_VERSION_NUMBER >= SPS_VERSION_CHECK(0, 9, 0))
   retval |= EXIT_FAILURE;
 #endif
 
   vtkNew<spsVersion> versionInfo;
 
-  const char* spsVersion = versionInfo->GetTsVersionFull();
+  const char* spsVersion = versionInfo->GetSpsVersionFull();
 
   std::string_view svVersion(spsVersion);
 

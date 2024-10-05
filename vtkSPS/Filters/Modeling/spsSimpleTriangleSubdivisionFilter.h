@@ -1,18 +1,16 @@
-#include "vtkCellArray.h"
-#include "vtkCellArrayIterator.h"
-#include "vtkDoubleArray.h"
-#include "vtkFloatArray.h"
-#include "vtkIdList.h"
-#include "vtkObjectFactory.h"
-#include "vtkPointData.h"
-#include "vtkPolyData.h"
-#include "vtkPolyDataAlgorithm.h"
-#include "vtkSmartPointer.h"
+#pragma once
+
+#include <spsFiltersModelingModule.h>
+#include <vtkPolyDataAlgorithm.h>
+
+// Dependency could easily be hidden by moving some functions to implementation
 #include <array>
-#include <cmath>
 #include <vector>
 
-class spsSimpleTriangleSubdivisionFilter : public vtkPolyDataAlgorithm
+class vtkPointData;
+class vtkInformationVector;
+
+class SPSFILTERSMODELING_EXPORT spsSimpleTriangleSubdivisionFilter : public vtkPolyDataAlgorithm
 {
 public:
   static spsSimpleTriangleSubdivisionFilter* New();

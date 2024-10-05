@@ -1,10 +1,10 @@
-set(TS_BUILD_TESTING "OFF"
+set(SPS_BUILD_TESTING "OFF"
   CACHE STRING "Build module testing directories")
-set_property(CACHE TS_BUILD_TESTING
+set_property(CACHE SPS_BUILD_TESTING
   PROPERTY
     STRINGS "ON;OFF;WANT")
 
-if (TS_BUILD_TESTING)
+if (SPS_BUILD_TESTING)
   # TODO: Figure out if we want to use ExternalData 
   # include(tsExternalData)
 
