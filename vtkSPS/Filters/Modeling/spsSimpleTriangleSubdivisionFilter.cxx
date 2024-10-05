@@ -1,17 +1,10 @@
 #include <spsSimpleTriangleSubdivisionFilter.h>
-#include <vtkCellArray.h>
-#include <vtkCellArrayIterator.h>
-#include <vtkDoubleArray.h>
-#include <vtkFloatArray.h>
 #include <vtkIdList.h>
 #include <vtkObjectFactory.h>
 #include <vtkPointData.h>
-#include <vtkPolyData.h>
-#include <vtkPolyDataAlgorithm.h>
 #include <vtkSmartPointer.h>
 
 #include <array>
-#include <cmath>
 #include <vector>
 
 namespace

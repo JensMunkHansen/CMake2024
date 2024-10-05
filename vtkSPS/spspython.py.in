@@ -6,8 +6,8 @@ import os
 # Home-made additions to VTK
 filedir = os.path.dirname(os.path.realpath(__file__))
 if os.name == "posix":
-  filepath = os.path.join("@sps_BINARY_DIR@" + "lib/python%d.%d/site-packages" % (sys.version_info.major, sys.version_info.minor))
+  filepath = os.path.join("@sps_BINARY_DIR@/" + "lib/python%d.%d/site-packages" % (sys.version_info.major, sys.version_info.minor))
   sys.path.insert(0, filepath)
 else:
-  filepath = os.path.join("@sps_BINARY_DIR@" + "bin/Lib/site-packages")
+  filepath = os.path.join("@sps_BINARY_DIR@/" + "bin/Lib/site-packages")
   sys.path.insert(0, filepath)
