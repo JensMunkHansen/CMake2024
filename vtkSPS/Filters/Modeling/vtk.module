@@ -8,9 +8,5 @@ DEPENDS
   VTK::CommonCore
   VTK::CommonDataModel
   VTK::CommonExecutionModel
-  VTK::FiltersCore
-  VTK::FiltersModeling  
 PRIVATE_DEPENDS
-  VTK::CommonMath
-  VTK::CommonSystem
 TEST_DEPENDS
