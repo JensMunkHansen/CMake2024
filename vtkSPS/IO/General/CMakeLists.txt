@@ -9,9 +9,6 @@ set(SpsIOGeneral_OVERRIDE " override")
 set(SpsIOGeneral_DELETE " = delete")
 
 set(classes
-  vtkSpsPolyDataFileSeriesReader
-  spsPolyDataReaderCollection
-  spsPolyDataReaderFactory
   spsPolyDataPieceFilter
 )
 

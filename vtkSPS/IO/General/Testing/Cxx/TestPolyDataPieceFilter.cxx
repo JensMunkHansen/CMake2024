@@ -6,7 +6,6 @@
 #include <vtkSphereSource.h>
 #include <vtkStreamingDemandDrivenPipeline.h>
 #include <vtkTestUtilities.h>
-#include <vtkTesting.h>
 
 namespace
 {
