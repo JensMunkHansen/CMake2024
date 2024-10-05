@@ -1,4 +1,4 @@
-# CMakefile for ThreeShape VTK modules
+# CMakefile for custom VTK modules
 
 
 # All policies in range 3.8 - 3.12 is set to NEW.
@@ -69,6 +69,7 @@ add_library(SPS::spsbuild ALIAS spsbuild)
 #              Have impact on the produced binaries and compatiblity to hardware
 include(spsCompilerFlags)
 include(spsTesting)
+include(spsUtilities)
 
 option(SPS_RELOCATABLE_INSTALL "Do not embed hard-coded paths into the install" ON)
 mark_as_advanced(SPS_RELOCATABLE_INSTALL)
@@ -224,6 +225,7 @@ if(BUILD_PYTHON_WRAPPERS)
   if(NOT VTK_PYTHON_VERSION VERSION_EQUAL Python3_VERSION_MAJOR)
     message(FATAL_ERROR "Python versions must agree")
   endif()
+  configure_file(${CMAKE_CURRENT_SOURCE_DIR}/spspython.py.in ${CMAKE_CURRENT_SOURCE_DIR}/spspython.py @ONLY)
 
   vtk_module_wrap_python(
     MODULES             ${sps_modules}
@@ -281,6 +283,7 @@ if (SPS_BUILD_TESTING)
   #ExternalData_Add_Target(TsData)
   enable_testing()
 endif()
+
 
 # Build examples. TODO: Include these like they do in VTK
 if (SPS_BUILD_EXAMPLES)
