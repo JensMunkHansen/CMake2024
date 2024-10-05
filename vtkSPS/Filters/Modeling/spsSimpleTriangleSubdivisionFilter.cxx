@@ -14,16 +14,13 @@
 #include <cmath>
 #include <vector>
 
-spsSimpleTriangleSubdivisionFilter::spsSimpleTriangleSubdivisionFilter() = default;
-spsSimpleTriangleSubdivisionFilter::~spsSimpleTriangleSubdivisionFilter() = default;
+namespace
+{
+using Triangle = std::array<vtkIdType, 3>;
 
-// VTK macro to enable object creation
-vtkStandardNewMacro(spsSimpleTriangleSubdivisionFilter);
-
-// Estimate the number of points and triangles after subdivision
-void spsSimpleTriangleSubdivisionFilter::EstimateSubdivisionSize(vtkIdType numInputPoints,
-  vtkIdType numInputTriangles, vtkIdType& estimatedNumPoints, vtkIdType& estimatedNumTriangles,
-  int subdivisions)
+//------------------------------------------------------------------------------
+void EstimateSubdivisionSize(vtkIdType numInputPoints, vtkIdType numInputTriangles,
+  vtkIdType& estimatedNumPoints, vtkIdType& estimatedNumTriangles, int subdivisions)
 {
   // Estimate the number of triangles after subdivision
   estimatedNumTriangles = numInputTriangles * static_cast<vtkIdType>(std::pow(3, subdivisions));
@@ -33,9 +30,38 @@ void spsSimpleTriangleSubdivisionFilter::EstimateSubdivisionSize(vtkIdType numIn
   estimatedNumPoints = numInputPoints + numInputTriangles * (std::pow(3, subdivisions) - 1) / 2;
 }
 
-// Convert vtkCellArray to std::vector<std::array<vtkIdType, 3>>
-bool spsSimpleTriangleSubdivisionFilter::ConvertCellArrayToTriangles(
-  vtkCellArray* cells, std::vector<Triangle>& triangleList)
+//------------------------------------------------------------------------------
+void InitializeOutputPointData(vtkPointData* inputPointData, vtkPointData* outputPointData,
+  vtkIdType numInputPoints, vtkIdType estimatedNumPoints)
+{
+  // Loop through each array in inputPointData
+  for (int i = 0; i < inputPointData->GetNumberOfArrays(); ++i)
+  {
+    vtkDataArray* inputArray = inputPointData->GetArray(i);
+    if (inputArray)
+    {
+      // Create a matching array in the output point data
+      vtkSmartPointer<vtkDataArray> outputArray =
+        vtkSmartPointer<vtkDataArray>::Take(inputArray->NewInstance());
+      outputArray->SetName(inputArray->GetName());
+      outputArray->SetNumberOfComponents(inputArray->GetNumberOfComponents());
+      outputArray->SetNumberOfTuples(
+        estimatedNumPoints); // Pre-allocate for all points (existing + new)
+
+      // Copy the data from input to output for the existing points
+      for (vtkIdType j = 0; j < numInputPoints; ++j)
+      {
+        outputArray->SetTuple(j, inputArray->GetTuple(j));
+      }
+
+      // Add the output array to the output point data
+      outputPointData->AddArray(outputArray);
+    }
+  }
+}
+
+//------------------------------------------------------------------------------
+bool ConvertCellArrayToTriangles(vtkCellArray* cells, std::vector<Triangle>& triangleList)
 {
   vtkIdType npts;
   const vtkIdType* pts;
@@ -45,7 +71,6 @@ bool spsSimpleTriangleSubdivisionFilter::ConvertCellArrayToTriangles(
   {
     if (npts != 3)
     {
-      vtkErrorMacro("Non-triangle cell found. Input mesh must contain only triangles.");
       return false;
     }
     triangleList.push_back({ pts[0], pts[1], pts[2] });
@@ -53,10 +78,9 @@ bool spsSimpleTriangleSubdivisionFilter::ConvertCellArrayToTriangles(
   return true;
 }
 
-// Recursive function to subdivide triangles
-void spsSimpleTriangleSubdivisionFilter::SubdivideTriangleRecursive(vtkPoints* points,
-  vtkPointData* outputPointData, std::vector<Triangle>& triangles, int depth, vtkIdType p0,
-  vtkIdType p1, vtkIdType p2)
+//------------------------------------------------------------------------------
+void SubdivideTriangleRecursive(vtkPoints* points, vtkPointData* outputPointData,
+  std::vector<Triangle>& triangles, int depth, vtkIdType p0, vtkIdType p1, vtkIdType p2)
 {
   if (depth == 0)
   {
@@ -98,78 +122,20 @@ void spsSimpleTriangleSubdivisionFilter::SubdivideTriangleRecursive(vtkPoints* p
   triangles.push_back({ p2, p0, centroidId });
   SubdivideTriangleRecursive(points, outputPointData, triangles, depth - 1, p2, p0, centroidId);
 }
-
-void spsSimpleTriangleSubdivisionFilter::InitializeOutputPointData(
-  vtkPointData* inputPointData, vtkPointData* outputPointData, vtkIdType estimatedNumPoints)
-{
-  // Deep copy all the existing input point data to the output
-  outputPointData->DeepCopy(inputPointData);
-
-  // Resize the output arrays to hold the estimated number of points
-  for (int i = 0; i < outputPointData->GetNumberOfArrays(); ++i)
-  {
-    vtkDataArray* outputArray = outputPointData->GetArray(i);
-    if (outputArray)
-    {
-      outputArray->Resize(estimatedNumPoints); // Pre-allocate for new points
-    }
-  }
 }
 
-void spsSimpleTriangleSubdivisionFilter::InitializeOutputPointData(vtkPointData* inputPointData,
-  vtkPointData* outputPointData, vtkIdType numInputPoints, vtkIdType estimatedNumPoints)
-{
-  // Loop through each array in inputPointData
-  for (int i = 0; i < inputPointData->GetNumberOfArrays(); ++i)
-  {
-    vtkDataArray* inputArray = inputPointData->GetArray(i);
-    if (inputArray)
-    {
-      // Create a matching array in the output point data
-      vtkSmartPointer<vtkDataArray> outputArray =
-        vtkSmartPointer<vtkDataArray>::Take(inputArray->NewInstance());
-      outputArray->SetName(inputArray->GetName());
-      outputArray->SetNumberOfComponents(inputArray->GetNumberOfComponents());
-      outputArray->SetNumberOfTuples(
-        estimatedNumPoints); // Pre-allocate for all points (existing + new)
+//------------------------------------------------------------------------------
+spsSimpleTriangleSubdivisionFilter::spsSimpleTriangleSubdivisionFilter() = default;
 
-      // Copy the data from input to output for the existing points
-      for (vtkIdType j = 0; j < numInputPoints; ++j)
-      {
-        outputArray->SetTuple(j, inputArray->GetTuple(j));
-      }
+//------------------------------------------------------------------------------
+spsSimpleTriangleSubdivisionFilter::~spsSimpleTriangleSubdivisionFilter() = default;
 
-      // Add the output array to the output point data
-      outputPointData->AddArray(outputArray);
-    }
-  }
-}
+// VTK macro to enable object creation
+vtkStandardNewMacro(spsSimpleTriangleSubdivisionFilter);
 
-void spsSimpleTriangleSubdivisionFilter::PreAllocateOutputPointData(
-  vtkPointData* inputPointData, vtkPointData* outputPointData, vtkIdType estimatedNumPoints)
-{
-  // Loop through each array in inputPointData
-  for (int i = 0; i < inputPointData->GetNumberOfArrays(); ++i)
-  {
-    vtkDataArray* inputArray = inputPointData->GetArray(i);
-    if (inputArray)
-    {
-      // Create a matching array in the output point data
-      vtkSmartPointer<vtkDataArray> outputArray =
-        vtkSmartPointer<vtkDataArray>::Take(inputArray->NewInstance());
-      outputArray->SetName(inputArray->GetName());
-      outputArray->SetNumberOfComponents(inputArray->GetNumberOfComponents());
-      outputArray->SetNumberOfTuples(estimatedNumPoints); // Pre-allocate based on estimated points
-
-      // Add the output array to the output point data
-      outputPointData->AddArray(outputArray);
-    }
-  }
-}
-
-// Main function that executes the subdivision
-int spsSimpleTriangleSubdivisionFilter::RequestData(
-  vtkInformation*, vtkInformationVector** inputVector, vtkInformationVector* outputVector)
+//------------------------------------------------------------------------------
+int spsSimpleTriangleSubdivisionFilter::RequestData(vtkInformation* vtkNotUsed(request),
+  vtkInformationVector** inputVector, vtkInformationVector* outputVector)
 {
   // Get the input and output polydata
   vtkPolyData* input = vtkPolyData::GetData(inputVector[0]);
@@ -186,6 +152,7 @@ int spsSimpleTriangleSubdivisionFilter::RequestData(
   std::vector<Triangle> triangles;
   if (!ConvertCellArrayToTriangles(input->GetPolys(), triangles))
   {
+    vtkErrorMacro("Non-triangle cell found. Input mesh must contain only triangles.");
     return 0; // Error if non-triangle cells are found
   }
 
@@ -211,8 +178,10 @@ int spsSimpleTriangleSubdivisionFilter::RequestData(
   // Set up point data copying (interpolated in recursion)
   vtkPointData* inputPointData = input->GetPointData();
   vtkPointData* outputPointData = output->GetPointData();
-  this->InitializeOutputPointData(
-    inputPointData, outputPointData, numInputPoints, estimatedNumPoints);
+
+  // outputPointData->InterpolateAllocate(inputPointData, estimatedNumPoints);
+
+  InitializeOutputPointData(inputPointData, outputPointData, numInputPoints, estimatedNumPoints);
 
   // Pre-allocate vector for subdivided triangles
   std::vector<Triangle> subdividedTriangles;
