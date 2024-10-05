@@ -124,6 +124,8 @@ mark_as_advanced(SPS_BUILD_ALL_MODULES)
 list(APPEND sps_requested_modules
   SPS::CommonCore
   SPS::CommonDataModel
+  SPS::FiltersModeling
+  SPS::IOGeneral
 )
 
 # Option for clearing modules
@@ -143,6 +145,8 @@ endif ()
 # Directories to search for modules
 set(sps_source_directories
   "${CMAKE_CURRENT_SOURCE_DIR}/Common"
+  "${CMAKE_CURRENT_SOURCE_DIR}/Filters"
+  "${CMAKE_CURRENT_SOURCE_DIR}/IO"
 )
 
 # Find all modules described in vtk.module files

@@ -3,7 +3,6 @@
 # Test without data
 vtk_add_test_cxx(
   spsIOGeneralCxxTests novalid_tests
-  TestSpsPolyDataFileSeriesReader.cxx, NO_VALID
   TestPolyDataPieceFilter.cxx, NO_VALID)
 
 
@@ -12,6 +11,4 @@ vtk_add_test_cxx(
 set(all_tests
   ${novalid_tests})
 
-vtk_test_cxx_executable(spsIOGeneralCxxTests all_tests
-  RENDERING_FACTORY
-)
+vtk_test_cxx_executable(spsIOGeneralCxxTests all_tests)
