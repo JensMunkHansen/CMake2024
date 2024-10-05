@@ -10,3 +10,5 @@ TODO: Write an introduction
 Install python, activate, build artifactory (shared + python)
 Build SPS, VTK_DIR=artifactory
 RegressionTest
+
+./VTK/Utilities/Maintenance/FindNeededModules.py -j modules.json -s source.cxx
