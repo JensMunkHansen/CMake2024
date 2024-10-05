@@ -126,6 +126,7 @@ list(APPEND sps_requested_modules
   SPS::CommonCore
   SPS::CommonDataModel
   SPS::FiltersModeling
+  SPS::FiltersCore
   SPS::IOGeneral
 )
 

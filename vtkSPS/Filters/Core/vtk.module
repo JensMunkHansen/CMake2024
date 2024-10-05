@@ -1,0 +1,38 @@
+NAME
+  SPS::FiltersCore
+LIBRARY_NAME
+  spsFiltersCore # We do not need the prefix if static build
+GROUPS
+  SpsFilters
+DEPENDS
+  VTK::CommonCore
+  VTK::CommonDataModel
+  VTK::CommonExecutionModel
+  VTK::CommonMisc
+  VTK::FiltersCore
+  SPS::CommonCore
+  SPS::CommonDataModel
+PRIVATE_DEPENDS
+  VTK::CommonMath
+  VTK::CommonSystem
+  VTK::CommonTransforms
+  VTK::FiltersGeneral
+  VTK::eigen
+  VTK::vtksys
+TEST_DEPENDS
+  VTK::CommonColor
+  VTK::CommonComputationalGeometry
+  VTK::CommonDataModel
+  VTK::CommonSystem
+  VTK::FiltersPoints
+  VTK::FiltersSources
+  VTK::FiltersGeometry
+  VTK::ImagingCore
+  VTK::InteractionImage
+  VTK::InteractionStyle
+  VTK::RenderingAnnotation
+  VTK::RenderingLOD
+  VTK::RenderingOpenGL2
+  VTK::RenderingVolumeOpenGL2
+  VTK::TestingCore
+  VTK::TestingRendering
