@@ -35,3 +35,4 @@ build_Release/
 SHIT
 /**/*.wasm
 /**/*.map
+spspython.py
