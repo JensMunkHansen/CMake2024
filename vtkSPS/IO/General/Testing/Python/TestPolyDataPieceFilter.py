@@ -1,13 +1,13 @@
 import addpaths
 
 from spsmodules.spsIOGeneral import spsPolyDataPieceFilter
+from spsmodules.util.scene_utils import vtk_color_all_cells
 
 # noinspection PyUnresolvedReferences
 import vtkmodules.vtkInteractionStyle
 # noinspection PyUnresolvedReferences
 import vtkmodules.vtkRenderingOpenGL2
 
-from vtkmodules.vtkCommonColor import vtkNamedColors
 from vtkmodules.vtkCommonDataModel import vtkPolyData
 from vtkmodules.vtkCommonCore import vtkUnsignedCharArray
 from vtkmodules.vtkCommonExecutionModel import vtkStreamingDemandDrivenPipeline
@@ -20,24 +20,7 @@ from vtkmodules.vtkRenderingCore import (
     vtkPolyDataMapper)
 from vtkmodules.vtkFiltersParallel import vtkPieceRequestFilter
 
-from vtk.util.numpy_support import vtk_to_numpy
-from vtk.util.numpy_support import numpy_to_vtk
-
 import numpy as np
-
-namedColors = vtkNamedColors()
-
-def colorMesh(polyData:vtkPolyData, iPiece):
-    colors = vtkUnsignedCharArray()
-    colors.SetNumberOfComponents(3)
-    colors.SetNumberOfTuples(polyData.GetNumberOfCells())
-    colorName = namedColors.GetColorNames().split('\n')[iPiece]
-    rgb = [0.0, 0.0, 0.0]
-    namedColors.GetColorRGB(colorName, rgb)
-    colors.FillComponent(0, 255*rgb[0])
-    colors.FillComponent(1, 255*rgb[1])
-    colors.FillComponent(2, 255*rgb[2])
-    polyData.GetCellData().SetScalars(colors)
 
 sphereSource = vtkSphereSource();
 sphereSource.SetThetaResolution(30);
@@ -76,7 +59,7 @@ for iPiece in range(nPieces):
     print("#cells: " + str(polyData.GetNumberOfCells()))
     print("#points: " + str(polyData.GetNumberOfPoints()))
     # Color the mesh
-    colorMesh(polyData, iPiece)
+    vtk_color_all_cells(polyData)
     # Display
     mapper = vtkPolyDataMapper()
     mapper.SetInputData(polyData)
