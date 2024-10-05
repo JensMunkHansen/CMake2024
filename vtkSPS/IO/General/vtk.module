@@ -5,11 +5,14 @@ LIBRARY_NAME
 GROUPS
   SpsIO
 DEPENDS
+  VTK::CommonCore
   VTK::CommonDataModel
   VTK::CommonExecutionModel
 PRIVATE_DEPENDS
   VTK::FiltersCore
 TEST_DEPENDS
+  VTK::CommonCore
+  VTK::CommonExecutionModel
   VTK::FiltersCore
   VTK::FiltersSources
   VTK::TestingCore
