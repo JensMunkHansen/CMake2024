@@ -87,6 +87,7 @@ def _windows_dll_path_extra():
     # Add all the directories - use site prefix
     os.add_dll_directory(VTK_PYTHON_BINARY_DIR)
     os.add_dll_directory(VTK_BINARY_DIR)
+    # TODO: Missing bin, should be build/bin/Release
     os.add_dll_directory(spsbindir)
     if QT_BINARY_DIR is not None:
         os.add_dll_directory(QT_BINARY_DIR)
