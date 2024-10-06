@@ -79,6 +79,10 @@ def _windows_dll_path_extra():
                          "@VTK_PYTHONPATH@"),
             "vtkmodules")
         VTK_BINARY_DIR = os.path.join("@VTK_PREFIX_PATH@", "bin/" + config).replace("\\","/")
+        if not os.path.exists(VTK_BINARY_DIR):
+            # Try without configuration
+            VTK_BINARY_DIR = os.path.join("@VTK_PREFIX_PATH@", "bin").replace("\\","/")
+            
 
     # Add all the directories - use site prefix
     os.add_dll_directory(VTK_PYTHON_BINARY_DIR)

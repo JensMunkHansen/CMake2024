@@ -35,7 +35,7 @@ set PATH="C:/Program Files/Python312";%PATH%
 call "C:\Program Files\Microsoft Visual Studio\2022\Professional\VC\Auxiliary\Build\vcvarsall.bat" x64
 cd build_Release
 
-cmake --build . --config Release --target install
+cmake --build . --config Release --target install -j 16
 goto :eof
 
 :Debug
@@ -47,7 +47,7 @@ call "C:\Program Files\Microsoft Visual Studio\2022\Professional\VC\Auxiliary\Bu
 
 cd build_Debug
 
-cmake --build . --config Debug --target install
+cmake --build . --config Debug --target install -j 16
 
 goto :eof
 
