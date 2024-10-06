@@ -231,6 +231,8 @@ if(BUILD_PYTHON_WRAPPERS)
 
   # Test remove _d from python libraries
   if (MSVC)
+    message("We remove postfix")
+    message(${Python3_LIBRARIES})
     string(REPLACE "_d" "" Python3_LIBRARIES "${Python3_LIBRARIES}")
   endif()
   
@@ -266,6 +268,11 @@ if(BUILD_PYTHON_WRAPPERS)
     # TODO: Find real target and remove "_d"
   endforeach()
 
+  set_target_properties(spsFiltersCorePython
+    PROPERTIES
+    DEBUG_POSTFIX "")
+  
+  
   add_subdirectory(Wrapping/Python)
 
   export(
