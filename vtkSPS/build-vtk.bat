@@ -35,19 +35,19 @@ set PATH="C:/Program Files/Python312";%PATH%
 call "C:\Program Files\Microsoft Visual Studio\2022\Professional\VC\Auxiliary\Build\vcvarsall.bat" x64
 cd build_Release
 
-cmake --build . --config Release --target install -j 16
+cmake --build . --config Release --target install -j 8
 goto :eof
 
 :Debug
 mkdir build_Debug
 
-cmake -HC:/VTK/VTK -BC:/VTK/build_Debug -G "Visual Studio 17 2022" -A "x64" -DCMAKE_CXX_MP_FLAG=ON -DVTK_WRAP_PYTHON=ON -DVTK_WINDOWS_PYTHON_DEBUGGABLE=ON
+cmake -HC:/VTK/VTK -BC:/VTK/build_Debug -G "Visual Studio 17 2022" -A "x64" -DCMAKE_CXX_MP_FLAG=ON -DVTK_WRAP_PYTHON=ON -DVTK_WINDOWS_PYTHON_DEBUGGABLE=ON -DVTK_WINDOWS_PYTHON_DEBUGGABLE_REPLACE_SUFFIX=ON
 
 call "C:\Program Files\Microsoft Visual Studio\2022\Professional\VC\Auxiliary\Build\vcvarsall.bat" x64
 
 cd build_Debug
 
-cmake --build . --config Debug --target install -j 16
+cmake --build . --config Debug --target install -j 8
 
 goto :eof
 
