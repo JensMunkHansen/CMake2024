@@ -50,6 +50,9 @@ if(VTK_WRAP_PYTHON)
   cmake_dependent_option(SPS_WINDOWS_PYTHON_DEBUGGABLE "Append `_d` to Python module names" OFF
     "WIN32;VTK_WRAP_PYTHON" OFF)
   mark_as_advanced(SPS_WINDOWS_PYTHON_DEBUGGABLE)
+  cmake_dependent_option(SPS_WINDOWS_PYTHON_DEBUGGABLE_REPLACE_SUFFIX "Replace any other debug suffix for Python module names" OFF
+    "SPS_WINDOWS_PYTHON_DEBUGGABLE" OFF)
+  mark_as_advanced(SPS_WINDOWS_PYTHON_DEBUGGABLE_REPLACE_SUFFIX)  
 else()
   unset(BUILD_PYTHON_WRAPPERS CACHE)
 endif()
@@ -238,6 +241,7 @@ if(BUILD_PYTHON_WRAPPERS)
     INSTALL_HEADERS     "${SPS_INSTALL_SDK}"
     SOABI               "${sps_soabi}" # TODO: Needed for a future wheels build
     USE_DEBUG_SUFFIX    "${SPS_WINDOWS_PYTHON_DEBUGGABLE}"
+    REPLACE_DEBUG_SUFFIX "${SPS_WINDOWS_PYTHON_DEBUGGABLE_REPLACE_SUFFIX}"
     UTILITY_TARGET      "SPS::spsbuild"
     WRAPPED_MODULES     sps_python_wrapped_modules
     BUILD_STATIC        OFF) # We do not support static python wrappers
