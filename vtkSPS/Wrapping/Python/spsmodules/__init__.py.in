@@ -73,7 +73,7 @@ def _windows_dll_path_extra():
         VTK_BINARY_DIR = os.path.join(filedir, "../vtkmodules")
     else:
         # For the build tree (assume building next to top dir)
-        spsbindir = os.path.normpath(os.path.join(filedir, "../../../" + config))
+        spsbindir = os.path.normpath(os.path.join(filedir, "../../../bin/" + config))
         VTK_PYTHON_BINARY_DIR = os.path.join(
             os.path.join("@VTK_PREFIX_PATH@",
                          "@VTK_PYTHONPATH@"),
