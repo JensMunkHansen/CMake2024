@@ -26,6 +26,10 @@ if %myArg% == DEBUG (
 mkdir build_Release
 cmake -HC:/VTK/VTK -BC:/VTK/build_Release -G "Visual Studio 17 2022" -A "x64" -DCMAKE_CXX_MP_FLAG=ON -DVTK_WRAP_PYTHON=ON -DVTK_WINDOWS_PYTHON_DEBUGGABLE=ON
 
+REM /passive
+REM /quiet /uninstall
+REM /quiet InstallAllUsers=1 PrependPath=1 Include_dev=1 Include_pip=1 Include_symbols=1
+
 set PATH="C:/Program Files/Python312";%PATH%
 
 call "C:\Program Files\Microsoft Visual Studio\2022\Professional\VC\Auxiliary\Build\vcvarsall.bat" x64
