@@ -229,6 +229,11 @@ if(BUILD_PYTHON_WRAPPERS)
     Interpreter
     Development REQUIRED)
 
+  # Test remove _d from python libraries
+  if (MSVC)
+    string(REPLACE "_d" "" Python3_LIBRARIES "${Python3_LIBRARIES}")
+  endif()
+  
   if(NOT VTK_PYTHON_VERSION VERSION_EQUAL Python3_VERSION_MAJOR)
     message(FATAL_ERROR "Python versions must agree")
   endif()
