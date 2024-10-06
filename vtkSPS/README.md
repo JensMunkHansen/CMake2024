@@ -3,6 +3,12 @@
 Introduction
 ================
 
+1. You need os.add_dll_directory (build tree)
+2. VTK works with python release
+3. TODO: Make my code use release of python
+
+Put sitecustomize.py into VIRTUAL_ENV\Lib\site-packages\
+
 TODO: Write an introduction
 
 * [Doc](./Doc) Documentation with developer guidelines

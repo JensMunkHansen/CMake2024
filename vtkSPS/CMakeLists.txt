@@ -20,7 +20,6 @@ project(sps
 set(sps_cmake_dir ${CMAKE_CURRENT_SOURCE_DIR}/CMake)
 list(APPEND CMAKE_MODULE_PATH ${sps_cmake_dir})
 
-
 include(spsVersion)
 set(SPS_VERSION
     "${SPS_MAJOR_VERSION}.${SPS_MINOR_VERSION}.${SPS_BUILD_VERSION}")
@@ -28,10 +27,12 @@ message("Building vtkSPS with version: ${SPS_VERSION}")
 
 set(sps_VTK_VERSION_MINIMUM 9.1)
 
-find_package(VTK ${sps_VTK_VERSION_MINIMUM})
-
-if(VTK_VERSION VERSION_LESS spsVTK_VERSION_MINIMUM)
-  message(FATAL_ERROR "VTK ${spsVTK_VERSION_MINIMUM} or later is required.")
+find_package(VTK ${sps_VTK_VERSION_MINIMUM} REQUIRED)
+if (VTK_FOUND)
+  message("-- Found VTK with version: ${VTK_VERSION}")
+endif()
+if(VTK_VERSION VERSION_LESS sps_VTK_VERSION_MINIMUM)
+  message(FATAL_ERROR "VTK ${sps_VTK_VERSION_MINIMUM} or later is required.")
 endif()
 
 option(BUILD_SHARED_LIBS "Build shared libraries." OFF)
@@ -200,6 +201,8 @@ if (SPS_CUSTOM_LIBRARY_SUFFIX STREQUAL "<DEFAULT>")
   endif ()
 endif ()
 
+set(_vtk_python_USE_DEBUG_SUFFIX OFF)
+
 vtk_module_build(
   MODULES               ${sps_modules}
   KITS                  ${sps_kits}
@@ -231,6 +234,11 @@ if(BUILD_PYTHON_WRAPPERS)
   endif()
   configure_file(${CMAKE_CURRENT_SOURCE_DIR}/spspython.py.in ${CMAKE_CURRENT_SOURCE_DIR}/spspython.py @ONLY)
 
+  if (NOT ${SPS_WINDOWS_PYTHON_DEBUGGABLE})
+    message("Removing postfix")
+    set(CMAKE_DEBUG_POSTFIX "")
+    set(VTK_WINDOWS_PYTHON_DEBUGGABLE OFF)
+  endif()
   vtk_module_wrap_python(
     MODULES             ${sps_modules}
     INSTALL_EXPORT      SPSPython
@@ -250,6 +258,7 @@ if(BUILD_PYTHON_WRAPPERS)
   message("Wrapped modules include:")
   foreach(sps_python_wrapped_module ${sps_python_wrapped_modules})
     message("  ${sps_python_wrapped_module}")
+    # TODO: Find real target and remove "_d"
   endforeach()
 
   add_subdirectory(Wrapping/Python)

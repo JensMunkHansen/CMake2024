@@ -30,7 +30,7 @@ REM /passive
 REM /quiet /uninstall
 REM /quiet InstallAllUsers=1 PrependPath=1 Include_dev=1 Include_pip=1 Include_symbols=1
 
-set PATH="C:/Program Files/Python312";%PATH%
+set PATH="C:\Program Files\Python312";%PATH%
 
 call "C:\Program Files\Microsoft Visual Studio\2022\Professional\VC\Auxiliary\Build\vcvarsall.bat" x64
 cd build_Release
