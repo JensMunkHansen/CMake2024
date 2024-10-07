@@ -306,7 +306,7 @@ if (SPS_BUILD_TESTING)
     endif()
   endif()
   # TODO: Decide if we want to use CMake's ExternalData functionality
-  #ExternalData_Add_Target(TsData)
+  ExternalData_Add_Target(SpsData)
   enable_testing()
 endif()
 
