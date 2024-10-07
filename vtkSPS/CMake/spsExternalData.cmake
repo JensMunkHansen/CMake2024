@@ -50,7 +50,6 @@ if(NOT SPS_FORBID_DOWNLOADS)
     # Data shared from local machine
     #"file:////DK-DTC-JEHN/Users/jens hansen/assets/data/%(algo)/%(hash)"
     "${SPS_FALLBACK_DATA_DIR}/{name}"
-    "${CMAKE_CURRENT_SOURCE_DIR}/Filters/Modeling/Testing/Data/Baseline/{name}"
   )
 endif()
 
