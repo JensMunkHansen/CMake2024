@@ -22,8 +22,7 @@ static char TestPolyDataPieceFilter2Log[] = "# StreamVersion 1.2\n"
                                             "ExposeEvent 0 299 0 0 0 0 0\n"
                                             "RenderEvent 0 299 0 0 0 0 0\n"
                                             "RenderEvent 0 299 0 0 0 0 0\n"
-                                            "EnterEvent 172 8 0 0 0 0 0\n"
-                                            "LeaveEvent 221 301 0 0 0 0 0\n";
+                                            "EnterEvent 172 8 0 0 0 0 0\n";
 
 namespace
 {
@@ -48,10 +47,12 @@ int TestPolyDataPieceFilter2(int argc, char* argv[])
 
   vtkNew<spsPolyDataPieceFilter> pieceFilter;
   pieceFilter->SetInputConnection(sphereSource->GetOutputPort());
+  // pieceFilter->SetInputData(sphereSource->GetOutput());
 
   // Renderer and window setup
   vtkNew<vtkRenderer> renderer;
   vtkNew<vtkRenderWindow> renderWindow;
+  renderWindow->SetWindowName("TestPolyDataPieceFilter2");
   renderWindow->AddRenderer(renderer);
   vtkNew<vtkRenderWindowInteractor> interactor;
   interactor->SetRenderWindow(renderWindow);
