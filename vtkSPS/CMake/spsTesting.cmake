@@ -5,8 +5,7 @@ set_property(CACHE SPS_BUILD_TESTING
     STRINGS "ON;OFF;WANT")
 
 if (SPS_BUILD_TESTING)
-  # TODO: Figure out if we want to use ExternalData 
-  # include(tsExternalData)
+  include(spsExternalData)
 
   # Use ctest for dashboard submissions
   include(CTest)

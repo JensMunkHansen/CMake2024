@@ -10,3 +10,8 @@ DEPENDS
   VTK::CommonExecutionModel
 PRIVATE_DEPENDS
 TEST_DEPENDS
+  VTK::FiltersSources
+  VTK::RenderingCore  
+  VTK::RenderingOpenGL2
+  VTK::TestingCore
+  VTK::TestingRendering
