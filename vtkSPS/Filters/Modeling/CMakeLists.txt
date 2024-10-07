@@ -1,10 +1,5 @@
-# Configuration header - not used
 set(SpsFiltersModeling_BUILD_SHARED_LIBS ${BUILD_SHARED_LIBS})
 set(SpsFiltersModeling_BUILD_TESTING ${BUILD_TESTING})
-
-# Only needed for old compiler support - not used here
-set(SpsFiltersModeling_OVERRIDE " override")
-set(SpsFiltersModeling_DELETE " = delete")
 
 # Create the library
 set(classes

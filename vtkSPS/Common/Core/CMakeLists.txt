@@ -37,10 +37,6 @@ configure_file(
 set(SpsCommonCore_BUILD_SHARED_LIBS ${BUILD_SHARED_LIBS})
 set(SpsCommonCore_BUILD_TESTING ${BUILD_TESTING})
 
-# Only needed for old compiler support - not used here
-set(SpsCommonCore_OVERRIDE " override")
-set(SpsCommonCore_DELETE " = delete")
-
 # TODO: Get this from .git
 set(SPS_BUILD_VERSION 1)
 configure_file(spsVersionFull.h.in spsVersionFull.h)

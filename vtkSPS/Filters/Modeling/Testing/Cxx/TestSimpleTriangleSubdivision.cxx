@@ -20,8 +20,7 @@ static char TestSimpleTriangleSubdivisionLog[] = "# StreamVersion 1.2\n"
                                                  "ExposeEvent 0 299 0 0 0 0 0\n"
                                                  "RenderEvent 0 299 0 0 0 0 0\n"
                                                  "RenderEvent 0 299 0 0 0 0 0\n"
-                                                 "EnterEvent 172 8 0 0 0 0 0\n"
-                                                 "LeaveEvent 221 301 0 0 0 0 0\n";
+                                                 "EnterEvent 172 8 0 0 0 0 0\n";
 
 namespace
 {
@@ -78,6 +77,13 @@ int TestSimpleTriangleSubdivision(int argc, char* argv[])
   retval |= !(nOutputCells == nInputCells * static_cast<vtkIdType>(std::pow(3, nSubdivisions)));
   retval |= !(nOutputPoints == nInputPoints + nInputCells * (std::pow(3, nSubdivisions) - 1) / 2);
 
+  std::cout << "nOutputCells: " << nOutputCells << std::endl;
+  std::cout << "nOutputPoints: " << nOutputPoints << std::endl;
+
+  if (retval != 0)
+  {
+    return 1;
+  }
   // Visual test (regression)
   // Create the render window, renderer and interactor->
   vtkNew<vtkRenderer> renderer;
@@ -103,7 +109,5 @@ int TestSimpleTriangleSubdivision(int argc, char* argv[])
   renderer->GetActiveCamera()->Zoom(0.5);
   renderWindow->Render();
 
-  // interactor->Start();
-  //  return EXIT_SUCCESS;
   return vtkTesting::InteractorEventLoop(argc, argv, interactor, TestSimpleTriangleSubdivisionLog);
 }

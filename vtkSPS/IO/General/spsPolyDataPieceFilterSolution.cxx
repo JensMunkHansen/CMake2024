@@ -39,10 +39,18 @@ int spsPolyDataPieceFilter::RequestInformation(vtkInformation* vtkNotUsed(reques
   vtkInformation* inInfo = inputVector[0]->GetInformationObject(0);
   vtkInformation* outInfo = outputVector->GetInformationObject(0);
   vtkNotUsed(outInfo);
+  int canHandlePieceRequest = inInfo->Get(vtkAlgorithm::CAN_HANDLE_PIECE_REQUEST());
 
-  // TODO: Figure out if upstream filter CAN_HANDLE_PIECE_REQUEST() and is not
-  //       a simple produce, ie.e. vtkTrivialProducer.
-
+  vtkTrivialProducer* trivialProducer = vtkTrivialProducer::SafeDownCast(
+    this->GetInputConnection(/* port */ 0, /* index */ 0)->GetProducer());
+  if (trivialProducer || !canHandlePieceRequest)
+  {
+    this->PiecesHandledUpstream = false;
+  }
+  else
+  {
+    this->PiecesHandledUpstream = true;
+  }
   return 1;
 }
 
