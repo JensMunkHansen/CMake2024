@@ -36,3 +36,5 @@ SHIT
 /**/*.wasm
 /**/*.map
 spspython.py
+VTK/
+python-3.12.7-amd64.exe
