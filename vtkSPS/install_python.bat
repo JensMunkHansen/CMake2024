@@ -113,6 +113,19 @@ IF ERRORLEVEL 1 (
     exit /b 1
 )
 
+python -m numpy --version >nul 2>&1
+IF ERRORLEVEL 1 (
+    echo Installing NumPy in the virtual environment...
+    pip install numpy
+) else (
+    echo NumPy is already installed.
+)
+
+IF ERRORLEVEL 1 (
+    echo Failed to install NumPy.
+    exit /b 1
+)
+
 :: Activate the virtual environment
 call "%PYTHON_VENV_PATH%\%PYTHON_VENV_NAME%\Scripts\deactivate"
 
