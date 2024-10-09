@@ -2,7 +2,6 @@
 echo "Simple installer for compiling VTK in C:/VTK without Qt and Python support"
 SetLocal EnableDelayedExpansion
 
-@echo off
 IF "%PKG_ROOT%"=="" (
    ECHO Environment variable PKG_ROOT is NOT set. Example "PKG_ROOT = C:\Artifactory"
    goto :eof
@@ -28,8 +27,6 @@ if exist "%~dp0\VTK" (
 ) else (
   git -c advice.detachedHead=false clone --depth 1 https://gitlab.kitware.com/vtk/vtk.git VTK
 )
-
-REM git@github.com:3ShapeInternal/VTK.git
 
 if %myArg% == DEBUG (
   goto :Debug
