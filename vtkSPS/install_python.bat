@@ -1,11 +1,25 @@
 @echo off
 
+pushd %~dp0
+
+:: Get the user's home directory
+set HOME_DIR="%USERPROFILE%"
+
 :: Path to the Python installer
 set PYTHON_INSTALLER=python-3.12.7-amd64.exe
 REM set PYTHON_INSTALL_DIR="C:\Python312"
 set PYTHON_INSTALL_DIR=%LOCALAPPDATA%\Programs\Python\Python312
 
 set PYTHON_DOWNLOAD_URL=https://www.python.org/ftp/python/3.12.7/python-3.12.7-amd64.exe
+
+set PYTHON_VENV_PATH="%HOME_DIR%\Environments"
+set PYTHON_VENV_NAME="Python312"
+
+set SITECUSTOMIZE_FILE=%PYTHON_VENV_PATH%\%PYTHON_VENV_NAME%\Lib\site-packages\sitecustomize.py
+
+IF NOT EXIST %PYTHON_VENV_PATH% (
+    mdir "%PYTHON_VENV_PATH%"
+)
 
 :: Check if Python installer exists in the current directory
 IF NOT EXIST %PYTHON_INSTALLER% (
@@ -56,5 +70,70 @@ IF ERRORLEVEL 1 (
     exit /b 1
 )
 
-echo Python 3.12 and virtualenv installed successfully in %PYTHON_INSTALL_DIR%.
+:: Check if the virtual environment already exists in the user's home directory
+if exist "%PYTHON_VENV_PATH%\%PYTHON_VENV_NAME%\Scripts\activate" (
+    echo Virtual environment already exists in %PYTHON_VENV_PATH%.
+) else (
+    echo Creating virtual environment using virtualenv in %PYTHON_VENV_PATH%...
+
+    :: Create the directory for the environment
+    mkdir "%PYTHON_VENV_PATH%"
+
+    cd /D "%PYTHON_VENV_PATH%"
+    :: Create the virtual environment in the user's home directory
+    "%PYTHON_INSTALL_DIR%\python.exe" -m virtualenv "%PYTHON_VENV_NAME%"
+
+    IF ERRORLEVEL 1 (
+        echo Failed to create virtual environment.
+        exit /b 1
+    )
+    cd /D "%~dp0"
+)
+
+:: Activate the virtual environment
+call "%PYTHON_VENV_PATH%\%PYTHON_VENV_NAME%\Scripts\activate"
+
+:: Upgrade pip inside the virtual environment
+echo Upgrading pip inside the virtual environment...
+python -m pip install --upgrade pip
+
+:: Check if IPython is installed in the virtual environment
+python -m ipython --version >nul 2>&1
+IF ERRORLEVEL 1 (
+    echo Installing IPython in the virtual environment...
+    pip install ipython
+) else (
+    echo IPython is already installed.
+)
+
+IF ERRORLEVEL 1 (
+    echo Failed to install IPython.
+    exit /b 1
+)
+
+:: Activate the virtual environment
+call "%PYTHON_VENV_PATH%\%PYTHON_VENV_NAME%\Scripts\deactivate"
+
+
+echo Python, virtual environment, and IPython installed successfully in %VENV_PATH%\%VENV_NAME%.
+
+:: Add or append to the sitecustomize.py file
+echo Checking for sitecustomize.py...
+if exist "%SITECUSTOMIZE_FILE%" (
+    echo Existing sitecustomize.py (you are on your own)...
+) else (
+    echo Creating new sitecustomize.py...
+    echo Adding custom content to sitecustomize.py...
+    echo. > "%SITECUSTOMIZE_FILE%"
+    :: Append the content to sitecustomize.py
+    echo. >> "%SITECUSTOMIZE_FILE%"
+    echo import os >> "%SITECUSTOMIZE_FILE%"
+    echo PKG_ROOT = os.environ.get("PKG_ROOT") >> "%SITECUSTOMIZE_FILE%"
+    echo os.add_dll_directory(f"{PKG_ROOT}/ArtifactoryInstall/WindowsShared/VTK/bin") >> "%SITECUSTOMIZE_FILE%"
+    echo import sys >> "%SITECUSTOMIZE_FILE%"
+    echo sys.path.insert(0, f"{PKG_ROOT}/ArtifactoryInstall/WindowsShared/VTK/lib/site-packages") >> "%SITECUSTOMIZE_FILE%"
+    
+    echo Custom content added to sitecustomize.py.
+)
+
 exit /b 0

@@ -1,4 +1,8 @@
 import os
-os.add_dll_directory("C:/Program Files/VTK/bin")
 import sys
-sys.path.insert(0, "C:/Program Files/VTK/lib/site-packages")
+
+PKG_ROOT = os.environ.get("PKG_ROOT")
+os.add_dll_directory(f"{PKG_ROOT}/ArtifactoryInstall/WindowsShared/VTK/bin")
+sys.path.insert(0, f"{PKG_ROOT}/ArtifactoryInstall/WindowsShared/VTK/lib/site-packages")
+
+
