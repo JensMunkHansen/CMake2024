@@ -8,8 +8,14 @@ IF "%PKG_ROOT%"=="" (
    goto :eof
 )
 
-set PYTHON_INSTALL_DIR=%LOCALAPPDATA%\Programs\Python\Python312
+if "%~1"=="" (
+   echo ERROR: This script requires exactly 1 argument.
+   echo Usage: install_vtk.bat [debug/release]
+   goto :eof
+)
 
+set PYTHON_INSTALL_DIR=%LOCALAPPDATA%\Programs\Python\Python312
+ 
 set myArg=%1
 
 call :TOUPPERCASE myArg
@@ -35,18 +41,30 @@ call "C:\Program Files\Microsoft Visual Studio\2022\Professional\VC\Auxiliary\Bu
 
 :Release
 
-if exist "PYTHON_INSTALL_DIR=%LOCALAPPDATA%\Programs\Python\Python312" (
-   cmake -H%~dp0/VTK -B%"%ROOT%/ArtifactoryCache/WindowsShared/Release" -G "Visual Studio 17 2022" -A "x64" -DCMAKE_CXX_MP_FLAG=ON -DVTK_WRAP_PYTHON=ON -DCMAKE_INSTALL_PREFIX="%ROOT%/ArtifactoryInstall/WindowsShared"
+if exist "%LOCALAPPDATA%\Programs\Python\Python312" (
+   cmake -H%~dp0/VTK -B"%PKG_ROOT%/ArtifactoryCache/WindowsShared/Release" -G "Visual Studio 17 2022" -A "x64" -DCMAKE_CXX_MP_FLAG=ON -DVTK_WRAP_PYTHON=ON -DCMAKE_INSTALL_PREFIX="%PKG_ROOT%/ArtifactoryInstall/WindowsShared"
 ) else (
-  cmake -H%~dp0/VTK -B%"%ROOT%/ArtifactoryCache/WindowsShared/Release" -G "Visual Studio 17 2022" -A "x64" -DCMAKE_CXX_MP_FLAG=ON -DCMAKE_INSTALL_PREFIX="%ROOT%/ArtifactoryInstall/WindowsShared"
+  cmake -H%~dp0/VTK -B"%PKG_ROOT%/ArtifactoryCache/WindowsShared/Release" -G "Visual Studio 17 2022" -A "x64" -DCMAKE_CXX_MP_FLAG=ON -DCMAKE_INSTALL_PREFIX="%PKG_ROOT%/ArtifactoryInstall/WindowsShared"
 )
 
-cmake --build %"%ROOT%/ArtifactoryCache/WindowsShared/Release" --config Release --target install -j 8
+cmake --build "%PKG_ROOT%/ArtifactoryCache/WindowsShared/Release" --config Release --target install -j 8
+
+goto :eof
 
 :Debug
 
-cmake -H%~dp0/VTK -B%"%ROOT%/ArtifactoryCache/WindowsShared/Debug" -G "Visual Studio 17 2022" -A "x64" -DCMAKE_CXX_MP_FLAG=ON -DCMAKE_INSTALL_PREFIX="%ROOT%/ArtifactoryInstall/WindowsShared"
+cmake -H%~dp0/VTK -B"%PKG_ROOT%/ArtifactoryCache/WindowsShared/Debug" -G "Visual Studio 17 2022" -A "x64" -DCMAKE_CXX_MP_FLAG=ON -DCMAKE_INSTALL_PREFIX="%ROOT%/ArtifactoryInstall/WindowsShared"
 )
-cmake --build %"%ROOT%/ArtifactoryCache/WindowsShared/Release" --config Release --target install -j 8
+cmake --build "%PKG_ROOT%/ArtifactoryCache/WindowsShared/Release" --config Release --target install -j 8
 
 goto :eof
+
+:TOUPPERCASE
+if not defined %~1 exit /b
+for %%a in ("a=A" "b=B" "c=C" "d=D" "e=E" "f=F" "g=G" "h=H" "i=I" "j=J" "k=K" "l=L" "m=M" "n=N" "o=O" "p=P" "q=Q" "r=R" "s=S" "t=T" "u=U" "v=V" "w=W" "x=X" "y=Y" "z=Z" "ä=Ä" "ö=Ö" "ü=Ü") do (
+call set %~1=%%%~1:%%~a%%
+)
+
+exit /b 0
+
+

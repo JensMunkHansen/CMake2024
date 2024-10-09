@@ -3,7 +3,7 @@
 pushd %~dp0
 
 :: Get the user's home directory
-set HOME_DIR="%USERPROFILE%"
+set HOME_DIR=%USERPROFILE%
 
 :: Path to the Python installer
 set PYTHON_INSTALLER=python-3.12.7-amd64.exe
@@ -12,13 +12,15 @@ set PYTHON_INSTALL_DIR=%LOCALAPPDATA%\Programs\Python\Python312
 
 set PYTHON_DOWNLOAD_URL=https://www.python.org/ftp/python/3.12.7/python-3.12.7-amd64.exe
 
-set PYTHON_VENV_PATH="%HOME_DIR%\Environments"
-set PYTHON_VENV_NAME="Python312"
+set PYTHON_VENV_PATH=%HOME_DIR%\Environments
+set PYTHON_VENV_NAME=Python312
 
 set SITECUSTOMIZE_FILE=%PYTHON_VENV_PATH%\%PYTHON_VENV_NAME%\Lib\site-packages\sitecustomize.py
 
-IF NOT EXIST %PYTHON_VENV_PATH% (
-    mdir "%PYTHON_VENV_PATH%"
+set PKG_ROOT="%TSPKG_ROOT%"
+
+IF NOT EXIST "%PYTHON_VENV_PATH%" (
+    mkdir "%PYTHON_VENV_PATH%"
 )
 
 :: Check if Python installer exists in the current directory
@@ -40,7 +42,7 @@ IF NOT EXIST %PYTHON_INSTALLER% (
 echo Installing Python 3.12.7...
 
 :: Create the target directory if it doesn't exist
-IF NOT EXIST %PYTHON_INSTALL_DIR% (
+IF NOT EXIST "%PYTHON_INSTALL_DIR%" (
     mkdir "%PYTHON_INSTALL_DIR%"
 )
 
@@ -114,26 +116,21 @@ IF ERRORLEVEL 1 (
 :: Activate the virtual environment
 call "%PYTHON_VENV_PATH%\%PYTHON_VENV_NAME%\Scripts\deactivate"
 
+echo Python, virtual environment, and IPython installed successfully in %PYTHON_VENV_PATH%\%PYTHON_VENV_NAME%.
 
-echo Python, virtual environment, and IPython installed successfully in %VENV_PATH%\%VENV_NAME%.
-
-:: Add or append to the sitecustomize.py file
-echo Checking for sitecustomize.py...
-if exist "%SITECUSTOMIZE_FILE%" (
-    echo Existing sitecustomize.py (you are on your own)...
-) else (
-    echo Creating new sitecustomize.py...
-    echo Adding custom content to sitecustomize.py...
+:: Create the sitecustomize.py if it does not exist
+if not exist "%SITECUSTOMIZE_FILE%" (
+    echo Creating sitecustomize.py at %SITECUSTOMIZE_FILE%
     echo. > "%SITECUSTOMIZE_FILE%"
-    :: Append the content to sitecustomize.py
-    echo. >> "%SITECUSTOMIZE_FILE%"
-    echo import os >> "%SITECUSTOMIZE_FILE%"
-    echo PKG_ROOT = os.environ.get("PKG_ROOT") >> "%SITECUSTOMIZE_FILE%"
-    echo os.add_dll_directory(f"{PKG_ROOT}/ArtifactoryInstall/WindowsShared/VTK/bin") >> "%SITECUSTOMIZE_FILE%"
-    echo import sys >> "%SITECUSTOMIZE_FILE%"
-    echo sys.path.insert(0, f"{PKG_ROOT}/ArtifactoryInstall/WindowsShared/VTK/lib/site-packages") >> "%SITECUSTOMIZE_FILE%"
-    
-    echo Custom content added to sitecustomize.py.
 )
+
+:: Add to the sitecustomize.py file
+echo import os >> "%SITECUSTOMIZE_FILE%"
+echo import sys >> "%SITECUSTOMIZE_FILE%"
+echo PKG_ROOT=os.environ.get("PKG_ROOT") >> "%SITECUSTOMIZE_FILE%"
+echo VTK_BINARY_DIR=(f"{PKG_ROOT}/ArtifactoryInstall/WindowsShared/bin").replace("\\","/") >> "%SITECUSTOMIZE_FILE%"
+echo if os.path.exists(VTK_BINARY_DIR): >> "%SITECUSTOMIZE_FILE%"
+echo     os.add_dll_directory(VTK_BINARY_DIR) >> "%SITECUSTOMIZE_FILE%"
+echo sys.path.insert(0, f"{PKG_ROOT}/ArtifactoryInstall/WindowsShared/lib/site-packages") >> "%SITECUSTOMIZE_FILE%"
 
 exit /b 0
