@@ -53,7 +53,15 @@ if(VTK_WRAP_PYTHON)
   mark_as_advanced(SPS_WINDOWS_PYTHON_DEBUGGABLE)
   cmake_dependent_option(SPS_WINDOWS_PYTHON_DEBUGGABLE_REPLACE_SUFFIX "Replace any other debug suffix for Python module names" OFF
     "SPS_WINDOWS_PYTHON_DEBUGGABLE" OFF)
-  mark_as_advanced(SPS_WINDOWS_PYTHON_DEBUGGABLE_REPLACE_SUFFIX)  
+  mark_as_advanced(SPS_WINDOWS_PYTHON_DEBUGGABLE_REPLACE_SUFFIX)
+
+  # Disable python if we explicitly have selected debug
+  if (CMAKE_BUILD_TYPE STREQUAL "Debug")
+    set(BUILD_PYTHON_WRAPPERS OFF)
+  endif()
+  
+
+  
 else()
   unset(BUILD_PYTHON_WRAPPERS CACHE)
 endif()
