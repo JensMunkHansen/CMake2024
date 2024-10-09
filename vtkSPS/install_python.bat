@@ -8,7 +8,7 @@ set HOME_DIR=%USERPROFILE%
 :: Path to the Python installer
 set PYTHON_INSTALLER=python-3.12.7-amd64.exe
 REM set PYTHON_INSTALL_DIR="C:\Python312"
-set PYTHON_INSTALL_DIR=%LOCALAPPDATA%\Programs\Python\Python312
+set PYTHON_INSTALL_DIR=%LOCALAPPDATA%\Programs\Python
 
 set PYTHON_DOWNLOAD_URL=https://www.python.org/ftp/python/3.12.7/python-3.12.7-amd64.exe
 
@@ -39,11 +39,11 @@ IF NOT EXIST %PYTHON_INSTALLER% (
     exit /b 1
 )
 
-echo Installing Python 3.12.7...
+echo Installing Python 3.12 at %PYTHON_INSTALL_DIR%
 
 :: Create the target directory if it doesn't exist
 IF NOT EXIST "%PYTHON_INSTALL_DIR%" (
-    mkdir "%PYTHON_INSTALL_DIR%"
+   mkdir "%PYTHON_INSTALL_DIR%"
 )
 
 REM ISSUE WITH RIGHTS
