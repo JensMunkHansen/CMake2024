@@ -50,7 +50,7 @@ goto :eof
 
 :Debug
 
-cmake -H%~dp0/VTK -B"%PKG_ROOT%/ArtifactoryCache/WindowsShared/Debug" -G "Visual Studio 17 2022" -A "x64" -DCMAKE_CXX_MP_FLAG=ON -DCMAKE_INSTALL_PREFIX="%ROOT%/ArtifactoryInstall/WindowsShared"
+cmake -H%~dp0/VTK -B"%PKG_ROOT%/ArtifactoryCache/WindowsShared/Debug" -G "Visual Studio 17 2022" -A "x64" -DCMAKE_CXX_MP_FLAG=ON -DCMAKE_INSTALL_PREFIX="%PKG_ROOT%/ArtifactoryInstall/WindowsShared"
 )
 cmake --build "%PKG_ROOT%/ArtifactoryCache/WindowsShared/Debug" --config Debug --target install -j 8
 
