@@ -229,11 +229,13 @@ if(BUILD_PYTHON_WRAPPERS)
     Interpreter
     Development REQUIRED)
 
-  # Test remove _d from python libraries
-  if (MSVC)
+  if (0) # if (MSVC)
+    # Not working. We need to patch VTK to make debugging easier
     message("We remove postfix")
     message(${Python3_LIBRARIES})
     string(REPLACE "_d" "" Python3_LIBRARIES "${Python3_LIBRARIES}")
+    get_filename_component(Python3_LIB_DIR "${Python3_LIBRARIES}" DIRECTORY)  
+    set(CMAKE_LIBRARY_PATH "${CMAKE_LIBRARY_PATH};${Python3_LIB_DIR}")
   endif()
   
   if(NOT VTK_PYTHON_VERSION VERSION_EQUAL Python3_VERSION_MAJOR)
