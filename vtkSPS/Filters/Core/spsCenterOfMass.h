@@ -27,7 +27,7 @@ class vtkPoints;
 class vtkDataArray;
 class vtkTransform;
 
-class SPSFILTERSCORE_EXPORT VTK_MARSHALAUTO spsCenterOfMass : public vtkPointSetAlgorithm
+class SPSFILTERSCORE_EXPORT spsCenterOfMass : public vtkPointSetAlgorithm
 {
 public:
   spsCenterOfMass(spsCenterOfMass&&) = delete;
