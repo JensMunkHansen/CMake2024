@@ -171,14 +171,14 @@ struct CenterWorker
   void operator()(TPoints* points)
   {
     CenterFunctor<TPoints> functor(points);
-    vtkSMPTools::For(0, points->GetNumberOfTuples(), vtkSMPTools::THRESHOLD, functor);
+    vtkSMPTools::For(0, points->GetNumberOfTuples(), 5e6 /*vtkSMPTools::THRESHOLD*/, functor);
     memcpy(Center, &functor.Center[0], 3 * sizeof(double));
   }
   template <typename TPoints, typename TScalars>
   void operator()(TPoints* points, TScalars* scalars)
   {
     CenterFunctorWeighted<TPoints, TScalars> functor(points, scalars);
-    vtkSMPTools::For(0, points->GetNumberOfTuples(), vtkSMPTools::THRESHOLD, functor);
+    vtkSMPTools::For(0, points->GetNumberOfTuples(), 5e6 /*vtkSMPTools::THRESHOLD*/, functor);
     memcpy(Center, &functor.Center[0], 3 * sizeof(double));
   }
 };
