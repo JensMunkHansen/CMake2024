@@ -11,7 +11,7 @@
 #include "vtkStreamingDemandDrivenPipeline.h"
 #include "vtkTrivialProducer.h"
 
-#include <map>
+#include <unordered_map>
 
 vtkStandardNewMacro(spsPolyDataPieceFilter);
 
@@ -132,7 +132,7 @@ int spsPolyDataPieceFilter::RequestData(vtkInformation* vtkNotUsed(request),
     newPointData->InterpolateAllocate(input->GetPointData(), endCell - startCell);
   }
 
-  std::map<vtkIdType, vtkIdType> pointMap; // Map from old point ID to new point ID
+  std::unordered_map<vtkIdType, vtkIdType> pointMap; // Map from old point ID to new point ID
 
   // Loop through the cells and extract them for this piece
   for (vtkIdType cellId = startCell; cellId < endCell; ++cellId)
