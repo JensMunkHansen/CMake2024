@@ -3,32 +3,24 @@
 Introduction
 ================
 
-1. You need os.add_dll_directory (build tree)
-2. VTK works with python release
-3. TODO: Make my code use release of python
+x os.add_dll_directory (for python to work)
+x make VTK work with python (just release mode)
+x put sitecustomize.py into VIRTUAL_ENV/Lib/site-packages
 
-Put sitecustomize.py into VIRTUAL_ENV\Lib\site-packages\
+x Install python
+x activate
+x build artifactory (shared + python)
+x Build SPS
+x RegressionTest
 
-TODO: Write an introduction
-
-* [Doc](./Doc) Documentation with developer guidelines
-
-Install python, activate, build artifactory (shared + python)
-Build SPS, VTK_DIR=artifactory
-RegressionTest
-
+Script for listing public/private dependencies
 ./VTK/Utilities/Maintenance/FindNeededModules.py -j modules.json -s source.cxx
 
+Note on ABI's and export 
 
-class MyClass;  // Forward declaration of MyClass
+Explain how std::vector can be instantiated and exported and still not good
 
-#ifdef BUILDING_DLL
-    #define DLL_EXPORT __declspec(dllexport)
-#else
-    #define DLL_EXPORT __declspec(dllimport)
-#endif
-
-DLL_EXPORT std::shared_ptr<MyClass> mySharedPtr;
+Power of forward declaration (mutual dependencies)
 
 
 // A.h
@@ -48,3 +40,12 @@ class A;  // Forward declaration of A
 class B {
     std::shared_ptr<A> aPtr;  // Use of forward-declared A
 };
+
+
+TODO: Write an introduction
+
+* [Doc](./Doc) Documentation with developer guidelines
+
+
+
+
