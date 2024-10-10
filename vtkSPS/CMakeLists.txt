@@ -55,13 +55,6 @@ if(VTK_WRAP_PYTHON)
     "SPS_WINDOWS_PYTHON_DEBUGGABLE" OFF)
   mark_as_advanced(SPS_WINDOWS_PYTHON_DEBUGGABLE_REPLACE_SUFFIX)
 
-  # Disable python if we explicitly have selected debug
-  if (CMAKE_BUILD_TYPE STREQUAL "Debug")
-    set(BUILD_PYTHON_WRAPPERS OFF)
-  endif()
-  
-
-  
 else()
   unset(BUILD_PYTHON_WRAPPERS CACHE)
 endif()
@@ -212,24 +205,24 @@ endif ()
 set(_vtk_python_USE_DEBUG_SUFFIX OFF)
 
 vtk_module_build(
-  MODULES               ${sps_modules}
-  KITS                  ${sps_kits}
-  INSTALL_EXPORT        "${sps_install_export}"
-  ARCHIVE_DESTINATION   "lib"
-  HEADERS_DESTINATION   "${CMAKE_INSTALL_INCLUDEDIR}/sps${sps_version_suffix}"
-  CMAKE_DESTINATION     "${sps_cmake_destination}"
-  LICENSE_DESTINATION   "${CMAKE_INSTALL_LIBDIR}/sps"
-  LIBRARY_NAME_SUFFIX   "${SPS_CUSTOM_LIBRARY_SUFFIX}"
-  HIERARCHY_DESTINATION "${CMAKE_INSTALL_LIBDIR}/sps${sps_version_suffix}/hierarchy/${CMAKE_PROJECT_NAME}"
-  VERSION               "${SPS_VERSION}"
-  SOVERSION             "1" # If the library is small and should work as a remote module to VTK
-  TEST_DATA_TARGET      SpsData
-  INSTALL_HEADERS       "${SPS_INSTALL_SDK}"
-  BUILD_WITH_KITS       "${SPS_ENABLE_KITS}"
-  USE_EXTERNAL          "${SPS_USE_EXTERNAL}"
-  UTILITY_TARGET        "SPS::spsbuild"  
-  TEST_INPUT_DATA_DIRECTORY   "${CMAKE_CURRENT_SOURCE_DIR}/Testing"
-  TEST_OUTPUT_DATA_DIRECTORY  "${CMAKE_CURRENT_BINARY_DIR}/ExternalData/Testing")
+  MODULES                    ${sps_modules}
+  KITS                       ${sps_kits}
+  INSTALL_EXPORT             "${sps_install_export}"
+  ARCHIVE_DESTINATION        "lib"
+  HEADERS_DESTINATION        "${CMAKE_INSTALL_INCLUDEDIR}/sps${sps_version_suffix}"
+  CMAKE_DESTINATION          "${sps_cmake_destination}"
+  LICENSE_DESTINATION        "${CMAKE_INSTALL_LIBDIR}/sps"
+  LIBRARY_NAME_SUFFIX        "${SPS_CUSTOM_LIBRARY_SUFFIX}"
+  HIERARCHY_DESTINATION      "${CMAKE_INSTALL_LIBDIR}/sps${sps_version_suffix}/hierarchy/${CMAKE_PROJECT_NAME}"
+  VERSION                    "${SPS_VERSION}"
+  SOVERSION                  "1" # If the library is small and should work as a remote module to VTK
+  TEST_DATA_TARGET           SpsData
+  INSTALL_HEADERS            "${SPS_INSTALL_SDK}"
+  BUILD_WITH_KITS            "${SPS_ENABLE_KITS}"
+  USE_EXTERNAL               "${SPS_USE_EXTERNAL}"
+  UTILITY_TARGET             "SPS::spsbuild"  
+  TEST_INPUT_DATA_DIRECTORY  "${CMAKE_CURRENT_SOURCE_DIR}/Testing"
+  TEST_OUTPUT_DATA_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/ExternalData/Testing")
 
   
 if(BUILD_PYTHON_WRAPPERS)
@@ -238,39 +231,25 @@ if(BUILD_PYTHON_WRAPPERS)
     Interpreter
     Development REQUIRED)
 
-  if (0) # if (MSVC)
-    # Not working. We need to patch VTK to make debugging easier
-    message("We remove postfix")
-    message(${Python3_LIBRARIES})
-    string(REPLACE "_d" "" Python3_LIBRARIES "${Python3_LIBRARIES}")
-    get_filename_component(Python3_LIB_DIR "${Python3_LIBRARIES}" DIRECTORY)  
-    set(CMAKE_LIBRARY_PATH "${CMAKE_LIBRARY_PATH};${Python3_LIB_DIR}")
-  endif()
-  
   if(NOT VTK_PYTHON_VERSION VERSION_EQUAL Python3_VERSION_MAJOR)
     message(FATAL_ERROR "Python versions must agree")
   endif()
   configure_file(${CMAKE_CURRENT_SOURCE_DIR}/spspython.py.in ${CMAKE_CURRENT_SOURCE_DIR}/spspython.py @ONLY)
 
-  if (NOT ${SPS_WINDOWS_PYTHON_DEBUGGABLE})
-    message("Removing postfix")
-    set(CMAKE_DEBUG_POSTFIX "")
-    set(VTK_WINDOWS_PYTHON_DEBUGGABLE OFF)
-  endif()
   vtk_module_wrap_python(
-    MODULES             ${sps_modules}
-    INSTALL_EXPORT      SPSPython
-    PYTHON_PACKAGE      "spsmodules"
-    LIBRARY_DESTINATION "${CMAKE_INSTALL_LIBDIR}"
-    MODULE_DESTINATION  "${SPS_PYTHON_SITE_PACKAGES_SUFFIX}"
-    CMAKE_DESTINATION   "${sps_cmake_destination}"
-    INSTALL_HEADERS     "${SPS_INSTALL_SDK}"
-    SOABI               "${sps_soabi}" # TODO: Needed for a future wheels build
-    USE_DEBUG_SUFFIX    "${SPS_WINDOWS_PYTHON_DEBUGGABLE}"
+    MODULES              ${sps_modules}
+    INSTALL_EXPORT       SPSPython
+    PYTHON_PACKAGE       "spsmodules"
+    LIBRARY_DESTINATION  "${CMAKE_INSTALL_LIBDIR}"
+    MODULE_DESTINATION   "${SPS_PYTHON_SITE_PACKAGES_SUFFIX}"
+    CMAKE_DESTINATION    "${sps_cmake_destination}"
+    INSTALL_HEADERS      "${SPS_INSTALL_SDK}"
+    SOABI                "${sps_soabi}" # TODO: Needed for a future wheels build
+    USE_DEBUG_SUFFIX     "${SPS_WINDOWS_PYTHON_DEBUGGABLE}"
     REPLACE_DEBUG_SUFFIX "${SPS_WINDOWS_PYTHON_DEBUGGABLE_REPLACE_SUFFIX}"
-    UTILITY_TARGET      "SPS::spsbuild"
-    WRAPPED_MODULES     sps_python_wrapped_modules
-    BUILD_STATIC        OFF) # We do not support static python wrappers
+    UTILITY_TARGET       "SPS::spsbuild"
+    WRAPPED_MODULES      sps_python_wrapped_modules
+    BUILD_STATIC         OFF) # We do not support static python wrappers
 
   # Display a list of the wrapped modules
   message("Wrapped modules include:")
