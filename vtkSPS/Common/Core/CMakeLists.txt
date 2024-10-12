@@ -49,9 +49,12 @@ set(classes
 if(DEFINED VTK_MODULE_ENABLE_SPS_CommonCore)
   vtk_module_add_module(SPS::CommonCore
     CLASSES           ${classes}
-    TEMPLATE_CLASSES  ${template_classes}
+    NOWRAP_CLASSES    ${nowrap_classes}
+    SOURCES           ${sources}
     HEADERS           ${headers}
-    PRIVATE_TEMPLATES ${private_templates})
+    TEMPLATE_CLASSES  ${template_classes}
+    PRIVATE_TEMPLATES ${private_templates}
+    HEADERS_SUBDIR    "")
   vtk_module_link(SPS::CommonCore
     PRIVATE
     VTK::CommonCore)
