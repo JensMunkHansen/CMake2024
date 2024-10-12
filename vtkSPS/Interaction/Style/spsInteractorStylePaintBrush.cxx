@@ -157,6 +157,14 @@ void spsInteractorStylePaintBrush::ApplyBrush(
 
   // Find points within the brush radius
   vtkNew<vtkIdList> result;
+#if 0
+  double* position = Picker->GetPickPosition();
+  std::cout << "position: " << position[0] << ", " << position[1] << ", " << position[2]
+            << std::endl;
+  position = polyData->GetPoint(pointId);
+  std::cout << "Pick position: " << position[0] << ", " << position[1] << ", " << position[2]
+            << std::endl;
+#endif
   pointLocator->FindPointsWithinRadius(BrushRadius, polyData->GetPoint(pointId), result);
 
   vtkUnsignedCharArray* colors =
