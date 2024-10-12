@@ -1,0 +1,19 @@
+NAME
+  SPS::InteractionStyle
+LIBRARY_NAME
+  spsInteractionStyle
+KIT
+  SPS::Interaction
+GROUPS
+  SpsInteraction
+DEPENDS
+  VTK::CommonDataModel
+  VTK::InteractionStyle
+  VTK::RenderingCore
+PRIVATE_DEPENDS
+TEST_DEPENDS
+  VTK::FiltersSources
+  VTK::RenderingCore  
+  VTK::RenderingOpenGL2
+  VTK::TestingCore
+  VTK::TestingRendering
