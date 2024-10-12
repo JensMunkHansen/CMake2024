@@ -133,6 +133,7 @@ list(APPEND sps_requested_modules
   SPS::FiltersModeling
   SPS::FiltersCore
   SPS::IOGeneral
+  SPS::InteractionStyle
 )
 
 # Option for clearing modules
@@ -154,6 +155,7 @@ set(sps_source_directories
   "${CMAKE_CURRENT_SOURCE_DIR}/Common"
   "${CMAKE_CURRENT_SOURCE_DIR}/Filters"
   "${CMAKE_CURRENT_SOURCE_DIR}/IO"
+  "${CMAKE_CURRENT_SOURCE_DIR}/Interaction"  
 )
 
 # Find all modules described in vtk.module files

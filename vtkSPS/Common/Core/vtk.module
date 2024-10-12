@@ -8,3 +8,5 @@ DESCRIPTION
   The base SPS
 GROUPS
   StandAlone
+TEST_DEPENDS
+  VTK::TestingCore
