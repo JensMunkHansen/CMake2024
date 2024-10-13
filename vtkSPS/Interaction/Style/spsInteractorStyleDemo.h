@@ -45,7 +45,6 @@ protected:
 
   // Internals
   bool IsActive;
-  bool IsFirst;
   vtkActor* CurrentActor;
   vtkIdType CurrentPointId;
   double CurrentPosition[3];
