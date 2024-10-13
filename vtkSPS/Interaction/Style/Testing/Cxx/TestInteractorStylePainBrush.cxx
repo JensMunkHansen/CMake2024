@@ -1,4 +1,5 @@
 #include <spsInteractorStylePaintBrush.h>
+//#include <spsInteractorStyleBrush.h>
 #include <vtkCamera.h>
 #include <vtkCellData.h>
 #include <vtkColor.h>
@@ -40,6 +41,7 @@ int TestInteractorStylePainBrush(int argc, char* argv[])
   vtkNew<vtkRenderWindowInteractor> interactor;
   interactor->SetRenderWindow(renderWindow);
   vtkNew<spsInteractorStylePaintBrush> style;
+  //  vtkNew<spsInteractorStyleBrush> style;
   style->SetBrushRadius(0.2);
   interactor->SetInteractorStyle(style);
 

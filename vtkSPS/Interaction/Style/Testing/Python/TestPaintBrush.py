@@ -2,6 +2,7 @@ import addpaths
 
 #from spsmodules.spsInteractionStyle import spsPaintBrush
 from spsmodules.spsInteractionStyle import spsInteractorStyleDemo as spsPaintBrush
+#from spsmodules.spsInteractionStyle import spsAbstractInteractorStyleBrush as spsPaintBrush
 from spsmodules.util.scene_utils import vtk_fps_counter
 
 # noinspection PyUnresolvedReferences

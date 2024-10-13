@@ -34,8 +34,7 @@ protected:
   vtkIdType CurrentPointId;
   double CurrentPosition[3];
   double CurrentLocalPosition[3];
-  double LastLocalPosition[3];      // Last position where brush was applied
-  double BrushApplicationThreshold; // Threshold for controlling brush application frequency
+  double LastLocalPosition[3]; // Last position where brush was applied
 
   vtkNew<vtkPointPicker> Picker;
   std::unordered_map<vtkSmartPointer<vtkActor>, vtkSmartPointer<vtkAbstractPointLocator>>
