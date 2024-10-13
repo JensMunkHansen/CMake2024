@@ -21,8 +21,8 @@ import numpy as np
 def create_sphere_source():
     # Create a sample mesh, like a sphere
     sphere = vtkSphereSource()
-    sphere.SetThetaResolution(100)
-    sphere.SetPhiResolution(100)
+    sphere.SetThetaResolution(300)
+    sphere.SetPhiResolution(300)
     return sphere
 
 # Create a renderer, render window, and interactor
