@@ -84,7 +84,11 @@ void spsInteractorStyleBrush::SetUseStaticLocators(bool polyDataStatic)
 void spsInteractorStyleBrush::OnMouseMove()
 {
   vtkDebugMacro("" << __FUNCTION__);
-  vtkRenderer* renderer = this->Interactor->GetRenderWindow()->GetRenderers()->GetFirstRenderer();
+  vtkRenderer* renderer = nullptr;
+  vtkActor* actor = nullptr;
+  vtkPolyData* polyData = nullptr;
+
+  renderer = this->Interactor->GetRenderWindow()->GetRenderers()->GetFirstRenderer();
   if (!renderer)
   {
     return;
@@ -102,30 +106,30 @@ void spsInteractorStyleBrush::OnMouseMove()
   // Use vtkCellPicker to pick the actor under the mouse position
   Picker->Pick(mousePos[0], mousePos[1], 0, renderer);
 
-  vtkActor* actor = Picker->GetActor();
-  if (!actor)
+  actor = Picker->GetActor();
+
+  if (actor)
+  {
+    polyData = vtkPolyData::SafeDownCast(actor->GetMapper()->GetInput());
+  }
+
+  if (!actor || !polyData)
   {
     vtkInteractorStyleTrackballCamera::OnMouseMove();
     return; // Safety check for null actor
   }
 
-  vtkPolyData* polyData = vtkPolyData::SafeDownCast(actor->GetMapper()->GetInput());
-  if (!polyData)
+  vtkIdType pickedPointId = Picker->GetPointId();
+  if (pickedPointId < 0)
   {
+    std::cout << "picked point\n";
     vtkInteractorStyleTrackballCamera::OnMouseMove();
-    return; // Safety check for null polyData
+    return; // Safety check for invalid point ID
   }
 
   if (!ActorHasColors(actor))
   {
     AddInitialColor(actor, polyData);
-  }
-
-  vtkIdType pickedPointId = Picker->GetPointId();
-  if (pickedPointId < 0)
-  {
-    vtkInteractorStyleTrackballCamera::OnMouseMove();
-    return; // Safety check for invalid point ID
   }
 
   // Apply brush effect at the current point
@@ -151,6 +155,7 @@ void spsInteractorStyleBrush::AddInitialColor(vtkActor* actor, vtkPolyData* poly
   vtkNew<vtkUnsignedCharArray> colors;
   colors->SetNumberOfComponents(3);
   colors->SetNumberOfTuples(polyData->GetNumberOfPoints());
+  colors->SetName("Colors");
 
   const uint8_t newColor[3] = { 255, 255, 255 };
   for (vtkIdType i = 0; i < polyData->GetNumberOfPoints(); ++i)

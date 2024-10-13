@@ -33,10 +33,10 @@ protected:
   std::unordered_map<vtkSmartPointer<vtkActor>, vtkSmartPointer<vtkAbstractPointLocator>>
     LocatorMap;
   vtkSmartPointer<vtkAbstractPointLocator> GetLocator(vtkActor* actor, vtkPolyData* polyData);
-  virtual void ApplyBrush(vtkActor* actor, vtkPolyData* polyData, vtkIdType pointId);
 
-  bool ActorHasColors(vtkActor* actor);
-  void AddInitialColor(vtkActor* actor, vtkPolyData* polyData);
+  virtual void ApplyBrush(vtkActor* actor, vtkPolyData* polyData, vtkIdType pointId);
+  virtual bool ActorHasColors(vtkActor* actor);
+  virtual void AddInitialColor(vtkActor* actor, vtkPolyData* polyData);
 
 private:
   spsInteractorStyleBrush(const spsInteractorStyleBrush&) = delete;
