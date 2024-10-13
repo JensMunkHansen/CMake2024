@@ -85,6 +85,7 @@ void spsInteractorStyleBrush::SetUseStaticLocators(bool polyDataStatic)
   {
     return;
   }
+  this->UseStaticLocators = polyDataStatic;
   for (auto& entry : this->LocatorMap)
   {
     vtkSmartPointer<vtkActor> actor = entry.first;
@@ -157,7 +158,7 @@ void spsInteractorStyleBrush::OnMouseMove()
   }
 
   // Apply brush effect at the current point
-  ApplyBrush(actor, polyData, this->CurrentPointId);
+  this->ApplyBrush(actor, polyData);
 }
 
 vtkSmartPointer<vtkAbstractPointLocator> spsInteractorStyleBrush::GetLocator(
@@ -191,7 +192,7 @@ vtkSmartPointer<vtkAbstractPointLocator> spsInteractorStyleBrush::GetLocator(
 }
 
 //------------------------------------------------------------------------------
-void spsInteractorStyleBrush::ApplyBrush(vtkActor* actor, vtkPolyData* polyData, vtkIdType pointId)
+void spsInteractorStyleBrush::ApplyBrush(vtkActor* actor, vtkPolyData* polyData)
 {
   vtkDebugMacro("" << __FUNCTION__);
 
@@ -204,7 +205,8 @@ void spsInteractorStyleBrush::ApplyBrush(vtkActor* actor, vtkPolyData* polyData,
 
   // Find points within the brush radius
   vtkNew<vtkIdList> result;
-  pointLocator->FindPointsWithinRadius(BrushRadius, polyData->GetPoint(pointId), result);
+  pointLocator->FindPointsWithinRadius(
+    BrushRadius, polyData->GetPoint(this->CurrentPointId), result);
 
   vtkUnsignedCharArray* colors =
     vtkUnsignedCharArray::SafeDownCast(polyData->GetPointData()->GetScalars());
