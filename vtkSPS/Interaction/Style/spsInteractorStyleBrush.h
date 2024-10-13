@@ -1,4 +1,5 @@
-#pragma once
+#ifndef SPS_INTERACTOR_STYLE_BRUSH_H
+#define SPS_INTERACTOR_STYLE_BRUSH_H
 
 #include <spsInteractionStyleModule.h>
 #include <unordered_map>
@@ -29,13 +30,20 @@ protected:
   double BrushRadius;
   bool UseStaticLocators;
   bool IsActive;
+  vtkActor* CurrentActor;
   vtkIdType CurrentPointId;
   double CurrentPosition[3];
   double CurrentLocalPosition[3];
+  double LastLocalPosition[3];      // Last position where brush was applied
+  double BrushApplicationThreshold; // Threshold for controlling brush application frequency
+
   vtkNew<vtkPointPicker> Picker;
   std::unordered_map<vtkSmartPointer<vtkActor>, vtkSmartPointer<vtkAbstractPointLocator>>
     LocatorMap;
   vtkSmartPointer<vtkAbstractPointLocator> GetLocator(vtkActor* actor, vtkPolyData* polyData);
+
+  void TransformToLocalCoordinates(
+    vtkActor* actor, const double worldPosition[3], double localPosition[3]);
 
   virtual void ApplyBrush(vtkActor* actor, vtkPolyData* polyData);
 
@@ -43,3 +51,5 @@ private:
   spsInteractorStyleBrush(const spsInteractorStyleBrush&) = delete;
   void operator=(const spsInteractorStyleBrush&) = delete;
 };
+
+#endif

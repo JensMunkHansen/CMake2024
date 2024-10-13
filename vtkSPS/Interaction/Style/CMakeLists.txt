@@ -5,6 +5,7 @@ set(SpsInteractionStyle_BUILD_TESTING ${BUILD_TESTING})
 set(classes
   spsInteractorStylePaintBrush
   spsInteractorStyleBrush
+  spsInteractorStyleDemo
 )
 
 if(DEFINED VTK_MODULE_ENABLE_SPS_InteractionStyle)

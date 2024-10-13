@@ -54,12 +54,35 @@ vtkStandardNewMacro(spsInteractorStyleBrush);
 spsInteractorStyleBrush::spsInteractorStyleBrush()
 {
   this->BrushRadius = 5.0; // Default brush radius
+  this->BrushApplicationThreshold = this->BrushRadius / 10.0;
   this->UseStaticLocators = true;
   this->IsActive = false;
+  this->CurrentActor = nullptr;
   this->CurrentPointId = -1;
   this->CurrentPosition[0] = this->CurrentPosition[1] = this->CurrentPosition[2] = 0.0;
   this->CurrentLocalPosition[0] = this->CurrentLocalPosition[1] = this->CurrentLocalPosition[2] =
     0.0;
+  this->LastLocalPosition[0] = this->LastLocalPosition[1] = this->LastLocalPosition[2] = 0.0;
+}
+
+void spsInteractorStyleBrush::TransformToLocalCoordinates(
+  vtkActor* actor, const double worldPosition[3], double localPosition[3])
+{
+  // Get the actor's transformation matrix
+  vtkNew<vtkMatrix4x4> actorMatrix;
+  actor->GetMatrix(actorMatrix);
+
+  // Invert the matrix to convert world coordinates to local coordinates
+  vtkNew<vtkMatrix4x4> invertedMatrix;
+  invertedMatrix->DeepCopy(actorMatrix);
+  invertedMatrix->Invert();
+
+  // Create a transform and apply the inverted matrix
+  vtkNew<vtkTransform> inverseTransform;
+  inverseTransform->SetMatrix(invertedMatrix);
+
+  // Apply the inverse transform to the world position to get the local position
+  inverseTransform->TransformPoint(worldPosition, localPosition);
 }
 
 //------------------------------------------------------------------------------
@@ -123,7 +146,6 @@ void spsInteractorStyleBrush::OnMouseMove()
 {
   vtkDebugMacro("" << __FUNCTION__);
   vtkRenderer* renderer = nullptr;
-  vtkActor* actor = nullptr;
   vtkPolyData* polyData = nullptr;
 
   renderer = this->Interactor->GetRenderWindow()->GetRenderers()->GetFirstRenderer();
@@ -143,14 +165,14 @@ void spsInteractorStyleBrush::OnMouseMove()
 
   // Use vtkCellPicker to pick the actor under the mouse position
   this->Picker->Pick(mousePos[0], mousePos[1], 0, renderer);
-  actor = this->Picker->GetActor();
+  this->CurrentActor = this->Picker->GetActor();
 
-  if (actor)
+  if (this->CurrentActor)
   {
-    polyData = vtkPolyData::SafeDownCast(actor->GetMapper()->GetInput());
+    polyData = vtkPolyData::SafeDownCast(this->CurrentActor->GetMapper()->GetInput());
   }
 
-  if (!actor || !polyData)
+  if (!this->CurrentActor || !polyData)
   {
     vtkInteractorStyleTrackballCamera::OnMouseMove();
     return; // Safety check for null actor
@@ -164,22 +186,12 @@ void spsInteractorStyleBrush::OnMouseMove()
   }
   this->Picker->GetPickPosition(this->CurrentPosition);
 
-  vtkNew<vtkMatrix4x4> actorMatrix;
-  actor->GetMatrix(actorMatrix);
-
-  // Invert the matrix to convert world coordinates to local coordinates
-  vtkNew<vtkMatrix4x4> invertedMatrix;
-  invertedMatrix->DeepCopy(actorMatrix);
-  invertedMatrix->Invert();
-
-  vtkNew<vtkTransform> inverseTransform;
-  inverseTransform->SetMatrix(invertedMatrix);
-
-  // Now apply the inverse transform to the world position to get local position
-  inverseTransform->TransformPoint(this->CurrentPosition, this->CurrentLocalPosition);
+  // Transform the world position to local coordinates
+  this->TransformToLocalCoordinates(
+    this->CurrentActor, this->CurrentPosition, this->CurrentLocalPosition);
 
   // Apply brush effect at the current point
-  this->ApplyBrush(actor, polyData);
+  this->ApplyBrush(this->CurrentActor, polyData);
 }
 
 vtkSmartPointer<vtkAbstractPointLocator> spsInteractorStyleBrush::GetLocator(
