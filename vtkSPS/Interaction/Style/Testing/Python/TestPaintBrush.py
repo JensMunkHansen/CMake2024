@@ -1,7 +1,7 @@
 import addpaths
 
 #from spsmodules.spsInteractionStyle import spsPaintBrush
-from spsmodules.spsInteractionStyle import spsInteractorStyleBrush as spsPaintBrush
+from spsmodules.spsInteractionStyle import spsInteractorStyleDemo as spsPaintBrush
 from spsmodules.util.scene_utils import vtk_fps_counter
 
 # noinspection PyUnresolvedReferences
@@ -63,6 +63,7 @@ renderer.SetBackground(0.1, 0.2, 0.4)
 
 paintBrushStyle = spsPaintBrush()
 paintBrushStyle.SetBrushRadius(0.2)
+paintBrushStyle.SetResolution(100000);
 interactor.SetInteractorStyle(paintBrushStyle)
 
 # Start the rendering loop
