@@ -2,7 +2,6 @@
 #include <vtkIdTypeArray.h>
 #include <vtkObjectFactory.h>
 #include <vtkPointData.h>
-#include <vtkPointLocator.h>
 #include <vtkPointPicker.h>
 #include <vtkPolyData.h>
 #include <vtkPolyDataMapper.h>
