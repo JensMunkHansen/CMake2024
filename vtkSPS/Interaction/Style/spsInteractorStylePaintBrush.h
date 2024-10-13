@@ -17,7 +17,6 @@ public:
 
   virtual void OnLeftButtonDown() override;
   virtual void OnLeftButtonUp() override;
-
   virtual void OnMouseMove() override;
   vtkSetMacro(BrushRadius, double);
   vtkGetMacro(BrushRadius, double);

@@ -1,5 +1,8 @@
 # Test with data
 
+set(TestInteractorStylePainBrush_ARGS "--PlaybackFile"
+  "DATA{../Data/Input/TestInteractorStylePainBrush.txt}")
+
 # Test without data
 vtk_add_test_cxx(
   spsInteractionStyleCxxTests data_tests
