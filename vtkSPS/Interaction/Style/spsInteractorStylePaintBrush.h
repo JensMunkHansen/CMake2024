@@ -6,7 +6,6 @@
 #include <vtkSmartPointer.h>
 
 class vtkPolyData;
-class vtkPointLocator;
 class vtkStaticPointLocator;
 class vtkPointPicker;
 
