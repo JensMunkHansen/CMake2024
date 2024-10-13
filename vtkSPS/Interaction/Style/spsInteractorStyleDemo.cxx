@@ -16,6 +16,8 @@
 
 #include <spsInteractorStyleDemo.h>
 
+// TODO: Consider painting on-click instead
+
 namespace
 {
 //------------------------------------------------------------------------------
@@ -216,10 +218,13 @@ void spsInteractorStyleDemo::OnMouseMove()
 //------------------------------------------------------------------------------
 void spsInteractorStyleDemo::OnLeftButtonUp()
 {
+  // TODO: Here draw current, everywhere else we should draw last
   vtkDebugMacro("" << __FUNCTION__);
 
   if (this->IsActive && this->CurrentActor)
   {
+    // We IsActive to false and then current position is brushed
+    this->IsActive = false;
     vtkPolyData* polyData = vtkPolyData::SafeDownCast(this->CurrentActor->GetMapper()->GetInput());
     if (polyData)
     {
@@ -314,8 +319,14 @@ void spsInteractorStyleDemo::ApplyBrush(vtkActor* actor, vtkPolyData* polyData)
   // Find points within the brush radius
   vtkNew<vtkIdList> result;
 
-  pointLocator->FindPointsWithinRadius(BrushRadius, this->CurrentLocalPosition, result);
-
+  if (this->IsActive)
+  {
+    pointLocator->FindPointsWithinRadius(BrushRadius, this->LastLocalPosition, result);
+  }
+  else
+  {
+    pointLocator->FindPointsWithinRadius(BrushRadius, this->CurrentLocalPosition, result);
+  }
   vtkUnsignedCharArray* colors =
     vtkUnsignedCharArray::SafeDownCast(polyData->GetPointData()->GetScalars());
   if (!colors)
