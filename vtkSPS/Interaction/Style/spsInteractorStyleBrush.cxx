@@ -54,7 +54,6 @@ vtkStandardNewMacro(spsInteractorStyleBrush);
 spsInteractorStyleBrush::spsInteractorStyleBrush()
 {
   this->BrushRadius = 5.0; // Default brush radius
-  this->BrushApplicationThreshold = this->BrushRadius / 10.0;
   this->UseStaticLocators = true;
   this->IsActive = false;
   this->CurrentActor = nullptr;
