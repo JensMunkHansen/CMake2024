@@ -1,7 +1,7 @@
 import addpaths
 
 #from spsmodules.spsInteractionStyle import spsPaintBrush
-from spsmodules.spsInteractionStyle import spsInteractorStylePaintBrush as spsPaintBrush
+from spsmodules.spsInteractionStyle import spsInteractorStyleBrush as spsPaintBrush
 from spsmodules.util.scene_utils import vtk_fps_counter
 
 # noinspection PyUnresolvedReferences
@@ -14,6 +14,7 @@ from vtkmodules.vtkRenderingCore import (
     vtkRenderWindowInteractor,
     vtkRenderer)
 from vtkmodules.vtkFiltersSources import vtkSphereSource
+from vtkmodules.vtkCommonTransforms import vtkTransform
 
 import numpy as np
 
@@ -48,6 +49,11 @@ for _ in range(1):
     
     # Position actors randomly for demonstration
     actor.SetPosition(np.random.uniform(-1, 1), np.random.uniform(-1, 1), 0)
+
+    tf = vtkTransform()
+    tf.RotateX(4)
+    tf.Translate(1,2,3)
+    actor.SetUserTransform(tf)
     
     # Add the actor to the renderer
     renderer.AddActor(actor)

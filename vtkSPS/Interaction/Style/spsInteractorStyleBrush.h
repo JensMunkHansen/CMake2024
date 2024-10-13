@@ -22,7 +22,7 @@ public:
   vtkGetMacro(BrushRadius, double);
   vtkGetMacro(UseStaticLocators, bool);
   virtual void SetUseStaticLocators(bool polyDataStatic);
-
+  // Set picker
 protected:
   spsInteractorStyleBrush();
   ~spsInteractorStyleBrush() = default;
@@ -30,6 +30,8 @@ protected:
   bool UseStaticLocators;
   bool IsActive;
   vtkIdType CurrentPointId;
+  double CurrentPosition[3];
+  double CurrentLocalPosition[3];
   vtkNew<vtkPointPicker> Picker;
   std::unordered_map<vtkSmartPointer<vtkActor>, vtkSmartPointer<vtkAbstractPointLocator>>
     LocatorMap;
