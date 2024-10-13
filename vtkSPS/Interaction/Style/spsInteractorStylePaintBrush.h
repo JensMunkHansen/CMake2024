@@ -6,6 +6,7 @@
 class vtkPolyData;
 class vtkPointLocator;
 class vtkCellPicker;
+class vtkPointPicker;
 class vtkPropPicker;
 
 class SPSINTERACTIONSTYLE_EXPORT spsInteractorStylePaintBrush
@@ -25,11 +26,13 @@ protected:
   spsInteractorStylePaintBrush();
   ~spsInteractorStylePaintBrush() = default;
   double BrushRadius;
-  bool IsPainting;
+  bool IsActive;
   // Declare LocatorMap as a class member variable
   std::unordered_map<vtkActor*, vtkSmartPointer<vtkPointLocator>> LocatorMap;
+
   //  vtkSmartPointer<vtkPropPicker> Picker;
-  vtkSmartPointer<vtkCellPicker> Picker;
+  //  vtkSmartPointer<vtkCellPicker> Picker;
+  vtkSmartPointer<vtkPointPicker> Picker;
 
   bool ActorHasColors(vtkActor* actor);
 
