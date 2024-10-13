@@ -8,9 +8,7 @@
 class vtkPolyData;
 class vtkPointLocator;
 class vtkStaticPointLocator;
-class vtkCellPicker;
 class vtkPointPicker;
-class vtkPropPicker;
 
 class SPSINTERACTIONSTYLE_EXPORT spsInteractorStylePaintBrush
   : public vtkInteractorStyleTrackballCamera
@@ -30,12 +28,9 @@ protected:
   ~spsInteractorStylePaintBrush() = default;
   double BrushRadius;
   bool IsActive;
-  // Declare LocatorMap as a class member variable (meshes cannot change)
-  std::unordered_map<vtkActor*, vtkSmartPointer<vtkStaticPointLocator>> LocatorMap;
+  std::unordered_map<vtkSmartPointer<vtkActor>, vtkSmartPointer<vtkStaticPointLocator>> LocatorMap;
 
-  //  vtkSmartPointer<vtkPropPicker> Picker;
-  //  vtkSmartPointer<vtkCellPicker> Picker;
-  vtkSmartPointer<vtkPointPicker> Picker;
+  vtkNew<vtkPointPicker> Picker;
 
   bool ActorHasColors(vtkActor* actor);
 
