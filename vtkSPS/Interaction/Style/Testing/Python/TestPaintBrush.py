@@ -36,8 +36,6 @@ interactor.SetRenderWindow(render_window)
 # Create multiple sphere actors
 for _ in range(1):
     sphere_source = create_sphere_source()
-    sphere_source.SetThetaResolution(40);
-    sphere_source.SetPhiResolution(80);
     sphere_source.SetRadius(1)
     sphere_source.Update()
     print(sphere_source.GetOutput().GetNumberOfCells())
@@ -69,6 +67,6 @@ interactor.SetInteractorStyle(paintBrushStyle)
 # Start the rendering loop
 render_window.Render()
 interactor.Initialize()
-vtk_fps_counter(renderer)
+fpsCounter = vtk_fps_counter(renderer)
 interactor.Start()
 

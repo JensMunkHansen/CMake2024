@@ -16,10 +16,9 @@
 
 #include <spsInteractorStyleDemo.h>
 
-// TODO: Consider painting on-click instead
-
 namespace
 {
+
 //------------------------------------------------------------------------------
 bool ActorHasColors(vtkActor* actor)
 {
@@ -59,7 +58,6 @@ spsInteractorStyleDemo::spsInteractorStyleDemo()
   this->Resolution = 10;
   this->UseStaticLocators = true;
   this->IsActive = false;
-  this->IsFirst = true;
   this->CurrentActor = nullptr;
   this->CurrentPointId = -1;
   this->CurrentPosition[0] = this->CurrentPosition[1] = this->CurrentPosition[2] = 0.0;
@@ -135,9 +133,11 @@ void spsInteractorStyleDemo::OnLeftButtonDown()
       this->LastLocalPosition[1] = this->CurrentLocalPosition[1];
       this->LastLocalPosition[2] = this->CurrentLocalPosition[2];
 
+      // Apply brush effect at the current point
+      this->ApplyBrush(this->CurrentActor, polyData);
+
       this->Counter = 0;
       this->IsActive = true; // Set active only if we hit something
-      this->IsFirst = true;
     }
   }
 
@@ -200,7 +200,7 @@ void spsInteractorStyleDemo::OnMouseMove()
 
   double BrushApplicationThreshold = this->BrushRadius / double(this->Resolution);
   // Apply the brush only if the distance is greater than or equal to 1/10th of the brush radius
-  if (distanceSquared >= (BrushApplicationThreshold * BrushApplicationThreshold) || this->IsFirst)
+  if (distanceSquared >= (BrushApplicationThreshold * BrushApplicationThreshold))
   {
     // Apply brush effect at the current point
     this->ApplyBrush(this->CurrentActor, polyData);
@@ -210,7 +210,6 @@ void spsInteractorStyleDemo::OnMouseMove()
     this->LastLocalPosition[1] = this->CurrentLocalPosition[1];
     this->LastLocalPosition[2] = this->CurrentLocalPosition[2];
     this->Counter++;
-    this->IsFirst = false;
   }
   this->IsActive = true;
 }
@@ -218,7 +217,6 @@ void spsInteractorStyleDemo::OnMouseMove()
 //------------------------------------------------------------------------------
 void spsInteractorStyleDemo::OnLeftButtonUp()
 {
-  // TODO: Here draw current, everywhere else we should draw last
   vtkDebugMacro("" << __FUNCTION__);
 
   if (this->IsActive && this->CurrentActor)
@@ -235,7 +233,6 @@ void spsInteractorStyleDemo::OnLeftButtonUp()
   }
   // Reset states
   this->IsActive = false;
-  this->IsFirst = false;
   this->CurrentActor = nullptr;
   vtkInteractorStyleTrackballCamera::OnLeftButtonUp();
 }
