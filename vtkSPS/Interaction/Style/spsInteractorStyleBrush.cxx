@@ -1,4 +1,5 @@
 #include <vtkIdTypeArray.h>
+#include <vtkMatrix4x4.h>
 #include <vtkObjectFactory.h>
 #include <vtkPointData.h>
 #include <vtkPointLocator.h>
@@ -10,6 +11,7 @@
 #include <vtkRenderer.h>
 #include <vtkRendererCollection.h>
 #include <vtkStaticPointLocator.h>
+#include <vtkTransform.h>
 #include <vtkUnsignedCharArray.h>
 
 #include <spsInteractorStyleBrush.h>
@@ -26,6 +28,7 @@ bool ActorHasColors(vtkActor* actor)
   }
   return false;
 }
+
 //------------------------------------------------------------------------------
 void AddInitialColor(vtkActor* actor, vtkPolyData* polyData)
 {
@@ -43,7 +46,7 @@ void AddInitialColor(vtkActor* actor, vtkPolyData* polyData)
   polyData->GetPointData()->SetScalars(colors);
   actor->GetMapper()->Update();
 }
-}
+} // namespace
 
 vtkStandardNewMacro(spsInteractorStyleBrush);
 
@@ -53,6 +56,10 @@ spsInteractorStyleBrush::spsInteractorStyleBrush()
   this->BrushRadius = 5.0; // Default brush radius
   this->UseStaticLocators = true;
   this->IsActive = false;
+  this->CurrentPointId = -1;
+  this->CurrentPosition[0] = this->CurrentPosition[1] = this->CurrentPosition[2] = 0.0;
+  this->CurrentLocalPosition[0] = this->CurrentLocalPosition[1] = this->CurrentLocalPosition[2] =
+    0.0;
 }
 
 //------------------------------------------------------------------------------
@@ -135,9 +142,8 @@ void spsInteractorStyleBrush::OnMouseMove()
   int* mousePos = this->GetInteractor()->GetEventPosition();
 
   // Use vtkCellPicker to pick the actor under the mouse position
-  Picker->Pick(mousePos[0], mousePos[1], 0, renderer);
-
-  actor = Picker->GetActor();
+  this->Picker->Pick(mousePos[0], mousePos[1], 0, renderer);
+  actor = this->Picker->GetActor();
 
   if (actor)
   {
@@ -150,12 +156,27 @@ void spsInteractorStyleBrush::OnMouseMove()
     return; // Safety check for null actor
   }
 
-  this->CurrentPointId = Picker->GetPointId();
+  this->CurrentPointId = this->Picker->GetPointId();
   if (this->CurrentPointId < 0)
   {
     vtkInteractorStyleTrackballCamera::OnMouseMove();
     return; // Safety check for invalid point ID
   }
+  this->Picker->GetPickPosition(this->CurrentPosition);
+
+  vtkNew<vtkMatrix4x4> actorMatrix;
+  actor->GetMatrix(actorMatrix);
+
+  // Invert the matrix to convert world coordinates to local coordinates
+  vtkNew<vtkMatrix4x4> invertedMatrix;
+  invertedMatrix->DeepCopy(actorMatrix);
+  invertedMatrix->Invert();
+
+  vtkNew<vtkTransform> inverseTransform;
+  inverseTransform->SetMatrix(invertedMatrix);
+
+  // Now apply the inverse transform to the world position to get local position
+  inverseTransform->TransformPoint(this->CurrentPosition, this->CurrentLocalPosition);
 
   // Apply brush effect at the current point
   this->ApplyBrush(actor, polyData);
@@ -205,8 +226,8 @@ void spsInteractorStyleBrush::ApplyBrush(vtkActor* actor, vtkPolyData* polyData)
 
   // Find points within the brush radius
   vtkNew<vtkIdList> result;
-  pointLocator->FindPointsWithinRadius(
-    BrushRadius, polyData->GetPoint(this->CurrentPointId), result);
+
+  pointLocator->FindPointsWithinRadius(BrushRadius, this->CurrentLocalPosition, result);
 
   vtkUnsignedCharArray* colors =
     vtkUnsignedCharArray::SafeDownCast(polyData->GetPointData()->GetScalars());
