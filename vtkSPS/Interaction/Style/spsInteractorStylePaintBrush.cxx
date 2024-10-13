@@ -22,7 +22,6 @@ spsInteractorStylePaintBrush::spsInteractorStylePaintBrush()
 {
   this->BrushRadius = 5.0; // Default brush radius
   this->IsActive = false;
-  this->Picker = vtkSmartPointer<vtkPointPicker>::New();
 }
 
 //------------------------------------------------------------------------------
@@ -135,23 +134,22 @@ void spsInteractorStylePaintBrush::ApplyBrush(
   vtkActor* actor, vtkPolyData* polyData, vtkIdType pointId)
 {
   vtkDebugMacro("" << __FUNCTION__);
+  vtkSmartPointer<vtkActor> smartActor = vtkSmartPointer<vtkActor>(actor);
   vtkSmartPointer<vtkStaticPointLocator> pointLocator;
 
   // Check if a locator already exists for this actor
-  if (LocatorMap.find(actor) == LocatorMap.end())
+  if (LocatorMap.find(smartActor) == LocatorMap.end())
   {
     // Create a new locator and store it
     pointLocator = vtkSmartPointer<vtkStaticPointLocator>::New();
     pointLocator->SetDataSet(polyData);
     pointLocator->BuildLocator();
-    LocatorMap[actor] = pointLocator;
+    LocatorMap[smartActor] = pointLocator;
   }
   else
   {
-    pointLocator = LocatorMap[actor];
+    pointLocator = LocatorMap[smartActor];
   }
-
-  // TODO: Print both the GetPoint and the point using the other wa
 
   // Find points within the brush radius
   vtkNew<vtkIdList> result;

@@ -14,6 +14,37 @@
 
 #include <spsInteractorStyleBrush.h>
 
+namespace
+{
+//------------------------------------------------------------------------------
+bool ActorHasColors(vtkActor* actor)
+{
+  vtkPolyData* polyData = vtkPolyData::SafeDownCast(actor->GetMapper()->GetInput());
+  if (polyData && polyData->GetPointData()->GetScalars())
+  {
+    return true;
+  }
+  return false;
+}
+//------------------------------------------------------------------------------
+void AddInitialColor(vtkActor* actor, vtkPolyData* polyData)
+{
+  vtkNew<vtkUnsignedCharArray> colors;
+  colors->SetNumberOfComponents(3);
+  colors->SetNumberOfTuples(polyData->GetNumberOfPoints());
+  colors->SetName("Colors");
+
+  const uint8_t newColor[3] = { 255, 255, 255 };
+  for (vtkIdType i = 0; i < polyData->GetNumberOfPoints(); ++i)
+  {
+    colors->SetTypedTuple(i, newColor);
+  }
+
+  polyData->GetPointData()->SetScalars(colors);
+  actor->GetMapper()->Update();
+}
+}
+
 vtkStandardNewMacro(spsInteractorStyleBrush);
 
 //------------------------------------------------------------------------------
@@ -22,7 +53,6 @@ spsInteractorStyleBrush::spsInteractorStyleBrush()
   this->BrushRadius = 5.0; // Default brush radius
   this->UseStaticLocators = true;
   this->IsActive = false;
-  //  this->Picker = vtkSmartPointer<vtkPointPicker>::New();
 }
 
 //------------------------------------------------------------------------------
@@ -119,52 +149,15 @@ void spsInteractorStyleBrush::OnMouseMove()
     return; // Safety check for null actor
   }
 
-  vtkIdType pickedPointId = Picker->GetPointId();
-  if (pickedPointId < 0)
+  this->CurrentPointId = Picker->GetPointId();
+  if (this->CurrentPointId < 0)
   {
-    std::cout << "picked point\n";
     vtkInteractorStyleTrackballCamera::OnMouseMove();
     return; // Safety check for invalid point ID
   }
 
-  if (!ActorHasColors(actor))
-  {
-    AddInitialColor(actor, polyData);
-  }
-
   // Apply brush effect at the current point
-  ApplyBrush(actor, polyData, pickedPointId);
-}
-
-//------------------------------------------------------------------------------
-bool spsInteractorStyleBrush::ActorHasColors(vtkActor* actor)
-{
-  vtkDebugMacro("" << __FUNCTION__);
-  vtkPolyData* polyData = vtkPolyData::SafeDownCast(actor->GetMapper()->GetInput());
-  if (polyData && polyData->GetPointData()->GetScalars())
-  {
-    return true;
-  }
-  return false;
-}
-
-//------------------------------------------------------------------------------
-void spsInteractorStyleBrush::AddInitialColor(vtkActor* actor, vtkPolyData* polyData)
-{
-  vtkDebugMacro("" << __FUNCTION__);
-  vtkNew<vtkUnsignedCharArray> colors;
-  colors->SetNumberOfComponents(3);
-  colors->SetNumberOfTuples(polyData->GetNumberOfPoints());
-  colors->SetName("Colors");
-
-  const uint8_t newColor[3] = { 255, 255, 255 };
-  for (vtkIdType i = 0; i < polyData->GetNumberOfPoints(); ++i)
-  {
-    colors->SetTypedTuple(i, newColor);
-  }
-
-  polyData->GetPointData()->SetScalars(colors);
-  actor->GetMapper()->Update();
+  ApplyBrush(actor, polyData, this->CurrentPointId);
 }
 
 vtkSmartPointer<vtkAbstractPointLocator> spsInteractorStyleBrush::GetLocator(
@@ -201,6 +194,11 @@ vtkSmartPointer<vtkAbstractPointLocator> spsInteractorStyleBrush::GetLocator(
 void spsInteractorStyleBrush::ApplyBrush(vtkActor* actor, vtkPolyData* polyData, vtkIdType pointId)
 {
   vtkDebugMacro("" << __FUNCTION__);
+
+  if (!ActorHasColors(actor))
+  {
+    AddInitialColor(actor, polyData);
+  }
 
   vtkSmartPointer<vtkAbstractPointLocator> pointLocator = this->GetLocator(actor, polyData);
 
