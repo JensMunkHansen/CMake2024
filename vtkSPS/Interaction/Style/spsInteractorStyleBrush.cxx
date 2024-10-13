@@ -1,4 +1,3 @@
-//
 #include <vtkIdTypeArray.h>
 #include <vtkObjectFactory.h>
 #include <vtkPointData.h>
@@ -13,20 +12,21 @@
 #include <vtkStaticPointLocator.h>
 #include <vtkUnsignedCharArray.h>
 
-#include <spsInteractorStylePaintBrush.h>
+#include <spsInteractorStyleBrush.h>
 
-vtkStandardNewMacro(spsInteractorStylePaintBrush);
+vtkStandardNewMacro(spsInteractorStyleBrush);
 
 //------------------------------------------------------------------------------
-spsInteractorStylePaintBrush::spsInteractorStylePaintBrush()
+spsInteractorStyleBrush::spsInteractorStyleBrush()
 {
   this->BrushRadius = 5.0; // Default brush radius
+  this->UseStaticLocators = true;
   this->IsActive = false;
-  this->Picker = vtkSmartPointer<vtkPointPicker>::New();
+  //  this->Picker = vtkSmartPointer<vtkPointPicker>::New();
 }
 
 //------------------------------------------------------------------------------
-void spsInteractorStylePaintBrush::OnLeftButtonDown()
+void spsInteractorStyleBrush::OnLeftButtonDown()
 {
   vtkDebugMacro("" << __FUNCTION__);
   vtkRenderer* renderer = this->Interactor->GetRenderWindow()->GetRenderers()->GetFirstRenderer();
@@ -41,7 +41,7 @@ void spsInteractorStylePaintBrush::OnLeftButtonDown()
 }
 
 //------------------------------------------------------------------------------
-void spsInteractorStylePaintBrush::OnLeftButtonUp()
+void spsInteractorStyleBrush::OnLeftButtonUp()
 {
   vtkDebugMacro("" << __FUNCTION__);
   this->IsActive = false; // Stop painting when the left mouse button is released
@@ -49,7 +49,39 @@ void spsInteractorStylePaintBrush::OnLeftButtonUp()
 }
 
 //------------------------------------------------------------------------------
-void spsInteractorStylePaintBrush::OnMouseMove()
+void spsInteractorStyleBrush::SetUseStaticLocators(bool polyDataStatic)
+{
+  if (this->UseStaticLocators == polyDataStatic)
+  {
+    return;
+  }
+  for (auto& entry : this->LocatorMap)
+  {
+    vtkSmartPointer<vtkActor> actor = entry.first;
+
+    vtkDataSet* dataSet = entry.second->GetDataSet();
+
+    if (this->UseStaticLocators)
+    {
+      vtkSmartPointer<vtkStaticPointLocator> staticLocator =
+        vtkSmartPointer<vtkStaticPointLocator>::New();
+      staticLocator->SetDataSet(dataSet);
+      staticLocator->BuildLocator();
+      entry.second = staticLocator;
+    }
+    else
+    {
+      vtkSmartPointer<vtkPointLocator> pointLocator = vtkSmartPointer<vtkPointLocator>::New();
+      pointLocator->SetDataSet(dataSet);
+      pointLocator->BuildLocator();
+      entry.second = pointLocator;
+    }
+  }
+  this->Modified();
+}
+
+//------------------------------------------------------------------------------
+void spsInteractorStyleBrush::OnMouseMove()
 {
   vtkDebugMacro("" << __FUNCTION__);
   vtkRenderer* renderer = this->Interactor->GetRenderWindow()->GetRenderers()->GetFirstRenderer();
@@ -101,7 +133,7 @@ void spsInteractorStylePaintBrush::OnMouseMove()
 }
 
 //------------------------------------------------------------------------------
-bool spsInteractorStylePaintBrush::ActorHasColors(vtkActor* actor)
+bool spsInteractorStyleBrush::ActorHasColors(vtkActor* actor)
 {
   vtkDebugMacro("" << __FUNCTION__);
   vtkPolyData* polyData = vtkPolyData::SafeDownCast(actor->GetMapper()->GetInput());
@@ -113,7 +145,7 @@ bool spsInteractorStylePaintBrush::ActorHasColors(vtkActor* actor)
 }
 
 //------------------------------------------------------------------------------
-void spsInteractorStylePaintBrush::AddInitialColor(vtkActor* actor, vtkPolyData* polyData)
+void spsInteractorStyleBrush::AddInitialColor(vtkActor* actor, vtkPolyData* polyData)
 {
   vtkDebugMacro("" << __FUNCTION__);
   vtkNew<vtkUnsignedCharArray> colors;
@@ -130,28 +162,42 @@ void spsInteractorStylePaintBrush::AddInitialColor(vtkActor* actor, vtkPolyData*
   actor->GetMapper()->Update();
 }
 
-//------------------------------------------------------------------------------
-void spsInteractorStylePaintBrush::ApplyBrush(
-  vtkActor* actor, vtkPolyData* polyData, vtkIdType pointId)
+vtkSmartPointer<vtkAbstractPointLocator> spsInteractorStyleBrush::GetLocator(
+  vtkActor* actor, vtkPolyData* polyData)
 {
-  vtkDebugMacro("" << __FUNCTION__);
-  vtkSmartPointer<vtkStaticPointLocator> pointLocator;
+  vtkSmartPointer<vtkAbstractPointLocator> pointLocator;
+
+  vtkSmartPointer<vtkActor> smartActor = vtkSmartPointer<vtkActor>(actor);
 
   // Check if a locator already exists for this actor
-  if (LocatorMap.find(actor) == LocatorMap.end())
+  if (LocatorMap.find(smartActor) == LocatorMap.end())
   {
     // Create a new locator and store it
-    pointLocator = vtkSmartPointer<vtkStaticPointLocator>::New();
+    if (this->UseStaticLocators)
+    {
+      pointLocator = vtkSmartPointer<vtkStaticPointLocator>::New();
+    }
+    else
+    {
+      pointLocator = vtkSmartPointer<vtkPointLocator>::New();
+    }
     pointLocator->SetDataSet(polyData);
     pointLocator->BuildLocator();
-    LocatorMap[actor] = pointLocator;
+    LocatorMap[smartActor] = pointLocator;
   }
   else
   {
-    pointLocator = LocatorMap[actor];
+    pointLocator = LocatorMap[smartActor];
   }
+  return pointLocator;
+}
 
-  // TODO: Print both the GetPoint and the point using the other wa
+//------------------------------------------------------------------------------
+void spsInteractorStyleBrush::ApplyBrush(vtkActor* actor, vtkPolyData* polyData, vtkIdType pointId)
+{
+  vtkDebugMacro("" << __FUNCTION__);
+
+  vtkSmartPointer<vtkAbstractPointLocator> pointLocator = this->GetLocator(actor, polyData);
 
   // Find points within the brush radius
   vtkNew<vtkIdList> result;
@@ -171,6 +217,7 @@ void spsInteractorStylePaintBrush::ApplyBrush(
     vtkIdType id = result->GetId(i);
     colors->SetTypedTuple(id, newColor);
   }
+
   if (result->GetNumberOfIds() > 0)
   {
     polyData->GetPointData()->Modified();
