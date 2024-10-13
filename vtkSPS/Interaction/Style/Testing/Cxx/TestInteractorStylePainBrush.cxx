@@ -18,14 +18,6 @@
 #include <vtkTesting.h>
 #include <vtkUnsignedCharArray.h>
 
-#if 0
-static char TestInteractorStylePaintBrushLog[] = "# StreamVersion 1.2\n"
-                                                 "ExposeEvent 0 299 0 0 0 0 0\n"
-                                                 "RenderEvent 0 299 0 0 0 0 0\n"
-                                                 "RenderEvent 0 299 0 0 0 0 0\n"
-                                                 "EnterEvent 172 8 0 0 0 0 0\n";
-#endif
-
 int TestInteractorStylePainBrush(int argc, char* argv[])
 {
 

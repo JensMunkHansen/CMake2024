@@ -4,6 +4,7 @@
 #include <vtkObjectFactory.h>
 #include <vtkPointData.h>
 #include <vtkPointLocator.h>
+#include <vtkPointPicker.h>
 #include <vtkPolyData.h>
 #include <vtkPolyDataMapper.h>
 #include <vtkPropPicker.h>
@@ -23,8 +24,12 @@ vtkStandardNewMacro(spsInteractorStylePaintBrush);
 spsInteractorStylePaintBrush::spsInteractorStylePaintBrush()
 {
   this->BrushRadius = 5.0; // Default brush radius
-  this->IsPainting = false;
-  this->Picker = vtkSmartPointer<vtkCellPicker>::New();
+  this->IsActive = false;
+  //  this->Picker = vtkSmartPointer<vtkCellPicker>::New();
+
+  // If data doesn't change use instead vtkStaticPointLocator
+  this->Picker = vtkSmartPointer<vtkPointPicker>::New();
+  // Question: StaticPointPicker, SurfacePointPlacer.... Can this be made faster
 }
 
 //------------------------------------------------------------------------------
@@ -38,7 +43,7 @@ void spsInteractorStylePaintBrush::OnLeftButtonDown()
     return;
   }
 
-  this->IsPainting = true; // Start painting when the left mouse button is pressed
+  this->IsActive = true; // Start painting when the left mouse button is pressed
   vtkInteractorStyleTrackballCamera::OnLeftButtonDown();
 }
 
@@ -46,7 +51,7 @@ void spsInteractorStylePaintBrush::OnLeftButtonDown()
 void spsInteractorStylePaintBrush::OnLeftButtonUp()
 {
   vtkDebugMacro("" << __FUNCTION__);
-  this->IsPainting = false; // Stop painting when the left mouse button is released
+  this->IsActive = false; // Stop painting when the left mouse button is released
   vtkInteractorStyleTrackballCamera::OnLeftButtonUp();
 }
 
@@ -60,7 +65,7 @@ void spsInteractorStylePaintBrush::OnMouseMove()
     return;
   }
 
-  if (!this->IsPainting)
+  if (!this->IsActive)
   {
     // Don't paint unless the left mouse button is pressed
     vtkInteractorStyleTrackballCamera::OnMouseMove();
@@ -157,14 +162,6 @@ void spsInteractorStylePaintBrush::ApplyBrush(
 
   // Find points within the brush radius
   vtkNew<vtkIdList> result;
-#if 0
-  double* position = Picker->GetPickPosition();
-  std::cout << "position: " << position[0] << ", " << position[1] << ", " << position[2]
-            << std::endl;
-  position = polyData->GetPoint(pointId);
-  std::cout << "Pick position: " << position[0] << ", " << position[1] << ", " << position[2]
-            << std::endl;
-#endif
   pointLocator->FindPointsWithinRadius(BrushRadius, polyData->GetPoint(pointId), result);
 
   vtkUnsignedCharArray* colors =
