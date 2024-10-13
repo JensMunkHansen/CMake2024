@@ -1,3 +1,5 @@
+#pragma once
+
 #include <spsInteractionStyleModule.h>
 #include <unordered_map>
 #include <vtkInteractorStyleTrackballCamera.h>
@@ -5,6 +7,7 @@
 
 class vtkPolyData;
 class vtkPointLocator;
+class vtkStaticPointLocator;
 class vtkCellPicker;
 class vtkPointPicker;
 class vtkPropPicker;
@@ -27,8 +30,8 @@ protected:
   ~spsInteractorStylePaintBrush() = default;
   double BrushRadius;
   bool IsActive;
-  // Declare LocatorMap as a class member variable
-  std::unordered_map<vtkActor*, vtkSmartPointer<vtkPointLocator>> LocatorMap;
+  // Declare LocatorMap as a class member variable (meshes cannot change)
+  std::unordered_map<vtkActor*, vtkSmartPointer<vtkStaticPointLocator>> LocatorMap;
 
   //  vtkSmartPointer<vtkPropPicker> Picker;
   //  vtkSmartPointer<vtkCellPicker> Picker;
