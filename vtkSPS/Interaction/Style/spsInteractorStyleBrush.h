@@ -35,7 +35,7 @@ protected:
     LocatorMap;
   vtkSmartPointer<vtkAbstractPointLocator> GetLocator(vtkActor* actor, vtkPolyData* polyData);
 
-  virtual void ApplyBrush(vtkActor* actor, vtkPolyData* polyData, vtkIdType pointId);
+  virtual void ApplyBrush(vtkActor* actor, vtkPolyData* polyData);
 
 private:
   spsInteractorStyleBrush(const spsInteractorStyleBrush&) = delete;
