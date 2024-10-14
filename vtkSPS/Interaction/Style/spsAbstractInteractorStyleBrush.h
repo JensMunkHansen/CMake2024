@@ -23,8 +23,16 @@ public:
   vtkGetMacro(BrushRadius, double);
   vtkGetMacro(Resolution, int);
   vtkSetMacro(Resolution, int);
-  vtkGetMacro(UseStaticLocators, bool);
-  virtual void SetUseStaticLocators(bool polyDataStatic);
+  enum LocatorModeType : int
+  {
+    OctreePointLocator = 0,
+    PointLocator = 1,
+    StaticPointLocator = 2
+  };
+  virtual void SetLocatorMode(int LocatorMode);
+  vtkGetMacro(LocatorMode, int);
+
+  const char* GetLocatorModeAsString();
 
 protected:
   using LocatorMapType =
@@ -34,7 +42,8 @@ protected:
   ~spsAbstractInteractorStyleBrush() override;
   double BrushRadius;
   int Resolution;
-  bool UseStaticLocators;
+  int LocatorMode = spsAbstractInteractorStyleBrush::PointLocator;
+
   vtkNew<vtkPointPicker> Picker;
 
   LocatorMapType LocatorMap;
