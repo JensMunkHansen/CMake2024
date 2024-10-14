@@ -215,6 +215,7 @@ void spsAbstractInteractorStyleBrush::OnLeftButtonUp()
   // Reset states
   this->IsActive = false;
   this->CurrentActor = nullptr;
+  this->RemoveUnusedLocators();
   vtkInteractorStyleTrackballCamera::OnLeftButtonUp();
 }
 
@@ -299,4 +300,21 @@ vtkSmartPointer<vtkAbstractPointLocator> spsAbstractInteractorStyleBrush::GetLoc
     pointLocator = LocatorMap[smartActor];
   }
   return pointLocator;
+}
+
+//------------------------------------------------------------------------------
+void spsAbstractInteractorStyleBrush::RemoveUnusedLocators()
+{
+  vtkRenderer* renderer = this->Interactor->GetRenderWindow()->GetRenderers()->GetFirstRenderer();
+
+  if (renderer)
+  {
+    for (auto& entry : this->LocatorMap)
+    {
+      if (!renderer->HasViewProp(entry.first))
+      {
+        this->LocatorMap.erase(entry.first);
+      }
+    }
+  }
 }

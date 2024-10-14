@@ -91,6 +91,7 @@ protected:
 
   void TransformToLocalCoordinates(
     vtkActor* actor, const double worldPosition[3], double localPosition[3]);
+  void RemoveUnusedLocators();
 
   virtual void ApplyBrush(vtkActor* actor, vtkPolyData* polyData) = 0;
 
