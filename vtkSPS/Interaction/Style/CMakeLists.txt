@@ -4,6 +4,7 @@ set(SpsInteractionStyle_BUILD_TESTING ${BUILD_TESTING})
 # Create the library
 set(classes
   spsInteractorStylePaintBrush
+  spsInteractorStyleTouchPaintBrush
   #spsInteractorStyleBrush
   spsAbstractInteractorStyleBrush
   spsInteractorStyleDemo
