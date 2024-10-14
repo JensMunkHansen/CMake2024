@@ -10,27 +10,67 @@ class vtkPolyData;
 class vtkAbstractPointLocator;
 class vtkPointPicker;
 
+/**
+ * @class   spsAbstractInteractorStyleBrush
+ * @brief   Abstract class for tools using a brush.
+ *
+ * This class can be used as a base class for drawing on meshes,
+ * sculpting and other operations, which can be applied using a brush.
+ */
 class SPSINTERACTIONSTYLE_EXPORT spsAbstractInteractorStyleBrush
   : public vtkInteractorStyleTrackballCamera
 {
 public:
   vtkTypeMacro(spsAbstractInteractorStyleBrush, vtkInteractorStyleTrackballCamera);
   void PrintSelf(ostream& os, vtkIndent indent) override;
+
   virtual void OnLeftButtonDown() override;
   virtual void OnLeftButtonUp() override;
   virtual void OnMouseMove() override;
+
+  ///@{
+  /**
+   * Specify the radius of the brush.
+   *
+   */
   vtkSetMacro(BrushRadius, double);
   vtkGetMacro(BrushRadius, double);
+  ///@}
+
+  ///@{
+  /**
+   * Specify resolution, i.e. how many brush applications for a
+   * displacment equal to the @BrushRadius.
+   *
+   */
   vtkGetMacro(Resolution, int);
   vtkSetMacro(Resolution, int);
+  ///@}
+
+  /**
+   * Possible values for the locator mode:
+   * - OcreePointLocator: Fastest locator to build, but lookups are slow.
+   *
+   * - PointLocator: Fast locator to build, lookups are fast but could
+   *   be faster.
+   *
+   * - StaticPointLocator: Slowest locator to build, but lookups are
+   *   very fasts. Use this for polydata that do not change.
+   */
   enum LocatorModeType : int
   {
     OctreePointLocator = 0,
     PointLocator = 1,
     StaticPointLocator = 2
   };
+
+  ///@{
+  /**
+   * Locator used (default: PointLocator).
+   */
   virtual void SetLocatorMode(int LocatorMode);
   vtkGetMacro(LocatorMode, int);
+  ///@}
 
   const char* GetLocatorModeAsString();
 
@@ -59,7 +99,7 @@ protected:
   vtkActor* CurrentActor;
   vtkIdType CurrentPointId;
   double CurrentLocalPosition[3];
-  double LastLocalPosition[3]; // Last position where brush was applied
+  double LastLocalPosition[3];
 
 private:
   spsAbstractInteractorStyleBrush(const spsAbstractInteractorStyleBrush&) = delete;
