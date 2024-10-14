@@ -1,6 +1,8 @@
+#include "spsAbstractInteractorStyleBrush.h"
 #include <vtkIdTypeArray.h>
 #include <vtkMatrix4x4.h>
 #include <vtkObjectFactory.h>
+#include <vtkOctreePointLocator.h>
 #include <vtkPointData.h>
 #include <vtkPointLocator.h>
 #include <vtkPointPicker.h>
@@ -21,7 +23,6 @@ spsAbstractInteractorStyleBrush::spsAbstractInteractorStyleBrush()
 {
   this->BrushRadius = 5.0; // Default brush radius
   this->Resolution = 10;
-  this->UseStaticLocators = true;
   this->IsActive = false;
   this->CurrentActor = nullptr;
   this->CurrentPointId = -1;
@@ -30,14 +31,32 @@ spsAbstractInteractorStyleBrush::spsAbstractInteractorStyleBrush()
   this->LastLocalPosition[0] = this->LastLocalPosition[1] = this->LastLocalPosition[2] = 0.0;
 }
 
+//------------------------------------------------------------------------------
 spsAbstractInteractorStyleBrush::~spsAbstractInteractorStyleBrush() {}
+
+//------------------------------------------------------------------------------
+const char* spsAbstractInteractorStyleBrush::GetLocatorModeAsString()
+{
+  if (this->LocatorMode == spsAbstractInteractorStyleBrush::PointLocator)
+  {
+    return "PointLocator";
+  }
+  if (this->LocatorMode == spsAbstractInteractorStyleBrush::StaticPointLocator)
+  {
+    return "StaticPointLocator";
+  }
+  else
+  {
+    return "OctreePointLocator";
+  }
+}
 
 //------------------------------------------------------------------------------
 void spsAbstractInteractorStyleBrush::PrintSelf(ostream& os, vtkIndent indent)
 {
   os << indent << "BrushRadius: " << this->BrushRadius << "\n";
   os << indent << "Resolution: " << this->Resolution << "\n";
-  os << indent << "UseStaticLocators: " << this->UseStaticLocators << "\n";
+  os << indent << "LocatorMode: " << this->GetLocatorModeAsString() << "\n";
   os << indent << "CurrentLocalPosition: [ " << this->CurrentLocalPosition[0] << ", "
      << this->CurrentLocalPosition[1] << ", " << this->CurrentLocalPosition[2] << " ]\n";
   os << indent << "LastLocalPosition: [ " << this->LastLocalPosition[0] << ", "
@@ -200,33 +219,48 @@ void spsAbstractInteractorStyleBrush::OnLeftButtonUp()
 }
 
 //------------------------------------------------------------------------------
-void spsAbstractInteractorStyleBrush::SetUseStaticLocators(bool polyDataStatic)
+void spsAbstractInteractorStyleBrush::SetLocatorMode(int locatorMode)
 {
-  if (this->UseStaticLocators == polyDataStatic)
+  if (this->LocatorMode == locatorMode)
   {
     return;
   }
-  this->UseStaticLocators = polyDataStatic;
+  if (locatorMode < spsAbstractInteractorStyleBrush::OctreePointLocator)
+    locatorMode = spsAbstractInteractorStyleBrush::OctreePointLocator;
+  if (locatorMode > spsAbstractInteractorStyleBrush::StaticPointLocator)
+    locatorMode = spsAbstractInteractorStyleBrush::StaticPointLocator;
+
+  this->LocatorMode = locatorMode;
+
   for (auto& entry : this->LocatorMap)
   {
     vtkSmartPointer<vtkActor> actor = entry.first;
 
     vtkDataSet* dataSet = entry.second->GetDataSet();
 
-    if (this->UseStaticLocators)
+    vtkSmartPointer<vtkAbstractPointLocator> locator = nullptr;
+
+    switch (this->LocatorMode)
     {
-      vtkSmartPointer<vtkStaticPointLocator> staticLocator =
-        vtkSmartPointer<vtkStaticPointLocator>::New();
-      staticLocator->SetDataSet(dataSet);
-      staticLocator->BuildLocator();
-      entry.second = staticLocator;
-    }
-    else
-    {
-      vtkSmartPointer<vtkPointLocator> pointLocator = vtkSmartPointer<vtkPointLocator>::New();
-      pointLocator->SetDataSet(dataSet);
-      pointLocator->BuildLocator();
-      entry.second = pointLocator;
+      case spsAbstractInteractorStyleBrush::OctreePointLocator:
+        locator = vtkSmartPointer<vtkOctreePointLocator>::New();
+        locator->SetDataSet(dataSet);
+        locator->BuildLocator();
+        entry.second = locator;
+        break;
+      case spsAbstractInteractorStyleBrush::StaticPointLocator:
+        locator = vtkSmartPointer<vtkStaticPointLocator>::New();
+        locator->SetDataSet(dataSet);
+        locator->BuildLocator();
+        entry.second = locator;
+        break;
+      case spsAbstractInteractorStyleBrush::PointLocator:
+      default:
+        locator = vtkSmartPointer<vtkPointLocator>::New();
+        locator->SetDataSet(dataSet);
+        locator->BuildLocator();
+        entry.second = locator;
+        break;
     }
   }
   this->Modified();
@@ -243,14 +277,18 @@ vtkSmartPointer<vtkAbstractPointLocator> spsAbstractInteractorStyleBrush::GetLoc
   // Check if a locator already exists for this actor
   if (LocatorMap.find(smartActor) == LocatorMap.end())
   {
-    // Create a new locator and store it
-    if (this->UseStaticLocators)
+    switch (this->LocatorMode)
     {
-      pointLocator = vtkSmartPointer<vtkStaticPointLocator>::New();
-    }
-    else
-    {
-      pointLocator = vtkSmartPointer<vtkPointLocator>::New();
+      case spsAbstractInteractorStyleBrush::OctreePointLocator:
+        pointLocator = vtkSmartPointer<vtkOctreePointLocator>::New();
+        break;
+      case spsAbstractInteractorStyleBrush::StaticPointLocator:
+        pointLocator = vtkSmartPointer<vtkStaticPointLocator>::New();
+        break;
+      case spsAbstractInteractorStyleBrush::PointLocator:
+      default:
+        pointLocator = vtkSmartPointer<vtkPointLocator>::New();
+        break;
     }
     pointLocator->SetDataSet(polyData);
     pointLocator->BuildLocator();
