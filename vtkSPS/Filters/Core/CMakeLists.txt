@@ -4,7 +4,9 @@ set(SpsFiltersCore_BUILD_TESTING ${BUILD_TESTING})
 
 # Create the library
 set(classes
-  spsCenterOfMass)
+  spsCenterOfMass
+  spsImplicitPolyDataDistance
+)
 
 if(DEFINED VTK_MODULE_ENABLE_SPS_FiltersCore)
   # When building as a module for VTK 8.90 or later

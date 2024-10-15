@@ -1,7 +1,7 @@
 NAME
-  SPS::FiltersCore
+  SPS::FiltersGeneral
 LIBRARY_NAME
-  spsFiltersCore # We do not need the prefix if static build
+  spsFiltersGeneral # We do not need the prefix if static build
 GROUPS
   SpsFilters
 DEPENDS
@@ -11,8 +11,7 @@ DEPENDS
   SPS::CommonCore
 PRIVATE_DEPENDS
   VTK::CommonDataModel
-  VTK::FiltersCore
-  VTK::FiltersGeneral
+  SPS::FiltersCore
 TEST_DEPENDS
   VTK::CommonSystem
   VTK::FiltersSources
