@@ -63,6 +63,7 @@ renderer.SetBackground(0.1, 0.2, 0.4)
 paintBrushStyle = spsPaintBrush()
 paintBrushStyle.SetBrushRadius(0.2)
 paintBrushStyle.SetResolution(10);
+paintBrushStyle.SetLocatorMode(2);
 interactor.SetInteractorStyle(paintBrushStyle)
 
 # Start the rendering loop
