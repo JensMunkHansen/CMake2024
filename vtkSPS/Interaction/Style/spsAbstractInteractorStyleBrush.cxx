@@ -1,23 +1,60 @@
 #include "spsAbstractInteractorStyleBrush.h"
+#include <spsInteractorStyleDemo.h>
+#include <vtkCellPicker.h>
 #include <vtkIdTypeArray.h>
 #include <vtkMatrix4x4.h>
 #include <vtkObjectFactory.h>
 #include <vtkOctreePointLocator.h>
+#include <vtkPicker.h>
 #include <vtkPointData.h>
 #include <vtkPointLocator.h>
 #include <vtkPointPicker.h>
 #include <vtkPolyData.h>
 #include <vtkPolyDataMapper.h>
+#include <vtkPropPicker.h>
 #include <vtkRenderWindow.h>
 #include <vtkRenderWindowInteractor.h>
 #include <vtkRenderer.h>
 #include <vtkRendererCollection.h>
+#include <vtkSmartPointer.h>
 #include <vtkStaticPointLocator.h>
 #include <vtkTransform.h>
 #include <vtkUnsignedCharArray.h>
+#include <vtkWorldPointPicker.h>
 
-#include <spsInteractorStyleDemo.h>
+namespace
+{
 
+// Works for vtkWorldPointPicker
+vtkActor* PickerGetActor(
+  vtkAbstractPicker* picker, vtkRenderer* renderer, double pickedWorldPoint[3])
+{
+
+  // Loop through the actors in the renderer
+  vtkActorCollection* actors = renderer->GetActors();
+  vtkActor* pickedActor = nullptr;
+
+  actors->InitTraversal();
+  vtkActor* actor = nullptr;
+  while ((actor = actors->GetNextActor()))
+  {
+    // Get the bounding box of the actor
+    double bounds[6];
+    actor->GetBounds(bounds);
+
+    // Check if the picked world point is within the bounds of the actor
+    if ((pickedWorldPoint[0] >= bounds[0] && pickedWorldPoint[0] <= bounds[1]) &&
+      (pickedWorldPoint[1] >= bounds[2] && pickedWorldPoint[1] <= bounds[3]) &&
+      (pickedWorldPoint[2] >= bounds[4] && pickedWorldPoint[2] <= bounds[5]))
+    {
+      pickedActor = actor;
+      break;
+    }
+  }
+  return pickedActor;
+}
+
+}
 //------------------------------------------------------------------------------
 spsAbstractInteractorStyleBrush::spsAbstractInteractorStyleBrush()
 {
@@ -25,10 +62,12 @@ spsAbstractInteractorStyleBrush::spsAbstractInteractorStyleBrush()
   this->Resolution = 10;
   this->IsActive = false;
   this->CurrentActor = nullptr;
-  this->CurrentPointId = -1;
   this->CurrentLocalPosition[0] = this->CurrentLocalPosition[1] = this->CurrentLocalPosition[2] =
     0.0;
   this->LastLocalPosition[0] = this->LastLocalPosition[1] = this->LastLocalPosition[2] = 0.0;
+  //  this->Picker = vtkSmartPointer<vtkCellPicker>::New();
+  // this->Picker = vtkSmartPointer<vtkPropPicker>::New(); // Not working
+  this->Picker = vtkSmartPointer<vtkPointPicker>::New();
 }
 
 //------------------------------------------------------------------------------
@@ -74,8 +113,7 @@ void spsAbstractInteractorStyleBrush::TransformToLocalCoordinates(
 
   // Invert the matrix to convert world coordinates to local coordinates
   vtkNew<vtkMatrix4x4> invertedMatrix;
-  invertedMatrix->DeepCopy(actorMatrix);
-  invertedMatrix->Invert();
+  vtkMatrix4x4::Invert(actorMatrix, invertedMatrix);
 
   // Create a transform and apply the inverted matrix
   vtkNew<vtkTransform> inverseTransform;
@@ -83,6 +121,19 @@ void spsAbstractInteractorStyleBrush::TransformToLocalCoordinates(
 
   // Apply the inverse transform to the world position to get the local position
   inverseTransform->TransformPoint(worldPosition, localPosition);
+}
+
+void spsAbstractInteractorStyleBrush::UpdateActorToLocalTransform()
+{
+  // Get the actor's transformation matrix
+  vtkNew<vtkMatrix4x4> actorMatrix;
+  this->CurrentActor->GetMatrix(actorMatrix);
+
+  // Invert the matrix to convert world coordinates to local coordinates
+  vtkNew<vtkMatrix4x4> invertedMatrix;
+  vtkMatrix4x4::Invert(actorMatrix, invertedMatrix);
+
+  this->ActorToLocalTransform->SetMatrix(invertedMatrix);
 }
 
 //------------------------------------------------------------------------------
@@ -100,32 +151,43 @@ void spsAbstractInteractorStyleBrush::OnLeftButtonDown()
 
   // Use vtkCellPicker to pick the actor under the mouse position
   this->Picker->Pick(mousePos[0], mousePos[1], 0, renderer);
-  this->CurrentActor = this->Picker->GetActor();
 
-  if (this->CurrentActor)
+  vtkActor* actor = nullptr;
+
+  vtkSmartPointer<vtkPicker> picker = vtkPicker::SafeDownCast(this->Picker);
+
+  if (picker)
   {
-    vtkPolyData* polyData = vtkPolyData::SafeDownCast(this->CurrentActor->GetMapper()->GetInput());
-    if (polyData)
+    actor = picker->GetActor();
+
+    if (actor)
     {
-      this->Picker->GetPickPosition(currentPosition);
-      this->TransformToLocalCoordinates(
-        this->CurrentActor, currentPosition, this->CurrentLocalPosition);
+      vtkPolyData* polyData = vtkPolyData::SafeDownCast(actor->GetMapper()->GetInput());
+      if (polyData)
+      {
+        this->Picker->GetPickPosition(currentPosition);
 
-      // Save the current position as the potential brush application point
-      this->LastLocalPosition[0] = this->CurrentLocalPosition[0];
-      this->LastLocalPosition[1] = this->CurrentLocalPosition[1];
-      this->LastLocalPosition[2] = this->CurrentLocalPosition[2];
+        if (actor != this->CurrentActor)
+        {
+          this->CurrentActor = actor;
+          this->UpdateActorToLocalTransform();
+        }
+        this->ActorToLocalTransform->TransformPoint(currentPosition, this->CurrentLocalPosition);
 
-      // Apply brush effect at the current point
-      this->ApplyBrush(this->CurrentActor, polyData);
+        // Save the current position as the potential brush application point
+        this->LastLocalPosition[0] = this->CurrentLocalPosition[0];
+        this->LastLocalPosition[1] = this->CurrentLocalPosition[1];
+        this->LastLocalPosition[2] = this->CurrentLocalPosition[2];
 
-      this->IsActive = true; // Set active only if we hit something
+        // Apply brush effect at the current point
+        this->ApplyBrush(this->CurrentActor, polyData);
+
+        this->IsActive = true; // Set active only if we hit something
+      }
     }
   }
-
   vtkInteractorStyleTrackballCamera::OnLeftButtonDown();
 }
-
 //------------------------------------------------------------------------------
 void spsAbstractInteractorStyleBrush::OnMouseMove()
 {
@@ -151,31 +213,37 @@ void spsAbstractInteractorStyleBrush::OnMouseMove()
 
   // Use vtkCellPicker to pick the actor under the mouse position
   this->Picker->Pick(mousePos[0], mousePos[1], 0, renderer);
-  this->CurrentActor = this->Picker->GetActor();
 
-  if (this->CurrentActor)
+  vtkActor* actor = nullptr;
+
+  vtkSmartPointer<vtkPicker> picker = vtkPicker::SafeDownCast(this->Picker);
+
+  if (picker)
+  {
+    actor = picker->GetActor();
+  }
+
+  if (actor)
   {
     polyData = vtkPolyData::SafeDownCast(this->CurrentActor->GetMapper()->GetInput());
   }
 
-  if (!this->CurrentActor || !polyData)
+  if (!actor || !polyData)
   {
     vtkInteractorStyleTrackballCamera::OnMouseMove();
     return; // Safety check for null actor
   }
 
-  this->CurrentPointId = this->Picker->GetPointId();
-  if (this->CurrentPointId < 0)
+  if (actor != this->CurrentActor)
   {
-    vtkInteractorStyleTrackballCamera::OnMouseMove();
-    return; // Safety check for invalid point ID
+    this->CurrentActor = actor;
+    this->UpdateActorToLocalTransform();
   }
 
   this->Picker->GetPickPosition(currentPosition);
 
   // Transform the world position to local coordinates
-  this->TransformToLocalCoordinates(
-    this->CurrentActor, currentPosition, this->CurrentLocalPosition);
+  this->ActorToLocalTransform->TransformPoint(currentPosition, this->CurrentLocalPosition);
 
   // Calculate the distance between the last applied position and the current position
   double distanceSquared =
@@ -318,3 +386,7 @@ void spsAbstractInteractorStyleBrush::RemoveUnusedLocators()
     }
   }
 }
+
+#if 0
+
+#endif

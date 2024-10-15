@@ -8,7 +8,8 @@
 
 class vtkPolyData;
 class vtkAbstractPointLocator;
-class vtkPointPicker;
+class vtkAbstractPicker;
+class vtkTransform;
 
 /**
  * @class   spsAbstractInteractorStyleBrush
@@ -84,7 +85,7 @@ protected:
   int Resolution;
   int LocatorMode = spsAbstractInteractorStyleBrush::PointLocator;
 
-  vtkNew<vtkPointPicker> Picker;
+  vtkSmartPointer<vtkAbstractPicker> Picker;
 
   LocatorMapType LocatorMap;
   vtkSmartPointer<vtkAbstractPointLocator> GetLocator(vtkActor* actor, vtkPolyData* polyData);
@@ -92,13 +93,14 @@ protected:
   void TransformToLocalCoordinates(
     vtkActor* actor, const double worldPosition[3], double localPosition[3]);
   void RemoveUnusedLocators();
+  void UpdateActorToLocalTransform();
 
   virtual void ApplyBrush(vtkActor* actor, vtkPolyData* polyData) = 0;
 
   // Internals
+  vtkNew<vtkTransform> ActorToLocalTransform;
   bool IsActive;
   vtkActor* CurrentActor;
-  vtkIdType CurrentPointId;
   double CurrentLocalPosition[3];
   double LastLocalPosition[3];
 
