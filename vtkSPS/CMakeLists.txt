@@ -132,6 +132,7 @@ list(APPEND sps_requested_modules
   SPS::CommonDataModel
   SPS::FiltersModeling
   SPS::FiltersCore
+  SPS::FiltersGeneral
   SPS::IOGeneral
   SPS::InteractionStyle
 )
