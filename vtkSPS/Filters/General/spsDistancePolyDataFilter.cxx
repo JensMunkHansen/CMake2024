@@ -2,9 +2,9 @@
 // SPDX-License-Identifier: BSD-3-Clause
 #include "spsDistancePolyDataFilter.h"
 
+#include "spsImplicitPolyDataDistance.h"
 #include "vtkCellData.h"
 #include "vtkDoubleArray.h"
-#include "vtkImplicitPolyDataDistance.h"
 #include "vtkInformation.h"
 #include "vtkInformationVector.h"
 #include "vtkObjectFactory.h"
@@ -98,7 +98,7 @@ void spsDistancePolyDataFilter::GetPolyDataDistance(vtkPolyData* mesh, vtkPolyDa
     return;
   }
 
-  vtkNew<vtkImplicitPolyDataDistance> imp;
+  vtkNew<spsImplicitPolyDataDistance> imp;
   imp->SetInput(src);
 
   // Calculate distance from points.

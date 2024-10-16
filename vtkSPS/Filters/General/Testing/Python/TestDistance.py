@@ -6,9 +6,9 @@ from spsmodules.spsFiltersGeneral import spsDistancePolyDataFilter
 import vtk
 
 smp = vtk.vtkSMPTools()
-#smp.SetBackend("TBB")
+smp.SetBackend("TBB")
 
-if True:
+if False:
     # Create two spheres
     sphere1 = vtk.vtkSphereSource()
     sphere1.SetCenter(0, 0, 0)
