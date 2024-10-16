@@ -11,6 +11,7 @@
 #include "vtkPointData.h"
 #include "vtkSMPThreadLocalObject.h"
 #include "vtkSMPTools.h"
+#include "vtkSmartPointer.h"
 #include "vtkStreamingDemandDrivenPipeline.h"
 #include "vtkTransform.h"
 #include "vtkTriangle.h"
@@ -48,14 +49,11 @@ spsDistancePolyDataFilter::spsDistancePolyDataFilter()
 
   this->SetNumberOfInputPorts(2);
   this->SetNumberOfOutputPorts(2);
-  this->Transform = vtkTransform::New();
+  this->Transform = vtkSmartPointer<vtkTransform>::New();
 }
 
 //------------------------------------------------------------------------------
-spsDistancePolyDataFilter::~spsDistancePolyDataFilter()
-{
-  this->Transform->Delete();
-}
+spsDistancePolyDataFilter::~spsDistancePolyDataFilter() = default;
 
 //------------------------------------------------------------------------------
 int spsDistancePolyDataFilter::RequestData(vtkInformation* vtkNotUsed(request),
@@ -125,7 +123,8 @@ void spsDistancePolyDataFilter::GetPolyDataDistance(vtkPolyData* mesh, vtkPolyDa
   vtkSMPTools::For(0, numPts,
     [&](vtkIdType begin, vtkIdType end)
     {
-      double pt[3], pt2[3];
+      double pt[3];
+      double pt2[3];
       for (vtkIdType ptId = begin; ptId < end; ptId++)
       {
         mesh->GetPoint(ptId, pt2);
@@ -182,11 +181,12 @@ void spsDistancePolyDataFilter::GetPolyDataDistance(vtkPolyData* mesh, vtkPolyDa
       {
         auto cell = TLCell.Local();
         int subId;
-        double pcoords[3], pcoords2[3], x[3], weights[VTK_MAXIMUM_NUMBER_OF_POINTS];
+        double pcoords2[3];
+        double pcoords[3], x[3], weights[VTK_MAXIMUM_NUMBER_OF_POINTS];
         for (vtkIdType cellId = begin; cellId < end; cellId++)
         {
           mesh->GetCell(cellId, cell);
-          cell->GetParametricCenter(pcoords);
+          cell->GetParametricCenter(pcoords2);
           cell->EvaluateLocation(subId, pcoords2, x, weights);
           this->Transform->InternalTransformPoint(pcoords2, pcoords);
           if (this->ComputeDirection)
@@ -197,6 +197,7 @@ void spsDistancePolyDataFilter::GetPolyDataDistance(vtkPolyData* mesh, vtkPolyDa
             double dist = DistanceWithSign(val);
             vtkMath::Subtract(closestPoint, x, direction);
             vtkMath::Normalize(direction);
+            this->Transform->InternalTransformVector(direction, direction);
             cellArray->SetValue(cellId, dist);
             cellDirectionArray->SetTuple(cellId, direction);
           }
