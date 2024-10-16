@@ -104,12 +104,12 @@ void spsDistancePolyDataFilter::GetPolyDataDistance(vtkPolyData* mesh, vtkPolyDa
   // Calculate distance from points.
   const vtkIdType numPts = mesh->GetNumberOfPoints();
 
-  vtkNew<vtkDoubleArray> pointArray;
+  vtkNew<vtkDoubleArray> pointArray; // Template
   pointArray->SetName("Distance");
   pointArray->SetNumberOfComponents(1);
   pointArray->SetNumberOfTuples(numPts);
 
-  vtkNew<vtkDoubleArray> directionArray;
+  vtkNew<vtkDoubleArray> directionArray; // Template
   if (this->ComputeDirection)
   {
     directionArray->SetName("Direction");
@@ -127,23 +127,23 @@ void spsDistancePolyDataFilter::GetPolyDataDistance(vtkPolyData* mesh, vtkPolyDa
       double pt2[3];
       for (vtkIdType ptId = begin; ptId < end; ptId++)
       {
-        mesh->GetPoint(ptId, pt2);
+        mesh->GetPoint(ptId, pt2); // Template
         this->Transform->InternalTransformPoint(pt2, pt);
-        if (this->ComputeDirection)
+        if (this->ComputeDirection) // Template
         {
           double closestPoint[3];
           double direction[3];
-          double val = imp->EvaluateFunctionAndGetClosestPoint(pt, closestPoint);
-          double dist = DistanceWithSign(val);
+          double val = imp->EvaluateFunctionAndGetClosestPoint(pt, closestPoint); // Template
+          double dist = DistanceWithSign(val);                                    // Template
           vtkMath::Subtract(closestPoint, pt, direction);
-          vtkMath::Normalize(direction);
+          vtkMath::Normalize(direction); // Template
           pointArray->SetValue(ptId, dist);
-          directionArray->SetTuple(ptId, direction);
+          directionArray->SetTuple(ptId, direction); // Template
         }
         else
         {
-          double val = imp->EvaluateFunction(pt);
-          double dist = DistanceWithSign(val);
+          double val = imp->EvaluateFunction(pt); // Template
+          double dist = DistanceWithSign(val);    // Template
           pointArray->SetValue(ptId, dist);
         }
       }
