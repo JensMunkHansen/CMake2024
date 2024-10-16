@@ -4,8 +4,10 @@
 
 #include "vtkCellData.h"
 #include "vtkCellLocator.h"
+#include "vtkCellTreeLocator.h"
 #include "vtkCleanPolyData.h"
 #include "vtkMath.h"
+#include "vtkModifiedBSPTree.h"
 #include "vtkObjectFactory.h"
 #include "vtkPolyData.h"
 #include "vtkPolygon.h"
@@ -105,8 +107,10 @@ void spsImplicitPolyDataDistance::CreateDefaultLocator()
 {
   if (this->Locator == nullptr)
   {
-    //    this->Locator = vtkCellLocator::New();
-    this->Locator = vtkStaticCellLocator::New();
+    this->Locator = vtkCellLocator::New();
+    // this->Locator = vtkStaticCellLocator::New();
+    // this->Locator = vtkCellTreeLocator::New();
+    //    this->Locator = vtkModifiedBSPTree::New();
   }
 }
 
