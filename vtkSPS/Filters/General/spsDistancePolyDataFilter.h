@@ -31,9 +31,14 @@
 #include "spsABINamespace.h"
 #include "spsFiltersGeneralModule.h" // For export macro
 #include "vtkPolyDataAlgorithm.h"
+#include "vtkSetGet.h"
+#include "vtkSmartPointer.h"
+#include "vtkTransform.h"
+
+SPS_ABI_NAMESPACE_BEGIN
 
 class vtkTransform;
-SPS_ABI_NAMESPACE_BEGIN
+
 class SPSFILTERSGENERAL_EXPORT spsDistancePolyDataFilter : public vtkPolyDataAlgorithm
 {
 public:
@@ -102,8 +107,7 @@ public:
   vtkBooleanMacro(ComputeDirection, vtkTypeBool);
   ///@}
 
-  vtkGetObjectMacro(Transform, vtkTransform);
-
+  vtkGetSmartPointerMacro(Transform, vtkTransform);
   vtkMTimeType GetMTime() override;
 
 protected:
@@ -113,7 +117,7 @@ protected:
   int RequestData(vtkInformation*, vtkInformationVector**, vtkInformationVector*) override;
   void GetPolyDataDistance(vtkPolyData*, vtkPolyData*);
 
-  vtkTransform* Transform;
+  vtkSmartPointer<vtkTransform> Transform;
 
 private:
   spsDistancePolyDataFilter(const spsDistancePolyDataFilter&) = delete;
