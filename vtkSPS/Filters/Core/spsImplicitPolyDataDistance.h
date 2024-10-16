@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: Copyright (c) Ken Martin, Will Schroeder, Bill Lorensen
 // SPDX-License-Identifier: BSD-3-Clause
 /**
- * @class   vtkImplicitPolyDataDistance(2)
+ * @class   vtkImplicitPolyDataDistance
  * @brief   Implicit function that computes the distance from a point x to the nearest point p on an
  * input vtkPolyData.
  *
@@ -23,22 +23,20 @@
  * by Cory Quammen, Chris Weigle C., Russ Taylor
  * http://hdl.handle.net/10380/3262
  * http://www.midasjournal.org/browse/publication/797
- *
- * The code is modified and made thread-safe and an option for
- * returning both points and gradients is added to the original implementation
- * of vtkImplicitPolyDataDistance of VTK.
  */
 
 #ifndef spsImplicitPolyDataDistance_h
 #define spsImplicitPolyDataDistance_h
 
+#include "spsABINamespace.h"
 #include "spsFiltersCoreModule.h" // For export macro
-#include "vtkDataObject.h"
-#include "vtkGenericCell.h" // For thread local storage
+#include "vtkGenericCell.h"       // For thread local storage
 #include "vtkImplicitFunction.h"
 #include "vtkSMPThreadLocalObject.h" // For thread local storage
 
-class vtkCellLocator;
+SPS_ABI_NAMESPACE_BEGIN
+class vtkAbstractCellLocator;
+class vtkLocator;
 class vtkPolyData;
 
 class SPSFILTERSCORE_EXPORT spsImplicitPolyDataDistance : public vtkImplicitFunction
@@ -71,22 +69,12 @@ public:
   double EvaluateFunctionAndGetClosestPoint(double x[3], double closestPoint[3]);
 
   /**
-   * Evaluate plane equation of nearest triangle to point x[3] and provides closest point on an
-   * input vtkPolyData as well as the graident.
-   */
-  double EvaluateFunctionGradientAndGetClosestPoint(
-    double x[3], double g[3], double closestPoint[3]);
-
-  double ClosestPointAndNorm(double x[3], double awnorm[3], double closestPoint[3]);
-
-  /**
    * Set the input vtkPolyData used for the implicit function
    * evaluation.  Passes input through an internal instance of
    * vtkTriangleFilter to remove vertices and lines, leaving only
    * triangular polygons for evaluation as implicit planes.
    */
   void SetInput(vtkPolyData* input);
-  vtkGetObjectMacro(Input, vtkPolyData);
 
   ///@{
   /**
@@ -127,12 +115,12 @@ protected:
   spsImplicitPolyDataDistance();
   ~spsImplicitPolyDataDistance() override;
 
-  double SharedEvaluate(double x[3], double g[3], double closestPoint[3]);
-
   /**
    * Create default locator. Used to create one when none is specified.
    */
   void CreateDefaultLocator();
+
+  double SharedEvaluate(double x[3], double g[3], double closestPoint[3]);
 
   double NoGradient[3];
   double NoClosestPoint[3];
@@ -140,7 +128,7 @@ protected:
   double Tolerance;
 
   vtkPolyData* Input;
-  vtkCellLocator* Locator;
+  vtkAbstractCellLocator* Locator;
   vtkSMPThreadLocalObject<vtkGenericCell> TLCell;
   vtkSMPThreadLocalObject<vtkIdList> TLCellIds;
 
@@ -149,4 +137,5 @@ private:
   void operator=(const spsImplicitPolyDataDistance&) = delete;
 };
 
+SPS_ABI_NAMESPACE_END
 #endif
