@@ -5,7 +5,7 @@ from spsmodules.spsFiltersGeneral import spsDistancePolyDataFilter
 import vtk
 
 smp = vtk.vtkSMPTools()
-#smp.SetBackend("TBB")
+smp.SetBackend("TBB")
 
 # Create two spheres
 sphere1 = vtk.vtkSphereSource()
@@ -22,41 +22,17 @@ sphere2.SetThetaResolution(50)
 sphere2.SetRadius(5)
 sphere2.Update()
     
-normal1 = vtk.vtkPolyDataNormals()
-normal1.SetInputConnection(sphere1.GetOutputPort())
-normal1.ComputeCellNormalsOn()
-normal1.ComputePointNormalsOn()
-normal1.Update()
-  
-input1 = normal1.GetOutput()
-  
-normal2 = vtk.vtkPolyDataNormals()
-normal2.ComputeCellNormalsOn()
-normal2.SetInputConnection(sphere2.GetOutputPort())
-normal2.ComputePointNormalsOn()
-normal2.Update()
-      
-input2 = normal2.GetOutput()
-  
-clean1 = vtk.vtkCleanPolyData()
-clean1.SetInputData(input1)
-clean1.Update()
-
-clean2 = vtk.vtkCleanPolyData()
-clean2.SetInputData(input2)
-clean2.Update()
-
 # Calculate the distance between two polydata objects
 distanceFilter = spsDistancePolyDataFilter()
-distanceFilter.SetInputData(0, clean1.GetOutput())
-distanceFilter.SetInputData(1, clean2.GetOutput())
-distanceFilter.ComputeCellCenterDistanceOn()
+distanceFilter.SetInputData(0, sphere1.GetOutput())
+distanceFilter.SetInputData(1, sphere2.GetOutput())
+#distanceFilter.ComputeCellCenterDistanceOn()
 distanceFilter.SignedDistanceOn()
 distanceFilter.Update()
 
 # Create a mapper and actor for the first sphere
 mapper1 = vtk.vtkPolyDataMapper()
-mapper1.SetInputConnection(clean1.GetOutputPort())
+mapper1.SetInputConnection(sphere1.GetOutputPort())
 actor1 = vtk.vtkActor()
 actor1.SetMapper(mapper1)
 #actor1.GetProperty().SetColor(1, 0, 0)  # Red for the first sphere
@@ -66,6 +42,12 @@ mapper2 = vtk.vtkPolyDataMapper()
 mapper2.SetInputConnection(distanceFilter.GetOutputPort())
 mapper2.ScalarVisibilityOn()
 mapper2.SetScalarRange(distanceFilter.GetOutput().GetPointData().GetScalars().GetRange())  # Distance-based coloring
+scalars = distanceFilter.GetOutput().GetPointData().GetScalars() 
+rng = [scalars.GetRange()[0],
+       scalars.GetRange()[1]]
+lim = max([abs(v) for v in rng])
+mapper2.SetScalarRange(-lim, lim)
+
 
 actor2 = vtk.vtkActor()
 actor2.SetMapper(mapper2)
@@ -97,7 +79,7 @@ class MoveCallback:
     def __call__(self, obj, event):
         self.sphereSource.Update()
         distanceFilter.GetTransform().SetMatrix(actor1.GetMatrix())
-        distanceFilter.Modified()
+        distanceFilter.GetTransform().Update()
         self.distanceFilter.Update()
         scalars = distanceFilter.GetOutput().GetPointData().GetScalars() 
         rng = [scalars.GetRange()[0],

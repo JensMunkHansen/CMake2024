@@ -11,7 +11,7 @@ DEPENDS
   SPS::CommonCore
 PRIVATE_DEPENDS
   VTK::CommonDataModel
-  SPS::FiltersCore
+  VTK::FiltersCore
 TEST_DEPENDS
   VTK::CommonSystem
   VTK::FiltersSources

@@ -79,8 +79,6 @@ public:
 
   double ClosestPointAndNorm(double x[3], double awnorm[3], double closestPoint[3]);
 
-  double ClosestPointAndNorm2(double x[3], double awnorm[3], double closestPoint[3]);
-
   /**
    * Set the input vtkPolyData used for the implicit function
    * evaluation.  Passes input through an internal instance of

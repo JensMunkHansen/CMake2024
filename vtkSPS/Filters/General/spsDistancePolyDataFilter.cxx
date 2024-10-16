@@ -2,9 +2,9 @@
 // SPDX-License-Identifier: BSD-3-Clause
 #include "spsDistancePolyDataFilter.h"
 
-#include "spsImplicitPolyDataDistance.h"
 #include "vtkCellData.h"
 #include "vtkDoubleArray.h"
+#include "vtkImplicitPolyDataDistance.h"
 #include "vtkInformation.h"
 #include "vtkInformationVector.h"
 #include "vtkObjectFactory.h"
@@ -22,18 +22,19 @@
 VTK_ABI_NAMESPACE_BEGIN
 vtkStandardNewMacro(spsDistancePolyDataFilter);
 
-vtkTransform* spsDistancePolyDataFilter::GetTransform()
+vtkMTimeType spsDistancePolyDataFilter::GetMTime()
 {
-  return this->Transform;
-}
+  vtkMTimeType mTime = this->Superclass::GetMTime();
+  vtkMTimeType time;
 
-void spsDistancePolyDataFilter::SetTransform(vtkTransform* transform)
-{
-  if (this->Transform != transform) // Check if the transform is different
+  // Would only make sense if it had inputs
+  vtkTransform* transform = this->Transform;
+  if (transform)
   {
-    this->Transform = transform; // Assign the new transform (handled by vtkSmartPointer)
-    this->Modified();            // Mark the object as modified
+    time = transform->GetMTime();
+    mTime = (time > mTime) ? time : mTime;
   }
+  return mTime;
 }
 
 //------------------------------------------------------------------------------
@@ -47,11 +48,14 @@ spsDistancePolyDataFilter::spsDistancePolyDataFilter()
 
   this->SetNumberOfInputPorts(2);
   this->SetNumberOfOutputPorts(2);
-  this->Transform = vtkSmartPointer<vtkTransform>::New();
+  this->Transform = vtkTransform::New();
 }
 
 //------------------------------------------------------------------------------
-spsDistancePolyDataFilter::~spsDistancePolyDataFilter() = default;
+spsDistancePolyDataFilter::~spsDistancePolyDataFilter()
+{
+  this->Transform->Delete();
+}
 
 //------------------------------------------------------------------------------
 int spsDistancePolyDataFilter::RequestData(vtkInformation* vtkNotUsed(request),
@@ -96,8 +100,7 @@ void spsDistancePolyDataFilter::GetPolyDataDistance(vtkPolyData* mesh, vtkPolyDa
     return;
   }
 
-  vtkNew<spsImplicitPolyDataDistance> imp;
-  imp->SetTransform(this->Transform);
+  vtkNew<vtkImplicitPolyDataDistance> imp;
   imp->SetInput(src);
 
   // Calculate distance from points.
@@ -122,10 +125,11 @@ void spsDistancePolyDataFilter::GetPolyDataDistance(vtkPolyData* mesh, vtkPolyDa
   vtkSMPTools::For(0, numPts,
     [&](vtkIdType begin, vtkIdType end)
     {
-      double pt[3];
+      double pt[3], pt2[3];
       for (vtkIdType ptId = begin; ptId < end; ptId++)
       {
-        mesh->GetPoint(ptId, pt);
+        mesh->GetPoint(ptId, pt2);
+        this->Transform->InternalTransformPoint(pt2, pt);
         if (this->ComputeDirection)
         {
           double closestPoint[3];
@@ -178,12 +182,13 @@ void spsDistancePolyDataFilter::GetPolyDataDistance(vtkPolyData* mesh, vtkPolyDa
       {
         auto cell = TLCell.Local();
         int subId;
-        double pcoords[3], x[3], weights[VTK_MAXIMUM_NUMBER_OF_POINTS];
+        double pcoords[3], pcoords2[3], x[3], weights[VTK_MAXIMUM_NUMBER_OF_POINTS];
         for (vtkIdType cellId = begin; cellId < end; cellId++)
         {
           mesh->GetCell(cellId, cell);
           cell->GetParametricCenter(pcoords);
-          cell->EvaluateLocation(subId, pcoords, x, weights);
+          cell->EvaluateLocation(subId, pcoords2, x, weights);
+          this->Transform->InternalTransformPoint(pcoords2, pcoords);
           if (this->ComputeDirection)
           {
             double closestPoint[3];

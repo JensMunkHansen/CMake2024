@@ -33,7 +33,6 @@
 #include "vtkPolyDataAlgorithm.h"
 
 class vtkTransform;
-
 SPS_ABI_NAMESPACE_BEGIN
 class SPSFILTERSGENERAL_EXPORT spsDistancePolyDataFilter : public vtkPolyDataAlgorithm
 {
@@ -102,8 +101,10 @@ public:
   vtkGetMacro(ComputeDirection, vtkTypeBool);
   vtkBooleanMacro(ComputeDirection, vtkTypeBool);
   ///@}
-  void SetTransform(vtkTransform* transform);
-  vtkTransform* GetTransform();
+
+  vtkGetObjectMacro(Transform, vtkTransform);
+
+  vtkMTimeType GetMTime() override;
 
 protected:
   spsDistancePolyDataFilter();
@@ -112,7 +113,7 @@ protected:
   int RequestData(vtkInformation*, vtkInformationVector**, vtkInformationVector*) override;
   void GetPolyDataDistance(vtkPolyData*, vtkPolyData*);
 
-  vtkSmartPointer<vtkTransform> Transform;
+  vtkTransform* Transform;
 
 private:
   spsDistancePolyDataFilter(const spsDistancePolyDataFilter&) = delete;
