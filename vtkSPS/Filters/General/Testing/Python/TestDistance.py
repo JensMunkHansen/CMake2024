@@ -1,40 +1,51 @@
 import addpaths
+from timeit import default_timer as timer
 
 from spsmodules.spsFiltersGeneral import spsDistancePolyDataFilter
 
 import vtk
 
 smp = vtk.vtkSMPTools()
-smp.SetBackend("TBB")
+#smp.SetBackend("TBB")
 
-# Create two spheres
-#sphere1 = vtk.vtkSphereSource()
-#sphere1.SetCenter(0, 0, 0)
-#sphere1.SetPhiResolution(20)
-#sphere1.SetThetaResolution(20)
-#sphere1.SetRadius(5)
+if True:
+    # Create two spheres
+    sphere1 = vtk.vtkSphereSource()
+    sphere1.SetCenter(0, 0, 0)
+    sphere1.SetPhiResolution(50)
+    sphere1.SetThetaResolution(50)
+    sphere1.SetRadius(5)
 
-reader1 = vtk.vtkPLYReader()
-reader1.SetFileName("./01_lowerJawScan.ply")
-reader1.Update()
-
-#sphere2 = vtk.vtkSphereSource()
-#sphere2.SetCenter(0, 0, 0)  # Initially offset second sphere
-#sphere2.SetPhiResolution(20)
-#sphere2.SetThetaResolution(20)
-#sphere2.SetRadius(5)
-
-reader2 = vtk.vtkPLYReader()
-reader2.SetFileName("./01_upperJawScan.ply")
-reader2.Update()
-
-dec1 = vtk.vtkQuadricDecimation()
-dec1.SetInputConnection(reader1.GetOutputPort())
-dec2 = vtk.vtkQuadricDecimation()
-dec2.SetInputConnection(reader2.GetOutputPort())
-
-dec1.SetTargetReduction(0.96)
-dec2.SetTargetReduction(0.96)
+    source2 = vtk.vtkSphereSource()
+    source2.SetCenter(0, 0, 0)  # Initially offset second sphere
+    source2.SetPhiResolution(50)
+    source2.SetThetaResolution(50)
+    source2.SetRadius(5)
+    normals1 = vtk.vtkPolyDataNormals()
+    normals1.ComputeCellNormalsOn()
+    normals1.SetInputConnection(sphere1.GetOutputPort())
+    normals2 = vtk.vtkPolyDataNormals()
+    normals2.ComputeCellNormalsOn()
+    normals2.SetInputConnection(source2.GetOutputPort())
+    if True:
+        dec1 = sphere1
+        dec2 = source2
+    else:
+        dec1 = normals1
+        dec2 = normals2
+else:
+    reader1 = vtk.vtkPLYReader()
+    reader1.SetFileName("./01_lowerJawScan.ply")
+    reader1.Update()
+    source2 = vtk.vtkPLYReader()
+    source2.SetFileName("./01_upperJawScan.ply")
+    source2.Update()
+    dec1 = vtk.vtkQuadricDecimation()
+    dec1.SetInputConnection(reader1.GetOutputPort())
+    dec2 = vtk.vtkQuadricDecimation()
+    dec2.SetInputConnection(source2.GetOutputPort())
+    dec1.SetTargetReduction(0.96)
+    dec2.SetTargetReduction(0.96)
 
 # Calculate the distance between two polydata objects
 distanceFilter = spsDistancePolyDataFilter()
@@ -46,7 +57,7 @@ distanceFilter.Update()
 
 # Create a mapper and actor for the first sphere
 mapper1 = vtk.vtkPolyDataMapper()
-mapper1.SetInputConnection(reader2.GetOutputPort())
+mapper1.SetInputConnection(source2.GetOutputPort())
 actor1 = vtk.vtkActor()
 actor1.SetMapper(mapper1)
 #actor1.GetProperty().SetColor(1, 0, 0)  # Red for the first sphere
@@ -107,7 +118,9 @@ class MoveCallback:
           tf1.SetMatrix(actor1.GetMatrix())
           tf2.SetMatrix(actor2.GetMatrix())
           distanceFilter.GetTransform().Update()
+          start = timer()
           self.distanceFilter.Update()
+          print("Elapsed: %f" % (timer() - start))
           scalars = distanceFilter.GetOutput().GetPointData().GetScalars() 
           rng = [scalars.GetRange()[0],
                  scalars.GetRange()[1]]
@@ -117,7 +130,7 @@ class MoveCallback:
           obj.GetRenderWindow().Render()
 
 # Create a callback to update the distance filter when moving the second sphere
-callback = MoveCallback(reader2, distanceFilter, actor2, mapper2)
+callback = MoveCallback(source2, distanceFilter, actor2, mapper2)
 
 renderWindowInteractor.AddObserver("EndInteractionEvent", callback)
 
