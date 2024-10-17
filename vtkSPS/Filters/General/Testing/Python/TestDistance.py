@@ -6,7 +6,8 @@ from spsmodules.spsFiltersGeneral import spsDistancePolyDataFilter
 import vtk
 
 smp = vtk.vtkSMPTools()
-smp.SetBackend("TBB")
+smp.SetBackend("STDThread")
+#smp.SetBackend("Sequential")
 
 if False:
     # Create two spheres
@@ -28,30 +29,41 @@ if False:
     normals2.ComputeCellNormalsOn()
     normals2.SetInputConnection(source2.GetOutputPort())
     if True:
-        dec1 = sphere1
-        dec2 = source2
+        out1 = sphere1
+        out2 = source2
     else:
-        dec1 = normals1
-        dec2 = normals2
+        out1 = normals1
+        out2 = normals2
 else:
     reader1 = vtk.vtkPLYReader()
-    reader1.SetFileName("./01_lowerJawScan.ply")
+    reader1.SetFileName("./VertexColorLowerJawScan.ply")
     reader1.Update()
     source2 = vtk.vtkPLYReader()
-    source2.SetFileName("./01_upperJawScan.ply")
+    source2.SetFileName("./VertexColorUpperJawScan.ply")
     source2.Update()
     dec1 = vtk.vtkQuadricDecimation()
     dec1.SetInputConnection(reader1.GetOutputPort())
     dec2 = vtk.vtkQuadricDecimation()
     dec2.SetInputConnection(source2.GetOutputPort())
-    dec1.SetTargetReduction(0.96)
-    dec2.SetTargetReduction(0.96)
+    dec1.SetTargetReduction(0.9)
+    dec2.SetTargetReduction(0.9)
+
+    normals1 = vtk.vtkPolyDataNormals()
+    normals1.ComputeCellNormalsOn()
+    normals1.SetInputConnection(dec1.GetOutputPort())
+    normals2 = vtk.vtkPolyDataNormals()
+    normals2.ComputeCellNormalsOn()
+    normals2.SetInputConnection(dec2.GetOutputPort())
+    #out1 = reader1
+    #out2 = source2
+    out1 = normals1
+    out2 = normals2
 
 # Calculate the distance between two polydata objects
 distanceFilter = spsDistancePolyDataFilter()
-distanceFilter.SetInputConnection(0, dec1.GetOutputPort())
-distanceFilter.SetInputConnection(1, dec2.GetOutputPort())
-distanceFilter.ComputeCellCenterDistanceOn()
+distanceFilter.SetInputConnection(0, out1.GetOutputPort())
+distanceFilter.SetInputConnection(1, out2.GetOutputPort())
+#distanceFilter.ComputeCellCenterDistanceOn()
 distanceFilter.SignedDistanceOn()
 distanceFilter.Update()
 
