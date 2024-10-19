@@ -3,7 +3,7 @@
 import sys
 import os
 
-from SpsDisplacementFilterSolution import SpsDisplacementPolyDataFilter
+from DisplacementFilterSolution import DisplacementPolyDataFilter
 
 # noinspection PyUnresolvedReferences
 import vtkmodules.vtkInteractionStyle
@@ -107,7 +107,7 @@ def main(argv):
   decimate.PreserveTopologyOn()
   decimate.Update()
   
-  displacementFilter = SpsDisplacementPolyDataFilter()
+  displacementFilter = DisplacementPolyDataFilter()
   displacementFilter.SetInputConnection(0, decimate.GetOutputPort())
   displacementFilter.SetInputConnection(1, clean2.GetOutputPort())
   displacementFilter.SignedDistanceOn()
@@ -164,7 +164,7 @@ def main(argv):
   renWin = vtkRenderWindow()
   renWin.AddRenderer(renderer)
   renWin.SetSize(600, 500)
-  renWin.SetWindowName("DistancePolyDataFilter")
+  renWin.SetWindowName("DisplacementPolyDataFilter")
   
   renWinInteractor = vtkRenderWindowInteractor()
   renWinInteractor.SetRenderWindow(renWin)

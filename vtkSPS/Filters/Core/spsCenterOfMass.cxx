@@ -63,7 +63,6 @@ struct CenterFunctor
   void Reduce()
   {
     this->Center.fill(0.0);
-    std::cout << "TLCenter(size): " << this->TLCenter.size() << std::endl;
     for (auto& center : this->TLCenter)
     {
       for (vtkIdType i = 0; i < 3; i++)

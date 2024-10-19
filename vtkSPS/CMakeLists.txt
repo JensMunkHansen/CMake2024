@@ -20,6 +20,7 @@ project(sps
 set(sps_cmake_dir ${CMAKE_CURRENT_SOURCE_DIR}/CMake)
 list(APPEND CMAKE_MODULE_PATH ${sps_cmake_dir})
 
+include(SPSDetermineVersion)
 include(spsVersion)
 set(SPS_VERSION
     "${SPS_MAJOR_VERSION}.${SPS_MINOR_VERSION}.${SPS_BUILD_VERSION}")

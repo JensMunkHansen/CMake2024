@@ -1,9 +1,5 @@
 include(CMakeDependentOption)
 
-#########################################
-# Please ignore this (begin)
-#########################################
-
 # Option to mangle SPS symbols
 set(SPS_ABI_NAMESPACE_NAME
   "<DEFAULT>"
@@ -15,7 +11,7 @@ if (SPS_ABI_NAMESPACE_NAME STREQUAL "<DEFAULT>")
   # This is consistent with the existing practice.
   set(SPS_ABI_NAMESPACE_NAME "")
 endif ()
-# We use vtkModuleTesting.cmake (TODO: Use our own variable for inline namespace)
+# We use vtkModuleTesting.cmake (TODO: Use our own variable _sps_abi_namespace_name for inline namespace)
 set_property(GLOBAL PROPERTY _vtk_abi_namespace_name "${SPS_ABI_NAMESPACE_NAME}")
 if (SPS_ABI_NAMESPACE_NAME STREQUAL "")
   set(SPS_ABI_NAMESPACE_BEGIN "")
@@ -30,15 +26,10 @@ configure_file(
   "${CMAKE_CURRENT_BINARY_DIR}/spsABINamespace.h"
   @ONLY)
 
-#########################################
-# Please ignore this (end)
-#########################################
-
 set(SpsCommonCore_BUILD_SHARED_LIBS ${BUILD_SHARED_LIBS})
 set(SpsCommonCore_BUILD_TESTING ${BUILD_TESTING})
 
 # TODO: Get this from .git
-set(SPS_BUILD_VERSION 1)
 configure_file(spsVersionFull.h.in spsVersionFull.h)
 configure_file(spsVersionMacros.h.in spsVersionMacros.h)
 
