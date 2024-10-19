@@ -1,7 +1,20 @@
 # VTK - extension to the VTK infrastructure
 
-Introduction
-================
+## Introduction
+
+* Module system
+    - [CMakeLists.txt](./Common/Core/CMakeLists.txt)
+    - [vtk.module](./Filters/Core/vtk.module)
+    - Order independency of libraries
+    - Linking order (circular dependencies)
+
+* Flexibility
+    - Enable/disable modules
+    - Multiple configurations (C#, JavaScript)
+    - Testing deployment of the SDK (Examples)
+
+* Regression Testing
+    - 
 
 x os.add_dll_directory (for python to work)
 x make VTK work with python (just release mode)

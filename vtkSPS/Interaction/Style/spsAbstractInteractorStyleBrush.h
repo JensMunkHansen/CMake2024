@@ -1,8 +1,8 @@
 #ifndef SPS_ABSTRACT_INTERACTOR_STYLE_BRUSH_H
 #define SPS_ABSTRACT_INTERACTOR_STYLE_BRUSH_H
 
+#include <memory>
 #include <spsInteractionStyleModule.h>
-#include <unordered_map>
 #include <vtkInteractorStyleTrackballCamera.h>
 #include <vtkSmartPointer.h>
 
@@ -76,23 +76,17 @@ public:
   const char* GetLocatorModeAsString();
 
 protected:
-  using LocatorMapType =
-    std::unordered_map<vtkSmartPointer<vtkActor>, vtkSmartPointer<vtkAbstractPointLocator>>;
-
   spsAbstractInteractorStyleBrush();
   ~spsAbstractInteractorStyleBrush() override;
   double BrushRadius;
   int Resolution;
   int LocatorMode = spsAbstractInteractorStyleBrush::PointLocator;
 
+  // TODO: Make this interchangeable
   vtkSmartPointer<vtkAbstractPicker> Picker;
 
-  LocatorMapType LocatorMap;
   vtkSmartPointer<vtkAbstractPointLocator> GetLocator(vtkActor* actor, vtkPolyData* polyData);
 
-  void TransformToLocalCoordinates(
-    vtkActor* actor, const double worldPosition[3], double localPosition[3]);
-  void RemoveUnusedLocators();
   void UpdateActorToLocalTransform();
 
   virtual void ApplyBrush(vtkActor* actor, vtkPolyData* polyData) = 0;
@@ -107,6 +101,8 @@ protected:
 private:
   spsAbstractInteractorStyleBrush(const spsAbstractInteractorStyleBrush&) = delete;
   void operator=(const spsAbstractInteractorStyleBrush&) = delete;
+  struct vtkInternals;
+  std::unique_ptr<vtkInternals> Internals;
 };
 
 #endif

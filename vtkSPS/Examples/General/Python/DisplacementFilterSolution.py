@@ -15,7 +15,7 @@ from vtkmodules.vtkFiltersCore import (
 # Most complex cell type supported
 VTK_MAXIMUM_NUMBER_OF_POINTS = 216
 
-class SpsDisplacementPolyDataFilter(VTKPythonAlgorithmBase):
+class DisplacementPolyDataFilter(VTKPythonAlgorithmBase):
     def __init__(self):
         VTKPythonAlgorithmBase.__init__(self,
             nInputPorts=2,

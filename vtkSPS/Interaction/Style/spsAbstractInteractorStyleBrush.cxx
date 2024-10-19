@@ -55,8 +55,79 @@ vtkActor* PickerGetActor(
 }
 
 }
+
+#include <unordered_map>
+
+struct spsAbstractInteractorStyleBrush::vtkInternals
+{
+  using LocatorMapType =
+    std::unordered_map<vtkSmartPointer<vtkActor>, vtkSmartPointer<vtkAbstractPointLocator>>;
+
+  vtkInternals(spsAbstractInteractorStyleBrush* parent)
+    : Parent(parent)
+  {
+  }
+  ~vtkInternals() = default;
+
+  vtkSmartPointer<vtkAbstractPointLocator> GetLocator(vtkActor* actor, vtkPolyData* polyData)
+  {
+    vtkSmartPointer<vtkAbstractPointLocator> pointLocator;
+
+    vtkSmartPointer<vtkActor> smartActor = vtkSmartPointer<vtkActor>(actor);
+
+    // Check if a locator already exists for this actor
+    if (LocatorMap.find(smartActor) == LocatorMap.end())
+    {
+      switch (Parent->GetLocatorMode())
+      {
+        case spsAbstractInteractorStyleBrush::OctreePointLocator:
+          pointLocator = vtkSmartPointer<vtkOctreePointLocator>::New();
+          break;
+        case spsAbstractInteractorStyleBrush::StaticPointLocator:
+          pointLocator = vtkSmartPointer<vtkStaticPointLocator>::New();
+          break;
+        case spsAbstractInteractorStyleBrush::PointLocator:
+        default:
+          pointLocator = vtkSmartPointer<vtkPointLocator>::New();
+          break;
+      }
+      pointLocator->SetDataSet(polyData);
+      pointLocator->BuildLocator();
+      LocatorMap[smartActor] = pointLocator;
+    }
+    else
+    {
+      pointLocator = LocatorMap[smartActor];
+    }
+    return pointLocator;
+  }
+  void RemoveUnusedLocators(vtkRenderer* renderer)
+  {
+    if (renderer)
+    {
+      for (auto& entry : this->LocatorMap)
+      {
+        if (!renderer->HasViewProp(entry.first))
+        {
+          this->LocatorMap.erase(entry.first);
+        }
+      }
+    }
+  }
+
+  spsAbstractInteractorStyleBrush* Parent = nullptr;
+  LocatorMapType LocatorMap;
+};
+
+vtkSmartPointer<vtkAbstractPointLocator> spsAbstractInteractorStyleBrush::GetLocator(
+  vtkActor* actor, vtkPolyData* polyData)
+{
+  return this->Internals->GetLocator(actor, polyData);
+}
+
 //------------------------------------------------------------------------------
 spsAbstractInteractorStyleBrush::spsAbstractInteractorStyleBrush()
+  : Internals(new spsAbstractInteractorStyleBrush::vtkInternals(this))
 {
   this->BrushRadius = 5.0; // Default brush radius
   this->Resolution = 10;
@@ -104,25 +175,6 @@ void spsAbstractInteractorStyleBrush::PrintSelf(ostream& os, vtkIndent indent)
 }
 
 //------------------------------------------------------------------------------
-void spsAbstractInteractorStyleBrush::TransformToLocalCoordinates(
-  vtkActor* actor, const double worldPosition[3], double localPosition[3])
-{
-  // Get the actor's transformation matrix
-  vtkNew<vtkMatrix4x4> actorMatrix;
-  actor->GetMatrix(actorMatrix);
-
-  // Invert the matrix to convert world coordinates to local coordinates
-  vtkNew<vtkMatrix4x4> invertedMatrix;
-  vtkMatrix4x4::Invert(actorMatrix, invertedMatrix);
-
-  // Create a transform and apply the inverted matrix
-  vtkNew<vtkTransform> inverseTransform;
-  inverseTransform->SetMatrix(invertedMatrix);
-
-  // Apply the inverse transform to the world position to get the local position
-  inverseTransform->TransformPoint(worldPosition, localPosition);
-}
-
 void spsAbstractInteractorStyleBrush::UpdateActorToLocalTransform()
 {
   // Get the actor's transformation matrix
@@ -169,6 +221,7 @@ void spsAbstractInteractorStyleBrush::OnLeftButtonDown()
 
         if (actor != this->CurrentActor)
         {
+          // Update current actor
           this->CurrentActor = actor;
           this->UpdateActorToLocalTransform();
         }
@@ -236,6 +289,7 @@ void spsAbstractInteractorStyleBrush::OnMouseMove()
 
   if (actor != this->CurrentActor)
   {
+    // Update current actor
     this->CurrentActor = actor;
     this->UpdateActorToLocalTransform();
   }
@@ -276,14 +330,20 @@ void spsAbstractInteractorStyleBrush::OnLeftButtonUp()
     vtkPolyData* polyData = vtkPolyData::SafeDownCast(this->CurrentActor->GetMapper()->GetInput());
     if (polyData)
     {
-      // Apply brush effect at the last picked position
+      // Apply brush effect at the last picked position (the current)
       this->ApplyBrush(this->CurrentActor, polyData);
     }
   }
   // Reset states
   this->IsActive = false;
   this->CurrentActor = nullptr;
-  this->RemoveUnusedLocators();
+
+  vtkRenderer* renderer = this->Interactor->GetRenderWindow()->GetRenderers()->GetFirstRenderer();
+  if (renderer)
+  {
+    this->Internals->RemoveUnusedLocators(renderer);
+  }
+
   vtkInteractorStyleTrackballCamera::OnLeftButtonUp();
 }
 
@@ -301,7 +361,7 @@ void spsAbstractInteractorStyleBrush::SetLocatorMode(int locatorMode)
 
   this->LocatorMode = locatorMode;
 
-  for (auto& entry : this->LocatorMap)
+  for (auto& entry : this->Internals->LocatorMap)
   {
     vtkSmartPointer<vtkActor> actor = entry.first;
 
@@ -333,58 +393,6 @@ void spsAbstractInteractorStyleBrush::SetLocatorMode(int locatorMode)
     }
   }
   this->Modified();
-}
-
-//------------------------------------------------------------------------------
-vtkSmartPointer<vtkAbstractPointLocator> spsAbstractInteractorStyleBrush::GetLocator(
-  vtkActor* actor, vtkPolyData* polyData)
-{
-  vtkSmartPointer<vtkAbstractPointLocator> pointLocator;
-
-  vtkSmartPointer<vtkActor> smartActor = vtkSmartPointer<vtkActor>(actor);
-
-  // Check if a locator already exists for this actor
-  if (LocatorMap.find(smartActor) == LocatorMap.end())
-  {
-    switch (this->LocatorMode)
-    {
-      case spsAbstractInteractorStyleBrush::OctreePointLocator:
-        pointLocator = vtkSmartPointer<vtkOctreePointLocator>::New();
-        break;
-      case spsAbstractInteractorStyleBrush::StaticPointLocator:
-        pointLocator = vtkSmartPointer<vtkStaticPointLocator>::New();
-        break;
-      case spsAbstractInteractorStyleBrush::PointLocator:
-      default:
-        pointLocator = vtkSmartPointer<vtkPointLocator>::New();
-        break;
-    }
-    pointLocator->SetDataSet(polyData);
-    pointLocator->BuildLocator();
-    LocatorMap[smartActor] = pointLocator;
-  }
-  else
-  {
-    pointLocator = LocatorMap[smartActor];
-  }
-  return pointLocator;
-}
-
-//------------------------------------------------------------------------------
-void spsAbstractInteractorStyleBrush::RemoveUnusedLocators()
-{
-  vtkRenderer* renderer = this->Interactor->GetRenderWindow()->GetRenderers()->GetFirstRenderer();
-
-  if (renderer)
-  {
-    for (auto& entry : this->LocatorMap)
-    {
-      if (!renderer->HasViewProp(entry.first))
-      {
-        this->LocatorMap.erase(entry.first);
-      }
-    }
-  }
 }
 
 #if 0

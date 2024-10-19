@@ -4,6 +4,7 @@ LIBRARY_NAME
   spsCommonCore
 DEPENDS
   VTK::CommonCore
+PRIVATE_DEPENDS
 DESCRIPTION
   The base SPS
 GROUPS

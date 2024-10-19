@@ -31,7 +31,7 @@ const char* spsVersion::GetSpsVersionFull()
 {
   // Since VTK_VERSION_FULL changes with every commit, it is kept out of the
   // header file to avoid excessive rebuilds.
-  return SPS_VERSION;
+  return SPS_VERSION_FULL;
 }
 
 const char* GetSpsVersion()

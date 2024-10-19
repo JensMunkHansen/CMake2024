@@ -3,6 +3,6 @@
 
 /* This is in its own header to reduce build dependencies */
 
-#define SPS_VERSION "@SPS_VERSION@"
+#define SPS_VERSION_FULL "@SPS_VERSION_FULL@"
 
 #endif

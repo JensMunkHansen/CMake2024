@@ -1,6 +1,7 @@
 #ifndef spsVersion_h
 #define spsVersion_h
 
+#include "spsABINamespace.h"
 #include "spsCommonCoreModule.h" // For export macro
 #include "spsVersionMacros.h"
 #include "vtkObject.h"
@@ -8,6 +9,7 @@
 #include "vtkVersionFull.h"
 #include "vtkVersionMacros.h" // For VTK version
 
+SPS_ABI_NAMESPACE_BEGIN
 class SPSCOMMONCORE_EXPORT spsVersion : public vtkObject
 {
 public:
@@ -40,6 +42,7 @@ private:
   spsVersion(const spsVersion&) = delete;
   void operator=(const spsVersion&) = delete;
 };
+SPS_ABI_NAMESPACE_END
 
 extern "C"
 {
