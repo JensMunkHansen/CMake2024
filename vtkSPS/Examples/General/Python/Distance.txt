@@ -1,0 +1,30 @@
+@startuml
+digraph G {
+
+    // Define nodes
+    PLYReader0 [label="PLYReader0"];
+    PLYReader1 [label="PLYReader1"];
+    QuadDecimate0 [label="QuadDecimate"];
+    QuadDecimate1 [label="QuadDecimate"];
+    DistancePolyData [label="DistancePolyData"];
+    Mapper0 [label="Mapper0"];
+    Mapper1 [label="Mapper1"];
+    
+    // Define RenderWindow as a box (square)
+    RenderWindow [label="RenderWindow", shape=box];
+    
+    // Define edges
+    PLYReader0 -> QuadDecimate0;
+    PLYReader1 -> QuadDecimate1;
+
+    QuadDecimate0 -> DistancePolyData;
+    QuadDecimate1 -> DistancePolyData;
+
+    PLYReader0 -> Mapper0;
+    DistancePolyData -> Mapper1;
+
+    // Connect the mappers to the RenderWindow
+    Mapper0 -> RenderWindow;
+    Mapper1 -> RenderWindow;
+}
+@enduml
