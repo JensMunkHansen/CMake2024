@@ -75,11 +75,12 @@ class vtkPolyDataReaderFactory:
 
 class Cutter:
     def __init__(self):
-        self.clipperPoly = None
+        self.clipperPoly = vtkClipPolyData()
         pass
     def SetClipper(self, clipper: vtkClipPolyData):
         self.clipperPoly = clipper
-    
+    def GetClipper(self):
+        return self.clipperPoly
     def interactionFcn(self, caller, event):
       boxWidget = caller
       planesClipping = vtkPlanes()
@@ -113,11 +114,12 @@ def main(argv):
   # storing planes of the bounding box
   planesClipping = vtkPlanes()
   boxWidget.GetRepresentation().GetPlanes(planesClipping)
+
+  cutter = Cutter()
   
   # clipping structure
-  clipperPoly = vtkClipPolyData()
-  clipperPoly.SetInputConnection(source.GetOutputPort())
-  clipperPoly.SetClipFunction(planesClipping)
+  cutter.GetClipper().SetInputConnection(source.GetOutputPort())
+  cutter.GetClipper().SetClipFunction(planesClipping)
   
   #mapper
   selectMapper = vtkDataSetMapper()
@@ -129,8 +131,6 @@ def main(argv):
   selectActor.GetProperty().SetColor(1.0000, 0.3882, 0.2784)
   selectActor.SetMapper(selectMapper)
 
-  cutter = Cutter()
-  cutter.SetClipper(clipperPoly)
   
   # Create graphics stuff
   ren1 = vtkRenderer()
