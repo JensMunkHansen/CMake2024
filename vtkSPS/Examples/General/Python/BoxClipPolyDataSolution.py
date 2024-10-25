@@ -115,6 +115,7 @@ def main(argv):
   planesClipping = vtkPlanes()
   boxWidget.GetRepresentation().GetPlanes(planesClipping)
 
+  # Entitity that can clip data
   cutter = Cutter()
   
   # clipping structure
@@ -123,14 +124,13 @@ def main(argv):
   
   #mapper
   selectMapper = vtkDataSetMapper()
-  selectMapper.SetInputConnection(clipperPoly.GetOutputPort())
+  selectMapper.SetInputConnection(cutter.GetClipper().GetOutputPort())
   selectMapper.Update()
   
   #actor
   selectActor = vtkActor()
   selectActor.GetProperty().SetColor(1.0000, 0.3882, 0.2784)
   selectActor.SetMapper(selectMapper)
-
   
   # Create graphics stuff
   ren1 = vtkRenderer()
