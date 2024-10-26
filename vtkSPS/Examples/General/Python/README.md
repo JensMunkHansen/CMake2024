@@ -31,7 +31,7 @@ Python exercises
     <td>
       <figure>
         <div align="center">
-          <img src="TestDisplacementFilter.png" alt="TestDisplacementFilter" style="width:300px;">
+          <img src="InteractSelect.png" alt="InteractSelect" style="width:200px;">
         </div>
         <div align="center">
           <figcaption>Displacement Filter</figcaption>
@@ -41,7 +41,17 @@ Python exercises
     <td>
       <figure>
         <div align="center">
-          <img src="Pipeline.png" alt="Pipeline" style="width:300px;">
+          <img src="InteractClip.png" alt="InteractClip" style="width:200px;">
+        </div>
+        <div align="center">
+          <figcaption>Pipeline</figcaption>
+        </div>
+      </figure>
+    </td>
+    <td>
+      <figure>
+        <div align="center">
+          <img src="InteractDecimate.png" alt="InteractDecimate" style="width:200px;">
         </div>
         <div align="center">
           <figcaption>Pipeline</figcaption>
