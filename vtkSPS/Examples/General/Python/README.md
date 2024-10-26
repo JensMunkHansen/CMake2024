@@ -34,7 +34,7 @@ Python exercises
           <img src="InteractSelect.png" alt="InteractSelect" style="width:200px;">
         </div>
         <div align="center">
-          <figcaption>Displacement Filter</figcaption>
+          <figcaption>vtkExtractPolyDataGeometry</figcaption>
         </div>
       </figure>
     </td>
@@ -44,7 +44,7 @@ Python exercises
           <img src="InteractClip.png" alt="InteractClip" style="width:200px;">
         </div>
         <div align="center">
-          <figcaption>Pipeline</figcaption>
+          <figcaption>vtkClipPolyData</figcaption>
         </div>
       </figure>
     </td>
@@ -54,7 +54,7 @@ Python exercises
           <img src="InteractDecimate.png" alt="InteractDecimate" style="width:200px;">
         </div>
         <div align="center">
-          <figcaption>Pipeline</figcaption>
+          <figcaption>vtkClipPolyData + vtkDecimatePro</figcaption>
         </div>
       </figure>
     </td>
