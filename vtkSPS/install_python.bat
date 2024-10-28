@@ -17,8 +17,6 @@ set PYTHON_VENV_NAME=Python312
 
 set SITECUSTOMIZE_FILE=%PYTHON_VENV_PATH%\%PYTHON_VENV_NAME%\Lib\site-packages\sitecustomize.py
 
-set PKG_ROOT="%TSPKG_ROOT%"
-
 IF NOT EXIST "%PYTHON_VENV_PATH%" (
     mkdir "%PYTHON_VENV_PATH%"
 )
@@ -95,6 +93,13 @@ if exist "%PYTHON_VENV_PATH%\%PYTHON_VENV_NAME%\Scripts\activate" (
 :: Activate the virtual environment
 call "%PYTHON_VENV_PATH%\%PYTHON_VENV_NAME%\Scripts\activate"
 
+:: For debugging. Unfortunately on Windows, binary APIs are not compatible
+:: python_d -m ensurepip
+:: python_d -m pip install --upgrade pip
+:: python_d -m pip install IPython
+:: python_d -m pip install numpy
+
+
 :: Upgrade pip inside the virtual environment
 echo Upgrading pip inside the virtual environment...
 python -m pip install --upgrade pip
@@ -138,12 +143,13 @@ if not exist "%SITECUSTOMIZE_FILE%" (
 )
 
 :: Add to the sitecustomize.py file
+:: - the approach also works in debug, simply replace Release -> Debug and run python_d.exe.
 echo import os >> "%SITECUSTOMIZE_FILE%"
 echo import sys >> "%SITECUSTOMIZE_FILE%"
-echo PKG_ROOT=os.environ.get("PKG_ROOT") >> "%SITECUSTOMIZE_FILE%"
-echo VTK_BINARY_DIR=(f"{PKG_ROOT}/ArtifactoryInstall/WindowsShared/bin").replace("\\","/") >> "%SITECUSTOMIZE_FILE%"
+echo PKG_ROOT=os.environ.get("TSPKG_ROOT") >> "%SITECUSTOMIZE_FILE%"
+echo VTK_BINARY_DIR=(f"{PKG_ROOT}/ArtifactoryInstall/WindowsShared/Release/bin/Release").replace("\\","/") >> "%SITECUSTOMIZE_FILE%"
 echo if os.path.exists(VTK_BINARY_DIR): >> "%SITECUSTOMIZE_FILE%"
 echo     os.add_dll_directory(VTK_BINARY_DIR) >> "%SITECUSTOMIZE_FILE%"
-echo sys.path.insert(0, f"{PKG_ROOT}/ArtifactoryInstall/WindowsShared/lib/site-packages") >> "%SITECUSTOMIZE_FILE%"
+echo sys.path.insert(0, f"{PKG_ROOT}/ArtifactoryInstall/WindowsShared/Release/lib/site-packages") >> "%SITECUSTOMIZE_FILE%"
 
 exit /b 0

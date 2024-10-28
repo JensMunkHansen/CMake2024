@@ -1,9 +1,9 @@
 @echo off
-echo "Simple installer for compiling VTK in C:/VTK without Qt and Python support"
+echo "Simple installer for installing VTK with and without Python support"
 SetLocal EnableDelayedExpansion
 
-IF "%PKG_ROOT%"=="" (
-   ECHO Environment variable PKG_ROOT is NOT set. Example "PKG_ROOT = C:\Artifactory"
+IF "%TSPKG_ROOT%"=="" (
+   ECHO Environment variable TSPKG_ROOT is NOT set. Example "TSPKG_ROOT = C:\Artifactory"
    goto :eof
 )
 
@@ -25,8 +25,10 @@ pushd %~dp0
 if exist "%~dp0\VTK" (
   echo "Folder exists"
 ) else (
-  git -c advice.detachedHead=false clone --depth 1 https://gitlab.kitware.com/vtk/vtk.git VTK
+  git -c advice.detachedHead=false clone --branch v9.3.20241014 --depth 1 git@github.com:3ShapeInternal/VTK.git VTK
 )
+
+call "C:\Program Files\Microsoft Visual Studio\2022\Professional\VC\Auxiliary\Build\vcvarsall.bat" x64
 
 if %myArg% == DEBUG (
   goto :Debug
@@ -34,25 +36,29 @@ if %myArg% == DEBUG (
 
 set PATH="%PYTHON_INSTALL_DIR%";%PATH%
 
-call "C:\Program Files\Microsoft Visual Studio\2022\Professional\VC\Auxiliary\Build\vcvarsall.bat" x64
-
 :Release
 
-if exist "%LOCALAPPDATA%\Programs\Python\Python312" (
-   cmake -H%~dp0/VTK -B"%PKG_ROOT%/ArtifactoryCache/WindowsShared/Release" -G "Visual Studio 17 2022" -A "x64" -DCMAKE_CXX_MP_FLAG=ON -DVTK_WRAP_PYTHON=ON -DCMAKE_INSTALL_PREFIX="%PKG_ROOT%/ArtifactoryInstall/WindowsShared"
+set INSTALL_PREFIX=%TSPKG_ROOT%\ArtifactoryInstall\WindowsShared\Release
+
+if exist "%PYTHON_INSTALL_DIR%" (
+  cmake -H"%~dp0VTK" -B"%TSPKG_ROOT%\ArtifactoryCache\WindowsShared\Release" -G "Visual Studio 17 2022" -A "x64" -DCMAKE_CXX_MP_FLAG=ON -DVTK_WRAP_PYTHON=ON -DCMAKE_INSTALL_PREFIX="%INSTALL_PREFIX%" -DBUILD_SHARED_LIBS=ON  -DVTK_MODULE_ENABLE_VTK_FiltersFlowPaths:STRING=NO
 ) else (
-  cmake -H%~dp0/VTK -B"%PKG_ROOT%/ArtifactoryCache/WindowsShared/Release" -G "Visual Studio 17 2022" -A "x64" -DCMAKE_CXX_MP_FLAG=ON -DCMAKE_INSTALL_PREFIX="%PKG_ROOT%/ArtifactoryInstall/WindowsShared"
+  cmake -H"%~dp0VTK" -B"%TSPKG_ROOT%\ArtifactoryCache\WindowsShared\Release" -G "Visual Studio 17 2022" -A "x64" -DCMAKE_CXX_MP_FLAG=ON -DCMAKE_INSTALL_PREFIX="%INSTALL_PREFIX%" -DBUILD_SHARED_LIBS=ON -DVTK_MODULE_ENABLE_VTK_FiltersFlowPaths:STRING=NO
 )
 
-cmake --build "%PKG_ROOT%/ArtifactoryCache/WindowsShared/Release" --config Release --target install -j 8
+cmake --build "%TSPKG_ROOT%\ArtifactoryCache\WindowsShared\Release" --config Release --target install -j 8
 
 goto :eof
 
 :Debug
 
-cmake -H%~dp0/VTK -B"%PKG_ROOT%/ArtifactoryCache/WindowsShared/Debug" -G "Visual Studio 17 2022" -A "x64" -DCMAKE_CXX_MP_FLAG=ON -DCMAKE_INSTALL_PREFIX="%PKG_ROOT%/ArtifactoryInstall/WindowsShared"
-)
-cmake --build "%PKG_ROOT%/ArtifactoryCache/WindowsShared/Debug" --config Debug --target install -j 8
+set INSTALL_PREFIX=%TSPKG_ROOT%\ArtifactoryInstall\WindowsShared\Debug
+
+REM: We do not support python binding in debug mode, TODO: Check if disabling VTK_VERSIONED_INSTALL works on Windows
+
+cmake -H"%~dp0VTK" -B"%TSPKG_ROOT%\ArtifactoryCache\WindowsShared\Debug" -G "Visual Studio 17 2022" -A "x64" -DCMAKE_CXX_MP_FLAG=ON -DCMAKE_INSTALL_PREFIX="%INSTALL_PREFIX%" -DBUILD_SHARED_LIBS=ON -DVTK_MODULE_ENABLE_VTK_FiltersFlowPaths:STRING=NO -DCMAKE_DEBUG_POSTFIX=d
+
+cmake --build "%TSPKG_ROOT%\ArtifactoryCache\WindowsShared\Debug" --config Debug --target install -j 8
 
 goto :eof
 
