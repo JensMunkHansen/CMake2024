@@ -147,7 +147,7 @@ if not exist "%SITECUSTOMIZE_FILE%" (
 echo import os >> "%SITECUSTOMIZE_FILE%"
 echo import sys >> "%SITECUSTOMIZE_FILE%"
 echo PKG_ROOT=os.environ.get("TSPKG_ROOT") >> "%SITECUSTOMIZE_FILE%"
-echo VTK_BINARY_DIR=(f"{PKG_ROOT}/ArtifactoryInstall/WindowsShared/Release/bin/Release").replace("\\","/") >> "%SITECUSTOMIZE_FILE%"
+echo VTK_BINARY_DIR=(f"{PKG_ROOT}/ArtifactoryInstall/WindowsShared/Release/bin").replace("\\","/") >> "%SITECUSTOMIZE_FILE%"
 echo if os.path.exists(VTK_BINARY_DIR): >> "%SITECUSTOMIZE_FILE%"
 echo     os.add_dll_directory(VTK_BINARY_DIR) >> "%SITECUSTOMIZE_FILE%"
 echo sys.path.insert(0, f"{PKG_ROOT}/ArtifactoryInstall/WindowsShared/Release/lib/site-packages") >> "%SITECUSTOMIZE_FILE%"
