@@ -111,7 +111,7 @@
     {
       "name": "core-test-linux",
       "description": "Enable output on failure",
-      "configurePreset": "linux-debug",
+      "configurePreset": "linux-release",
       "output": {
         "outputOnFailure": true
       }
