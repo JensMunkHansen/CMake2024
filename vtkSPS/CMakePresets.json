@@ -12,6 +12,9 @@
         "type": "equals",
         "lhs": "${hostSystemName}",
         "rhs": "Windows"
+      },
+      "cacheVariables": {
+        "SPS_BUILD_TESTING": "ON"
       }
     },
     {

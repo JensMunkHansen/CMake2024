@@ -25,7 +25,6 @@ int TestVersion(int argc, char* argv[])
 #if !(SPS_VERSION_NUMBER >= SPS_VERSION_CHECK(0, 9, 0))
   retval |= EXIT_FAILURE;
 #endif
-
   vtkNew<spsVersion> versionInfo;
 
   const char* spsVersion = versionInfo->GetSpsVersionFull();
@@ -34,6 +33,5 @@ int TestVersion(int argc, char* argv[])
 
   // Count occurrences of '.' in the string view
   retval |= (std::count(svVersion.begin(), svVersion.end(), '.') - 2);
-
   return retval;
 }
