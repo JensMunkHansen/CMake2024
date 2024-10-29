@@ -90,6 +90,12 @@
       "description": "Vanilla build"
     },
     {
+      "name": "release-build-linux",
+      "displayName": "Release",
+      "configurePreset": "linux-release",
+      "description": "Vanilla build"
+    },
+    {
       "name": "verbose-build-linux",
       "displayName": "Verbose Build",
       "description": "Passes -v to Ninja",
