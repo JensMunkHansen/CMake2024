@@ -27,7 +27,11 @@
         "value": "x64",
         "strategy": "external"
       },
+      "environment": {
+          "CUSTOM_RUNTIME_PATH": "$env{PKG_ROOT}/ArtifactoryInstall/WindowsShared/bin;$env{PATH}"
+      },
       "cacheVariables": {
+        "CMAKE_PREFIX_PATH": "$env{PKG_ROOT}/ArtifactoryInstall/WindowsShared/lib/cmake/vtk",
         "CMAKE_C_COMPILER": "cl",
         "CMAKE_CXX_COMPILER": "cl"
       }
@@ -123,7 +127,17 @@
       "name": "core-test-windows",
       "inherits": "core-test-linux",
       "configurePreset": "windows",
-      "configuration": "Release"
+      "configuration": "Release",
+      "output": {
+        "outputOnFailure": true
+      },
+      "environment": {
+        "CUSTOM_RUNTIME_PATH": "$env{PKG_ROOT}/ArtifactoryInstall/WindowsShared/bin;$env{PATH}"
+      },
+      "execution": {
+        "inheritEnvironments": ["env"],
+        "args": ["-D", "${binaryDir}/ExternalData/Testing"]
+      }
     }
   ]
 }
