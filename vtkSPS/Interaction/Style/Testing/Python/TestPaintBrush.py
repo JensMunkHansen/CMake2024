@@ -66,6 +66,9 @@ paintBrushStyle.SetResolution(10);
 paintBrushStyle.SetLocatorMode(2);
 interactor.SetInteractorStyle(paintBrushStyle)
 
+# Use timers
+paintBrushStyle.SetUseTimers(True)
+
 # Start the rendering loop
 render_window.Render()
 interactor.Initialize()

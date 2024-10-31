@@ -59,7 +59,6 @@ class vtk_fps_counter:
         self.mRenderObservationTag = self.mRenderer.AddObserver(vtkCommand.EndEvent, self)
         self.mIren = self.mRenderer.GetRenderWindow().GetInteractor()
         self.mInteractorObservationTag = self.mIren.AddObserver(vtkCommand.TimerEvent, self.interactorCallback)
-        #self.mIren.CreateRepeatingTimer(16)
         # DPI is 72 times the display scaling factor (in VTK)
         dpi = self.mRenderer.GetRenderWindow().GetDPI()
         self.ActorPosX = x
@@ -81,9 +80,7 @@ class vtk_fps_counter:
           self.mFpsActor2.SetInput("FPS: {:.2f}".format(_fps))
         self.mTickCount = self.mTickCount + 1
     def __del__(self):
-        print("Removing observers")
         self.mRenderer.RemoveObserver(self.mRenderObservationTag)
-        #self.mIren.RemoveObserver(self.mInteractorObservationTag)
     def setPosition(self, x, y):
         self.ActorPosX = x
         self.ActorPosY = y
@@ -98,7 +95,6 @@ class vtk_fps_counter:
                 _duration        = _currentTime - self.mStartTime
                 
                 _fps = self.mFrameCount/_duration
-                #print("fps={:.3f}".format(_fps))
                 self.mFpsActor.SetInput("FPS: {:.2f}".format(_fps))
                 self.mStartTime  = _currentTime
                 self.mFrameCount = 0
@@ -110,13 +106,6 @@ class vtk_fps_counter:
         self.mFpsActor.GetTextProperty().SetColor([1, 1, 1])
         self.mFpsActor.SetPosition(self.ActorPosX, self.ActorPosY)
         self.mRenderer.AddActor(self.mFpsActor)      
-        # self.mFpsActor2 = vtkTextActor()
-        # self.mFpsActor2.GetTextProperty().SetFontFamilyAsString("Georgia")
-        # self.mFpsActor2.GetTextProperty().SetFontSize(30)
-        # self.mFpsActor2.GetTextProperty().SetColor([1, 1, 1])
-        # (x,y) = self.mRenderer.GetRenderWindow().GetSize()
-        # self.mFpsActor2.SetPosition(x, y)
-        # self.mRenderer.AddActor(self.mFpsActor2)      
 
 # Local variables: #
 # tab-width: 2 #
