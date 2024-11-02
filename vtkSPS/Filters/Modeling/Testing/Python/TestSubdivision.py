@@ -3,7 +3,8 @@ import addpaths
 from spsmodules.spsFiltersModeling import spsSimpleTriangleSubdivisionFilter
 from spsmodules.util.scene_utils import (
     vtk_color_cells_randomly,
-    vtk_color_points_randomly)
+    vtk_color_points_randomly,
+    vtk_subfigs)
 
 # noinspection PyUnresolvedReferences
 import vtkmodules.vtkInteractionStyle
@@ -42,17 +43,27 @@ nOutputCells = outPolyData.GetNumberOfCells()
 assert(nOutputPoints == nInputPoints + 0.5*(3**(nSubDivisions) - 1) * nInputCells)
 assert(nOutputCells == nInputCells * 3**(nSubDivisions))
 
-renderer = vtkRenderer()
-mapper = vtkPolyDataMapper()
-mapper.SetInputData(outPolyData)
-mapper.SetScalarModeToUseCellData()
+rwin, renderers = vtk_subfigs(nrows=1, ncols=2, sharecamera=True)
 
-actor = vtkActor()
-actor.SetMapper(mapper)
+mappers = []
+mappers.append(vtkPolyDataMapper())
+mappers[0].SetInputData(outPolyData)
+mappers[0].SetScalarModeToUseCellData()
 
-renderer.AddActor(actor)
-rwin = vtkRenderWindow()
-rwin.AddRenderer(renderer)
+actors = []
+actors.append(vtkActor())
+actors[0].SetMapper(mappers[0])
+
+renderers[0].AddActor(actors[0])
+
+mappers.append(vtkPolyDataMapper())
+mappers[1].SetInputData(inPolyData)
+mappers[1].SetScalarModeToUseCellData()
+
+actors.append(vtkActor())
+actors[1].SetMapper(mappers[1])
+renderers[1].AddActor(actors[1])
+
 rwin.Render()
 iren = vtkRenderWindowInteractor()
 iren.SetRenderWindow(rwin)
