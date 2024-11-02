@@ -19,6 +19,7 @@ vtkStandardNewMacro(spsPolyDataPieceFilter);
 spsPolyDataPieceFilter::spsPolyDataPieceFilter()
 {
   this->PiecesHandledUpstream = true;
+  this->PiecesHandledUpstream = false;
 }
 
 //------------------------------------------------------------------------------
@@ -92,7 +93,6 @@ int spsPolyDataPieceFilter::RequestData(vtkInformation* vtkNotUsed(request),
   {
     return 0;
   }
-
   if (this->PiecesHandledUpstream)
   {
     // We act like a pass-through filter
