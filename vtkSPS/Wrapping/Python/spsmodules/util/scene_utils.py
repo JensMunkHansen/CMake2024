@@ -9,8 +9,30 @@ from vtkmodules.vtkCommonCore import (
 from vtkmodules.vtkCommonDataModel import vtkPolyData
 import vtkmodules.vtkRenderingFreeType
 from vtkmodules.vtkRenderingCore import (
+  vtkRenderWindowInteractor,
+  vtkRenderWindow,
+  vtkCamera,
+  vtkRenderer,
+  vtkActor,
   vtkTextActor)
-  
+
+def vtk_subfigs(nrows=1, ncols=1, sharecamera=False):
+  renderWindow = vtkRenderWindow()
+  renderers = []
+  camera = None
+  if sharecamera:
+    camera = vtkCamera()
+  for irow in range(nrows-1,-1,-1):
+    for icol in range(ncols):
+      renderer = vtkRenderer()
+      renderer.SetViewport(0.0 + icol*1.0/ncols,0.0 + irow*1.0/nrows,
+                           (icol+1)*1.0/ncols,(irow+1)*1.0/nrows)
+      if camera is not None:
+        renderer.SetActiveCamera(camera)
+      renderWindow.AddRenderer(renderer)
+      renderers.append(renderer)
+  return renderWindow, renderers
+
 def vtk_next_named_color(step=2):
   colors = vtkNamedColors()
   colorNames = colors.GetColorNames().split("\n")
