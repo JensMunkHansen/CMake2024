@@ -77,6 +77,8 @@ for iPiece in range(nPieces):
     #renderer.AddActor(actor)
 actor = vtkActor()
 
+
+# Could use append filter and geometry filter (no deepcopy). Leave only outer shell as poly data
 mapper = vtkDataSetMapper()
 mapper.SetInputData(append.GetOutput())
 actor.SetMapper(mapper)
