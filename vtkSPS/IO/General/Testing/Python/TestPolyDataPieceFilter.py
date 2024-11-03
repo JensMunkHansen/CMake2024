@@ -11,6 +11,7 @@ import vtkmodules.vtkRenderingOpenGL2
 from vtkmodules.vtkCommonDataModel import vtkPolyData
 from vtkmodules.vtkCommonCore import vtkUnsignedCharArray
 from vtkmodules.vtkCommonExecutionModel import vtkStreamingDemandDrivenPipeline
+from vtkmodules.vtkFiltersCore import vtkAppendPolyData
 from vtkmodules.vtkFiltersGeometry import vtkGeometryFilter
 from vtkmodules.vtkFiltersSources import vtkSphereSource
 from vtkmodules.vtkRenderingCore import (
@@ -49,7 +50,8 @@ nPieces = 16
 outInfo = pieceFilter.GetExecutive().GetOutputInformation(0)
 outInfo.Set(vtkStreamingDemandDrivenPipeline.UPDATE_NUMBER_OF_PIECES(), nPieces)
 
-append = vtk.vtkAppendFilter()
+append = vtkAppendPolyData()
+append.SetInputConnection(pieceFilter.GetOutputPort())
 for iPiece in range(nPieces):
     outInfo.Set(vtkStreamingDemandDrivenPipeline.UPDATE_PIECE_NUMBER(), iPiece)
     pieceFilter.Update()
@@ -59,7 +61,8 @@ for iPiece in range(nPieces):
     # Take a copy
     polyData = vtkPolyData()
     polyData.DeepCopy(pieceFilter.GetOutput())
-    append.AddInputData(polyData)
+    #append.AddInputData(polyData)
+    append.Update()
     # Debug
     print("#cells: " + str(polyData.GetNumberOfCells()))
     print("#points: " + str(polyData.GetNumberOfPoints()))
@@ -73,12 +76,9 @@ for iPiece in range(nPieces):
     actor.SetMapper(mapper)
     #renderer.AddActor(actor)
 actor = vtkActor()
-geometryFilter = vtk.vtkGeometryFilter()
-geometryFilter.SetInputConnection(append.GetOutputPort())
-geometryFilter.Update()
 
 mapper = vtkDataSetMapper()
-mapper.SetInputData(geometryFilter.GetOutput())
+mapper.SetInputData(append.GetOutput())
 actor.SetMapper(mapper)
 renderer.AddActor(actor)
 
