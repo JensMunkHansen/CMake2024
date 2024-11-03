@@ -1,3 +1,7 @@
+1. Clip. Multiply implicit function, cutter.
+2. C++ slot for scalar impl, unit test (example)
+
+
 1. We do not provide runtime dependencies on Windows:
 
 Consider using file(GET_RUNTIME_DEPENDENCIES) and RUNTIME_DEPENDENCY_SET or install(CODE)
