@@ -29,8 +29,8 @@ sphereSource.Update();
 
 pieceFilter = spsPolyDataPieceFilter();
 
-#pieceFilter.SetInputData(sphereSource.GetOutput()) # We split into pieces
-pieceFilter.SetInputConnection(sphereSource.GetOutputPort()) # We split into pieces
+pieceFilter.SetInputData(sphereSource.GetOutput()) # We split into pieces
+#pieceFilter.SetInputConnection(sphereSource.GetOutputPort()) # We split into pieces
 
 # Renderer and window setup
 renderer = vtkRenderer()

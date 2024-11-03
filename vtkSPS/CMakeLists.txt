@@ -27,7 +27,7 @@ set(SPS_VERSION
 message("Building vtkSPS with version: ${SPS_VERSION}")
 
 set(VTK_VERSION_MINIMUM 9.2)
-find_package(VTK ${VTK_VERSION_MINIMUM} REQUIRED)
+find_package(VTK ${VTK_VERSION_MINIMUM})
 if (VTK_FOUND)
   message("-- Found VTK with version: ${VTK_VERSION}")
 endif()
