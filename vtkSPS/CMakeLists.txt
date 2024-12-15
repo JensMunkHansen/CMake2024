@@ -19,6 +19,7 @@ project(sps
 # Location for custom cmake macros
 set(sps_cmake_dir ${CMAKE_CURRENT_SOURCE_DIR}/CMake)
 list(APPEND CMAKE_MODULE_PATH ${sps_cmake_dir})
+list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/CMakeLocal)
 
 include(SPSDetermineVersion)
 include(spsVersion)
@@ -129,12 +130,6 @@ mark_as_advanced(SPS_BUILD_ALL_MODULES)
 # Here list what is needed
 list(APPEND sps_requested_modules
   SPS::CommonCore
-  SPS::CommonDataModel
-  SPS::FiltersModeling
-  SPS::FiltersCore
-  SPS::FiltersGeneral
-  SPS::IOGeneral
-  SPS::InteractionStyle
 )
 
 # Option for clearing modules
@@ -261,11 +256,6 @@ if(BUILD_PYTHON_WRAPPERS)
     # TODO: Find real target and remove "_d"
   endforeach()
 
-  set_target_properties(spsFiltersCorePython
-    PROPERTIES
-    DEBUG_POSTFIX "")
-  
-  
   add_subdirectory(Wrapping/Python)
 
   export(
