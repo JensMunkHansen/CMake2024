@@ -46,11 +46,11 @@ int spsPolyDataPieceFilter::RequestInformation(vtkInformation* vtkNotUsed(reques
     this->GetInputConnection(/* port */ 0, /* index */ 0)->GetProducer());
   if (trivialProducer || !canHandlePieceRequest)
   {
-    //    this->PiecesHandledUpstream = false;
+    this->PiecesHandledUpstream = false;
   }
   else
   {
-    //    this->PiecesHandledUpstream = true;
+    this->PiecesHandledUpstream = true;
   }
   return 1;
 }
