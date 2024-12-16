@@ -38,8 +38,10 @@ endif()
 
 # TODO: No vtkWrapHierarchi.wasm
 set(_vtkModule_dir "${VTK_DIR}/lib/cmake/vtk-9.4")
+set(_vtkModuleTesting_dir "${VTK_DIR}/lib/cmake/vtk-9.4")
 if (NOT EXISTS "${_vtkModule_dir}")
   set(_vtkModule_dir "${VTK_DIR}")
+  set(_vtkModuleTesting_dir "${VTK_DIR}")
 endif()
 include(spsModule)
 

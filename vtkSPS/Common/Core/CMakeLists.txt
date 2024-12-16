@@ -51,3 +51,17 @@ if(DEFINED VTK_MODULE_ENABLE_SPS_CommonCore)
     SPS_JAVASCRIPT_WRAPPERS ""
     HEADERS_SUBDIR    "")
 endif()
+
+if (CMAKE_SYSTEM_NAME STREQUAL "Emscripten")
+  vtk_module_link_options(SPS::CommonCore
+    INTERFACE
+      "$<BUILD_INTERFACE:--js-library=${CMAKE_CURRENT_SOURCE_DIR}/vtkEmscriptenTestUtilities.js>"
+      "$<INSTALL_INTERFACE:--js-library=$<INSTALL_PREFIX>/${_vtk_build_LIBRARY_DESTINATION}/vtkEmscriptenTestUtilities.js>")
+  install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/vtkEmscriptenTestUtilities.js"
+    DESTINATION ${_vtk_build_LIBRARY_DESTINATION})
+endif ()
+
+vtk_add_test_mangling(SPS::CommonCore)
+
+
+
