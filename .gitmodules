@@ -1,3 +1,0 @@
-[submodule "vtkSPS/CMake"]
-	path = vtkSPS/CMake
-	url = git@github.com:JensMunkHansen/CMake.git
