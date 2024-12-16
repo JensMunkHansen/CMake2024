@@ -37,16 +37,17 @@ set(classes
   spsVersion
 )
 
+sps_scan_wrappers(${CMAKE_CURRENT_SOURCE_DIR}/JavaScriptVTK vtk_javascript_wrappers)
+
 if(DEFINED VTK_MODULE_ENABLE_SPS_CommonCore)
-  vtk_module_add_module(SPS::CommonCore
+  sps_module_add_module(SPS::CommonCore
     CLASSES           ${classes}
     NOWRAP_CLASSES    ${nowrap_classes}
     SOURCES           ${sources}
     HEADERS           ${headers}
+    VTK_JAVASCRIPT_WRAPPERS ${vtk_javascript_wrappers}
     TEMPLATE_CLASSES  ${template_classes}
     PRIVATE_TEMPLATES ${private_templates}
+    SPS_JAVASCRIPT_WRAPPERS ""
     HEADERS_SUBDIR    "")
-  vtk_module_link(SPS::CommonCore
-    PRIVATE
-    VTK::CommonCore)
 endif()
