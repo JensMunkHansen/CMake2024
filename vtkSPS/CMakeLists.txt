@@ -36,7 +36,11 @@ if(VTK_VERSION VERSION_LESS sps_VTK_VERSION_MINIMUM)
   message(FATAL_ERROR "VTK ${sps_VTK_VERSION_MINIMUM} or later is required.")
 endif()
 
+# TODO: No vtkWrapHierarchi.wasm
 set(_vtkModule_dir "${VTK_DIR}/lib/cmake/vtk-9.4")
+if (NOT EXISTS "${_vtkModule_dir}")
+  set(_vtkModule_dir "${VTK_DIR}")
+endif()
 include(spsModule)
 
 option(BUILD_SHARED_LIBS "Build shared libraries." OFF)
