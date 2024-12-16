@@ -28,13 +28,16 @@ set(SPS_VERSION
 message("Building vtkSPS with version: ${SPS_VERSION}")
 
 set(VTK_VERSION_MINIMUM 9.2)
-find_package(VTK ${VTK_VERSION_MINIMUM})
+find_package(VTK ${VTK_VERSION_MINIMUM} REQUIRED)
 if (VTK_FOUND)
   message("-- Found VTK with version: ${VTK_VERSION}")
 endif()
 if(VTK_VERSION VERSION_LESS sps_VTK_VERSION_MINIMUM)
   message(FATAL_ERROR "VTK ${sps_VTK_VERSION_MINIMUM} or later is required.")
 endif()
+
+set(_vtkModule_dir "${VTK_DIR}/lib/cmake/vtk-9.4")
+include(spsModule)
 
 option(BUILD_SHARED_LIBS "Build shared libraries." OFF)
 
